@@ -59,7 +59,7 @@ export function LibraryMock() {
                 key={r.t}
                 className="flex items-center gap-3 rounded-chip bg-surface-2/40 px-3 py-2"
               >
-                <p className="text-[12.5px] font-medium truncate flex-1 min-w-0">{r.t}</p>
+                <p className="text-meta font-medium truncate flex-1 min-w-0">{r.t}</p>
                 <span
                   className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 font-tabular ${toneClass[r.tone]}`}
                 >
@@ -120,7 +120,7 @@ export function PlanMock() {
           </motion.div>
         ))}
       </div>
-      <div className="flex items-center gap-3 mt-3 text-[10.5px] text-ink-soft">
+      <div className="flex items-center gap-3 mt-3 text-[10px] text-ink-soft">
         <span className="inline-flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: SUBJECT_DOT.math }} />
           3 reviews Thu
@@ -160,11 +160,11 @@ export function FocusMock() {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <p className="font-display text-[19px] font-semibold font-tabular leading-none">18:24</p>
-          <p className="text-[9.5px] text-ink-soft mt-1">left</p>
+          <p className="text-[10px] text-ink-soft mt-1">left</p>
         </div>
       </div>
-      <p className="text-[12.5px] font-medium mt-3.5">Vector Algebra</p>
-      <p className="text-[11px] text-ink-soft mt-0.5">Physics · Review 2 of 4</p>
+      <p className="text-meta font-medium mt-3.5">Vector Algebra</p>
+      <p className="text-[11px] text-ink-soft mt-0.5">Physics · Review 2 of 5</p>
       <div className="flex items-center gap-2 mt-4">
         <span className="inline-flex items-center gap-1.5 rounded-capsule bg-brand text-white text-[11px] font-medium px-3 py-1.5">
           <Pause size={11} /> Pause
@@ -189,7 +189,7 @@ export function StreakMock() {
         <p className="font-display text-[26px] font-semibold tracking-tight font-tabular leading-none">
           78
         </p>
-        <p className="text-[11.5px] text-ink-soft">reviews cleared this month</p>
+        <p className="text-meta text-ink-soft">reviews cleared this month</p>
       </div>
       <div className="flex items-end gap-[3px] h-[62px] mt-4">
         {bars.map((v, i) => (

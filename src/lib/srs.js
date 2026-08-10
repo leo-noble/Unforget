@@ -1,20 +1,20 @@
 // Cadence spaced-repetition engine
 //
 // The schedule is defined as an interval *since the previous review*:
-// +1, +3, +7, +30 days — i.e. Day 1 (learn) → Day 2 → Day 5 → Day 12 →
-// Day 42. Internally we store the cumulative "days after Day 0" for each
+// +1, +3, +7, +15, +30 days — i.e. Day 1 (learn) → Day 2 → Day 5 → Day 12 →
+// Day 27 → Day 57. Internally we store the cumulative "days after Day 0" for each
 // review (since that's what the date math needs), but the rule that
 // matters is the interval-from-previous-review one — each step is
 // deliberately wider than the last, so a review can be pushed a day or
 // two late without breaking the schedule, but the schedule itself is
 // fixed from the moment a chapter is logged, not recalculated from when
 // a review actually happens.
-const INTERVALS_SINCE_PREVIOUS = [1, 3, 7, 30]
+const INTERVALS_SINCE_PREVIOUS = [1, 3, 7, 15, 30]
 export const INTERVALS_FROM_DAY0 = (() => {
   let cumulative = 0
   return INTERVALS_SINCE_PREVIOUS.map((n) => (cumulative += n))
-})() // [1, 4, 11, 41]
-export const MAX_REVIEW_INDEX = INTERVALS_FROM_DAY0.length // 4
+})() // [1, 4, 11, 26, 56]
+export const MAX_REVIEW_INDEX = INTERVALS_FROM_DAY0.length // 5
 export const MAX_CONSECUTIVE_SNOOZES = 2
 
 const DAY_MS = 24 * 60 * 60 * 1000

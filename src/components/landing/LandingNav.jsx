@@ -49,7 +49,7 @@ export default function LandingNav() {
             <a
               key={l.href}
               href={l.href}
-              className={`relative text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors duration-180 rounded-capsule px-3.5 py-2 hover:bg-hover ${focusRing}`}
+              className={`relative text-ui font-medium text-ink-soft hover:text-ink transition-colors duration-180 rounded-capsule px-3.5 py-2 hover:bg-hover ${focusRing}`}
             >
               {l.label}
             </a>
@@ -59,13 +59,13 @@ export default function LandingNav() {
         <div className="flex items-center gap-2">
           <Link
             to="/login"
-            className={`hidden sm:inline-flex text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors duration-180 rounded-capsule px-3 py-2 hover:bg-hover ${focusRing}`}
+            className={`hidden sm:inline-flex text-ui font-medium text-ink-soft hover:text-ink transition-colors duration-180 rounded-capsule px-3 py-2 hover:bg-hover ${focusRing}`}
           >
             Log in
           </Link>
           <Link
             to="/login"
-            className={`inline-flex items-center gap-1.5 rounded-capsule bg-brand text-white text-[13.5px] font-medium px-4 py-2 transition-transform duration-180 hover:scale-[1.03] active:scale-[0.97] ${focusRing}`}
+            className={`inline-flex items-center gap-1.5 rounded-capsule bg-brand text-white text-ui font-medium px-4 py-2 transition-transform duration-180 hover:scale-[1.03] active:scale-[0.97] ${focusRing}`}
           >
             Get started <ArrowRight size={15} />
           </Link>

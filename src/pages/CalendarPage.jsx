@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
 import { toISODate, startOfDay, addDays } from '../lib/srs'
 import { startOfWeek, weekDates as weekDatesOf } from '../lib/timeGrid'
-import PageHeader from '../components/PageHeader'
+import PageShell, { PageHeader } from '../components/PageShell'
 import SegmentedControl from '../components/SegmentedControl'
 import StudyPlanSheet from '../components/StudyPlanSheet'
 import MiniMonth from '../components/calendar/MiniMonth'
@@ -121,7 +121,7 @@ export default function CalendarPage({ cadence, onOpenChapter }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 md:pb-10">
+    <PageShell width="wide">
       <PageHeader
         eyebrow="Your schedule"
         title="Plan"
@@ -261,6 +261,6 @@ export default function CalendarPage({ cadence, onOpenChapter }) {
           />
         )}
       </AnimatePresence>
-    </div>
+    </PageShell>
   )
 }

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Flame, Target, Layers } from 'lucide-react'
-import PageHeader from '../components/PageHeader'
+import PageShell, { PageHeader } from '../components/PageShell'
 import { toISODate, MAX_REVIEW_INDEX } from '../lib/srs'
 
 function last30Days() {
@@ -61,7 +61,7 @@ export default function StatsPage({ cadence }) {
   const totalCompleted = events.filter((e) => e.action === 'completed').length
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 md:pb-10">
+    <PageShell>
       <PageHeader eyebrow="Your progress" title="Stats" />
 
       <div className="grid grid-cols-3 gap-2.5 mb-6">
@@ -127,6 +127,6 @@ export default function StatsPage({ cadence }) {
           </div>
         ))}
       </div>
-    </div>
+    </PageShell>
   )
 }

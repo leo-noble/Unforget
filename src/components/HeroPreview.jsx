@@ -10,21 +10,21 @@ import { EASE } from './landing/anim'
 const ROWS = [
   {
     title: 'Vector Algebra',
-    meta: 'Physics · Review 2 of 4',
+    meta: 'Physics · Review 2 of 5',
     dot: 'bg-status-overdue',
     chip: 'Overdue · 1 day',
     chipClass: 'text-status-overdue bg-status-overdue/10',
   },
   {
     title: 'Coordinate Geometry — Circles',
-    meta: 'Higher Math · Review 3 of 4',
+    meta: 'Higher Math · Review 3 of 5',
     dot: 'bg-status-due',
     chip: 'Due today',
     chipClass: 'text-status-due bg-status-due/10',
   },
   {
     title: 'Periodic Trends',
-    meta: 'Chemistry · Review 1 of 4',
+    meta: 'Chemistry · Review 1 of 5',
     dot: 'bg-status-due',
     chip: 'Due today',
     chipClass: 'text-status-due bg-status-due/10',
@@ -72,11 +72,11 @@ export default function HeroPreview() {
             >
               <span className={`h-2 w-2 rounded-full shrink-0 ${r.dot}`} />
               <div className="min-w-0 flex-1">
-                <p className="text-[13.5px] font-medium truncate">{r.title}</p>
-                <p className="text-[11.5px] text-ink-soft truncate mt-0.5">{r.meta}</p>
+                <p className="text-ui font-medium truncate">{r.title}</p>
+                <p className="text-meta text-ink-soft truncate mt-0.5">{r.meta}</p>
               </div>
               <span
-                className={`text-[10.5px] font-medium rounded-full px-2 py-0.5 shrink-0 font-tabular ${r.chipClass}`}
+                className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 font-tabular ${r.chipClass}`}
               >
                 {r.chip}
               </span>
@@ -94,12 +94,12 @@ export default function HeroPreview() {
               <Check size={10} strokeWidth={3} className="text-white" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[13.5px] font-medium text-ink-soft line-through truncate">
+              <p className="text-ui font-medium text-ink-soft line-through truncate">
                 Trigonometric Identities
               </p>
-              <p className="text-[11.5px] text-ink-soft/70 truncate mt-0.5">Higher Math · Review 2 of 4</p>
+              <p className="text-meta text-ink-soft/70 truncate mt-0.5">Higher Math · Review 2 of 5</p>
             </div>
-            <span className="text-[10.5px] font-medium text-ink-soft shrink-0">Done</span>
+            <span className="text-[10px] font-medium text-ink-soft shrink-0">Done</span>
           </motion.div>
         </div>
       </AppFrame>
@@ -116,7 +116,7 @@ export default function HeroPreview() {
           <Check size={14} strokeWidth={2.5} className="text-brand" />
         </span>
         <div>
-          <p className="text-[12.5px] font-medium leading-tight">Marked as revised</p>
+          <p className="text-meta font-medium leading-tight">Marked as revised</p>
           <p className="text-[11px] text-ink-soft mt-0.5 font-tabular">Next review · in 7 days</p>
         </div>
       </motion.div>

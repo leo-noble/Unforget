@@ -16,7 +16,7 @@ const TABS = [
     icon: LibraryBig,
     label: 'Library',
     title: 'Your whole syllabus, by subject',
-    body: 'Every chapter you have added, grouped under its subject and marked due, upcoming, or mastered. This is the list you check when you want to know where you actually stand.',
+    body: 'Every chapter grouped under its subject and marked due, upcoming, or mastered. This is the list you check when you want to know where you stand.',
     mock: <LibraryMock />,
   },
   {
@@ -24,7 +24,7 @@ const TABS = [
     icon: CalendarDays,
     label: 'Plan',
     title: 'See the busy weeks coming',
-    body: 'Reviews land on real dates, so you can look a fortnight ahead and spot the day with five of them on it. Block out study time and drag it around until the week fits.',
+    body: 'Reviews land on real dates, so you can look a fortnight ahead and spot the day with five on it. Block out study time and drag it until the week fits.',
     mock: <PlanMock />,
   },
   {
@@ -40,7 +40,7 @@ const TABS = [
     icon: LineChart,
     label: 'Progress',
     title: 'Proof that it is adding up',
-    body: 'Reviews cleared, chapters mastered, and the days you turned up. Enough to see the habit forming, without turning revision into a scoreboard.',
+    body: 'Reviews cleared, chapters mastered, and the days you turned up — without turning revision into a scoreboard.',
     mock: <StreakMock />,
   },
 ]
@@ -50,7 +50,7 @@ export default function AppTour() {
   const tab = TABS.find((t) => t.id === active) || TABS[0]
 
   return (
-    <div className="mt-12 md:mt-14">
+    <div className="mt-12">
       {/* Tab strip. The moving pill is a shared layout element, so switching
           tabs slides rather than cutting. */}
       <Reveal>
@@ -67,7 +67,7 @@ export default function AppTour() {
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActive(t.id)}
-                className={`relative inline-flex items-center gap-2 rounded-capsule px-4 py-2 text-[13.5px] font-medium transition-colors duration-200 ${focusRing} ${
+                className={`relative inline-flex items-center gap-2 rounded-capsule px-4 py-2 text-ui font-medium transition-colors duration-200 ${focusRing} ${
                   selected ? 'text-ink' : 'text-ink-soft hover:text-ink'
                 }`}
               >
@@ -87,9 +87,11 @@ export default function AppTour() {
       </Reveal>
 
       <Reveal delay={0.08} className="mt-8">
-        <div className="grid md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-10 md:gap-14 items-center">
-          {/* Copy. Crossfades in place — a slide here would fight the mock. */}
-          <div className="min-h-[180px]">
+        <div className="grid md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 md:gap-14 items-center">
+          {/* Copy. Crossfades in place — a slide here would fight the mock.
+              The fixed min-height stops the row from resizing between tabs
+              whose copy wraps to a different number of lines. */}
+          <div className="min-h-[160px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={tab.id}
@@ -98,10 +100,8 @@ export default function AppTour() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.3, ease: EASE }}
               >
-                <h3 className="font-display text-[26px] md:text-[30px] font-semibold leading-tight tracking-tight mb-4">
-                  {tab.title}
-                </h3>
-                <p className="text-[15.5px] text-ink-soft leading-relaxed max-w-md">{tab.body}</p>
+                <h3 className="font-display text-display-md font-semibold mb-3">{tab.title}</h3>
+                <p className="text-prose text-ink-soft">{tab.body}</p>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -118,7 +118,7 @@ export default function AppTour() {
                 {/* A fixed content height across all four screens: without it
                     the frame resizes on every tab change and the section below
                     jumps, which reads as jank rather than as a switch. */}
-                <div className="min-h-[336px] flex flex-col justify-center">{tab.mock}</div>
+                <div className="min-h-[300px] flex flex-col justify-center">{tab.mock}</div>
               </AppFrame>
             </motion.div>
           </AnimatePresence>

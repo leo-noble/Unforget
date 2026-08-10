@@ -5,10 +5,10 @@ import { INTERVALS_FROM_DAY0 } from './srs'
 // app schedules against — so the marketing visuals can never drift out of
 // sync with the engine.
 
-/** Day numbers of every point on a chapter's life: [0, 1, 4, 11, 41]. */
+/** Day numbers of every point on a chapter's life: [0, 1, 4, 11, 26, 56]. */
 export const REVIEW_DAYS = [0, ...INTERVALS_FROM_DAY0]
 
-/** Days waited before each review: [1, 3, 7, 30]. */
+/** Days waited before each review: [1, 3, 7, 15, 30]. */
 export const REVIEW_GAPS = INTERVALS_FROM_DAY0.map(
   (day, i) => day - (INTERVALS_FROM_DAY0[i - 1] ?? 0)
 )

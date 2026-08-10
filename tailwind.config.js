@@ -73,12 +73,39 @@ export default {
       backgroundImage: {
         panel: 'var(--gradient-panel)',
       },
+      // One type scale for the whole product. Before this, 33 distinct
+      // arbitrary `text-[Npx]` values were in use and 14/14.5/15/15.5/16/16.5/17
+      // all coexisted as "body" — differences too small to read as intentional
+      // but enough to stop anything from lining up. These are named by role
+      // rather than by size so a component asks for "lede" and cannot invent a
+      // 16.5px one-off. Deliberately additive: Tailwind's own text-sm/text-2xl
+      // still resolve, so existing app code keeps working during migration.
+      fontSize: {
+        eyebrow: ['11px', { lineHeight: '1.45', letterSpacing: '0.06em' }],
+        meta: ['12px', { lineHeight: '1.5' }],
+        ui: ['13px', { lineHeight: '1.5' }],
+        // The workhorse. Everything that was 13.5/14/14.5 collapses here.
+        body: ['15px', { lineHeight: '1.6' }],
+        // Body copy that carries an argument and needs the extra air.
+        prose: ['16px', { lineHeight: '1.7' }],
+        lede: ['17px', { lineHeight: '1.65' }],
+        // Display steps ~1.3x apart, so each is unmistakably a different level.
+        'display-xs': ['20px', { lineHeight: '1.3', letterSpacing: '-0.02em' }],
+        'display-sm': ['24px', { lineHeight: '1.25', letterSpacing: '-0.02em' }],
+        'display-md': ['30px', { lineHeight: '1.2', letterSpacing: '-0.025em' }],
+        'display-lg': ['40px', { lineHeight: '1.1', letterSpacing: '-0.03em' }],
+        'display-xl': ['56px', { lineHeight: '1.03', letterSpacing: '-0.03em' }],
+      },
       letterSpacing: {
         tightest: '-0.03em',
         wideish: '0.06em',
       },
       spacing: {
         18: '4.5rem',
+        // The vertical rhythm every section band pays. Named so a section
+        // can't quietly pick 160px when its neighbour picked 128px.
+        band: '6rem',
+        'band-lg': '7.5rem',
       },
       transitionDuration: {
         180: '180ms',

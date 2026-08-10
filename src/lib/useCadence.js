@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as store from './storage'
-import { pullCloudData, pushCloudDataDebounced } from './cloudSync'
+import { pullCloudData, pushCloudData, flushCloudData, mergeSnapshots } from './cloudSync'
 import {
   deriveStatus,
   isDueOrOverdue,
@@ -15,16 +15,24 @@ import {
 import { MIN_BLOCK_MINUTES, DEFAULT_BLOCK_MINUTES } from './timeGrid'
 
 export function useCadence(userId) {
+  // The cache is scoped to the user before the first read, so a second
+  // account signing in on this browser never sees the first account's data.
+  const scopeReady = useRef(false)
+  if (!scopeReady.current) {
+    store.setStorageScope(userId)
+    scopeReady.current = true
+  }
+
   const [subjects, setSubjects] = useState(() => store.getSubjects())
-  const [chapters, setChapters] = useState(() => {
-    store.migrateScheduleIfNeeded()
-    return store.getChapters()
-  })
+  const [chapters, setChapters] = useState(() => store.migrateSchedule(store.getChapters()))
   const [events, setEvents] = useState(() => store.getEvents())
   const [blocks, setBlocks] = useState(() => store.getStudyBlocks())
   const [prefs, setPrefs] = useState(() => store.getPrefs())
   const [streak, setStreak] = useState(() => store.getStreakData())
   const [justMastered, setJustMastered] = useState(null) // chapter id, for celebration
+  // 'idle' before sign-in, 'syncing' while a pull is in flight, 'synced' once
+  // the server copy has landed, 'offline' if it couldn't be reached.
+  const [syncState, setSyncState] = useState('idle')
 
   useEffect(() => { store.saveSubjects(subjects) }, [subjects])
   useEffect(() => { store.saveChapters(chapters) }, [chapters])
@@ -34,39 +42,101 @@ export function useCadence(userId) {
   useEffect(() => { store.saveStreakData(streak) }, [streak])
 
   // ---- cloud sync (multi-device) ----
-  // On sign-in: if this browser has no chapters/subjects yet, pull whatever
-  // this account already has in the cloud (new-device bootstrap). Either
-  // way, every subsequent local change gets pushed up, debounced, so the
-  // next device to sign in sees it.
-  const pulledForUser = useRef(null)
-  useEffect(() => {
-    if (!userId || pulledForUser.current === userId) return
-    pulledForUser.current = userId
-    const isLocalEmpty = store.getSubjects().length === 0 && store.getChapters().length === 0
-    if (!isLocalEmpty) return
-    pullCloudData(userId).then((remote) => {
-      if (!remote) return
-      if (Array.isArray(remote.subjects)) { store.saveSubjects(remote.subjects); setSubjects(remote.subjects) }
-      if (Array.isArray(remote.chapters)) { store.saveChapters(remote.chapters); setChapters(remote.chapters) }
-      if (Array.isArray(remote.events)) { store.saveEvents(remote.events); setEvents(remote.events) }
-      // The cloud blob may still hold old-shape range plans if it was last
-      // written by a device that hasn't updated, so normalize on the way in
-      // rather than trusting the shape.
-      const remoteBlocks = remote.blocks ?? remote.plans
-      if (Array.isArray(remoteBlocks)) {
-        const normalized = store.normalizeBlocks(remoteBlocks)
-        store.saveStudyBlocks(normalized)
-        setBlocks(normalized)
+  // The server is the source of truth. This pulls on sign-in, on tab focus,
+  // and on reconnect — not once per empty browser, which is what let a Mac
+  // and a phone drift apart indefinitely. What's in the cache only survives
+  // a pull if the server doesn't have a newer copy of that same record.
+  const applySnapshot = useCallback((snap) => {
+    if (!snap) return
+    setSubjects(snap.subjects || [])
+    setChapters(store.migrateSchedule(snap.chapters || []))
+    setEvents(snap.events || [])
+    setBlocks(store.normalizeBlocks(snap.blocks ?? snap.plans ?? []))
+    if (snap.prefs) setPrefs((p) => ({ ...p, ...snap.prefs }))
+    if (snap.streak) setStreak(snap.streak)
+  }, [])
+
+  const syncedUser = useRef(null)
+  const syncNow = useCallback(
+    async (userIdArg, { merge = false } = {}) => {
+      if (!userIdArg) return
+      setSyncState('syncing')
+      const remote = await pullCloudData(userIdArg)
+      if (!remote) {
+        // No server copy yet (first sign-in) or unreachable. Seed the server
+        // from whatever this device holds so the next device has something
+        // to pull, rather than leaving the account empty.
+        const local = store.readSnapshot()
+        const hasLocal = local.subjects.length > 0 || local.chapters.length > 0
+        if (hasLocal) pushCloudData(userIdArg, local, { immediate: true })
+        setSyncState(hasLocal ? 'synced' : 'offline')
+        return
       }
-      if (remote.streak) { store.saveStreakData(remote.streak); setStreak(remote.streak) }
-    })
-  }, [userId])
+      // `merge` is the first pull after sign-in, where this device may hold
+      // work that never reached the server. Later pulls take the server as
+      // given, so a delete on another device isn't resurrected from cache.
+      applySnapshot(merge ? mergeSnapshots(store.readSnapshot(), remote) : remote)
+      setSyncState('synced')
+    },
+    [applySnapshot]
+  )
 
   useEffect(() => {
+    if (!userId) {
+      setSyncState('idle')
+      return
+    }
+    if (syncedUser.current === userId) return
+    const isFirstSyncForUser = syncedUser.current !== userId
+    syncedUser.current = userId
+
+    // Re-scope the cache, then adopt any pre-namespacing data so an existing
+    // user's chapters aren't stranded in the old global keys.
+    const scopeChanged = store.setStorageScope(userId)
+    const legacy = store.claimLegacyData()
+    if (legacy) store.writeSnapshot(mergeSnapshots(legacy, store.readSnapshot()))
+    if (scopeChanged) {
+      setSubjects(store.getSubjects())
+      setChapters(store.migrateSchedule(store.getChapters()))
+      setEvents(store.getEvents())
+      setBlocks(store.getStudyBlocks())
+      setPrefs(store.getPrefs())
+      setStreak(store.getStreakData())
+    }
+    syncNow(userId, { merge: isFirstSyncForUser })
+  }, [userId, syncNow])
+
+  // Re-pull whenever the user comes back to the tab or the network returns.
+  // This is what makes a review ticked off on a phone show up on a laptop
+  // that was left open, without a refresh.
+  useEffect(() => {
     if (!userId) return
+    function onFocus() {
+      if (document.visibilityState === 'visible') syncNow(userId)
+    }
+    // A pending write must not die with the tab.
+    function onHide() {
+      if (document.visibilityState === 'hidden') flushCloudData()
+    }
+    document.addEventListener('visibilitychange', onFocus)
+    document.addEventListener('visibilitychange', onHide)
+    window.addEventListener('online', onFocus)
+    window.addEventListener('pagehide', flushCloudData)
+    return () => {
+      document.removeEventListener('visibilitychange', onFocus)
+      document.removeEventListener('visibilitychange', onHide)
+      window.removeEventListener('online', onFocus)
+      window.removeEventListener('pagehide', flushCloudData)
+    }
+  }, [userId, syncNow])
+
+  // Every local change goes up. Skipped until the first pull has landed, so
+  // an empty initial render can't overwrite the server copy with nothing.
+  useEffect(() => {
+    if (!userId || syncState === 'syncing' || syncState === 'idle') return
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-    pushCloudDataDebounced(userId, { subjects, chapters, events, blocks, streak, prefs, timezone })
-  }, [userId, subjects, chapters, events, blocks, streak, prefs])
+    pushCloudData(userId, { subjects, chapters, events, blocks, streak, prefs, timezone })
+  }, [userId, subjects, chapters, events, blocks, streak, prefs, syncState])
 
   const refreshAll = useCallback(() => {
     setSubjects(store.getSubjects())
@@ -337,6 +407,8 @@ export function useCadence(userId) {
     blocks,
     prefs,
     streak,
+    syncState,
+    syncNow: useCallback(() => syncNow(userId), [syncNow, userId]),
     overdue,
     dueToday,
     struggling,

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Bell, LogOut, BarChart3, Check, BellRing, Sun, Moon, Monitor } from 'lucide-react'
 import { useAuth } from '../lib/useAuth'
 import { enablePushNotifications, disablePushNotifications } from '../lib/push'
-import PageHeader from '../components/PageHeader'
+import { flushCloudData } from '../lib/cloudSync'
+import PageShell, { PageHeader } from '../components/PageShell'
 import SegmentedControl from '../components/SegmentedControl'
 
 // Preview swatches for the theme picker — the only place these literal hex
@@ -122,6 +123,9 @@ export default function SettingsPage({ cadence }) {
   }
 
   async function handleSignOut() {
+    // Flush queued writes first — signing out tears down the session the
+    // push needs, so anything still debounced would be lost.
+    await flushCloudData()
     await signOut()
     navigate('/login', { replace: true })
   }
@@ -161,7 +165,7 @@ export default function SettingsPage({ cadence }) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 md:pb-10">
+    <PageShell>
       <PageHeader eyebrow="Your account" title="Settings" />
 
       {profile?.name && (
@@ -304,6 +308,6 @@ export default function SettingsPage({ cadence }) {
       )}
 
       <p className="text-[13px] text-ink-soft text-center mt-10">Cadence — study in rhythm.</p>
-    </div>
+    </PageShell>
   )
 }

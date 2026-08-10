@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, CheckCircle2 } from 'lucide-react'
 import ChapterCard from '../components/ChapterCard'
 import TodayHero from '../components/TodayHero'
+import PageShell from '../components/PageShell'
 
 export default function Dashboard({ cadence, profile, onOpenChapter, onAddChapter }) {
   const { overdue, dueToday, subjectMap, streak, events, chapters, reviseChapter, snoozeChapterAction } = cadence
@@ -19,7 +20,7 @@ export default function Dashboard({ cadence, profile, onOpenChapter, onAddChapte
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 md:pb-10">
+    <PageShell>
       <TodayHero profile={profile} streakCount={streak.count} events={events} chapters={chapters} />
 
       {nothingDue ? (
@@ -110,6 +111,6 @@ export default function Dashboard({ cadence, profile, onOpenChapter, onAddChapte
           </AnimatePresence>
         </div>
       )}
-    </div>
+    </PageShell>
   )
 }

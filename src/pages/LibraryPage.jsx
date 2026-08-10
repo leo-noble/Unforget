@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Trash2, Search, X } from 'lucide-react'
 import ChapterCard from '../components/ChapterCard'
 import SegmentedControl from '../components/SegmentedControl'
-import PageHeader from '../components/PageHeader'
+import PageShell, { PageHeader } from '../components/PageShell'
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -47,7 +47,7 @@ export default function LibraryPage({ cadence, onOpenChapter, onAddChapter }) {
   const hasAnyVisible = useMemo(() => Array.from(bySubject.values()).some((list) => list.length > 0), [bySubject])
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 md:pb-10">
+    <PageShell>
       <PageHeader
         eyebrow={`${subjects.length} subject${subjects.length === 1 ? '' : 's'}`}
         title="Library"
@@ -161,6 +161,6 @@ export default function LibraryPage({ cadence, onOpenChapter, onAddChapter }) {
           </AnimatePresence>
         </div>
       )}
-    </div>
+    </PageShell>
   )
 }

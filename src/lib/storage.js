@@ -1,17 +1,50 @@
-// Offline-first local persistence for Cadence.
-// Everything lives in localStorage as JSON — no network required.
-// Shape mirrors the data model in the blueprint (Subject / Chapter / ReviewEvent),
-// using camelCase JS keys internally.
+// Local persistence for Cadence — a per-user cache, not the source of truth.
+//
+// The server owns the data (see cloudSync.js). What's here exists so the app
+// paints instantly on open and keeps working without a connection; every key
+// is namespaced by the signed-in user's id, so signing into a second account
+// on the same browser can never show the first account's chapters. Keys were
+// previously global, which is why a shared device leaked data between logins.
+//
+// Shape mirrors the data model in the blueprint (Subject / Chapter /
+// ReviewEvent), using camelCase JS keys internally.
 
 import { toISODate, addDays, daysBetween, nextReviewDateForIndex, MAX_REVIEW_INDEX } from './srs'
 
-const KEYS = {
+// The namespace is set once, as early as auth resolves, before any read.
+// Signed-out reads (the landing page, the login screen) use the anon bucket
+// and are discarded the moment a real user arrives.
+let scope = 'anon'
+
+export function setStorageScope(userId) {
+  const next = userId || 'anon'
+  const changed = next !== scope
+  scope = next
+  return changed
+}
+
+export function getStorageScope() {
+  return scope
+}
+
+const BASE = {
   subjects: 'cadence.subjects',
   chapters: 'cadence.chapters',
   events: 'cadence.events',
   prefs: 'cadence.prefs',
   streak: 'cadence.streak',
   plans: 'cadence.studyPlans', // now stores blocks, not date-range plans
+}
+
+// `cadence.chapters` → `cadence.u_<id>.chapters`. Kept as a getter rather
+// than a constant map because the scope changes at runtime, on sign-in.
+const KEYS = new Proxy(BASE, {
+  get: (target, prop) =>
+    scope === 'anon' ? target[prop] : target[prop]?.replace('cadence.', `cadence.u_${scope}.`),
+})
+
+function scoped(key) {
+  return scope === 'anon' ? key : key.replace('cadence.', `cadence.u_${scope}.`)
 }
 
 function read(key, fallback) {
@@ -40,6 +73,7 @@ export const DEFAULT_PREFS = {
   pomodoroWork: 25,
   pomodoroShortBreak: 5,
   pomodoroLongBreak: 15,
+  pomodoroCycleLength: 4, // focus sessions before a long break
   pomodoroAutoTransition: false,
   pomodoroSound: true,
 }
@@ -257,10 +291,10 @@ export function saveStreakData(data) {
 // Separate from prefs since it's internal housekeeping, not a user setting.
 const LAST_NOTIFIED_KEY = 'cadence.lastNotifiedDate'
 export function getLastNotifiedDate() {
-  return read(LAST_NOTIFIED_KEY, null)
+  return read(scoped(LAST_NOTIFIED_KEY), null)
 }
 export function setLastNotifiedDate(dateStr) {
-  write(LAST_NOTIFIED_KEY, dateStr)
+  write(scoped(LAST_NOTIFIED_KEY), dateStr)
 }
 
 // ---------- Pomodoro session log ----------
@@ -268,13 +302,13 @@ export function setLastNotifiedDate(dateStr) {
 // how many minutes that adds up to. Used for the "today's stats" readout.
 const POMODORO_LOG_KEY = 'cadence.pomodoroLog'
 export function getPomodoroLog() {
-  return read(POMODORO_LOG_KEY, {}) // { 'YYYY-MM-DD': { sessions: n, minutes: n } }
+  return read(scoped(POMODORO_LOG_KEY), {}) // { 'YYYY-MM-DD': { sessions: n, minutes: n } }
 }
 export function logPomodoroSession(dateStr, minutes) {
   const log = getPomodoroLog()
   const entry = log[dateStr] || { sessions: 0, minutes: 0 }
   log[dateStr] = { sessions: entry.sessions + 1, minutes: entry.minutes + minutes }
-  write(POMODORO_LOG_KEY, log)
+  write(scoped(POMODORO_LOG_KEY), log)
   return log[dateStr]
 }
 
@@ -289,13 +323,13 @@ export function logPomodoroSession(dateStr, minutes) {
 // was backgrounded or how late a timer callback fires.
 const TIMER_STATE_KEY = 'cadence.pomodoroTimerState'
 export function getTimerState() {
-  return read(TIMER_STATE_KEY, null)
+  return read(scoped(TIMER_STATE_KEY), null)
 }
 export function saveTimerState(state) {
-  write(TIMER_STATE_KEY, state)
+  write(scoped(TIMER_STATE_KEY), state)
 }
 export function clearTimerState() {
-  localStorage.removeItem(TIMER_STATE_KEY)
+  localStorage.removeItem(scoped(TIMER_STATE_KEY))
 }
 
 // ---------- Backup / restore ----------
@@ -391,9 +425,10 @@ export function importAllData(jsonString) {
   return { ok: true }
 }
 
-// Wipes every trace of Cadence from this browser, including the profile —
+// Wipes every trace of Cadence for the signed-in user from this browser —
 // used by Settings > Delete all data. Irreversible; the caller is
-// responsible for confirming with the user first.
+// responsible for confirming with the user first (and for clearing the
+// server copy, which is what actually persists).
 export function deleteAllData() {
   localStorage.removeItem(KEYS.subjects)
   localStorage.removeItem(KEYS.chapters)
@@ -403,31 +438,96 @@ export function deleteAllData() {
   localStorage.removeItem(KEYS.streak)
 }
 
+// ---------- Snapshots ----------
+// The unit the sync layer moves around: everything that belongs to a user,
+// read or written in one go. Prefs are included so a duration changed on a
+// laptop shows up on a phone.
+export function readSnapshot() {
+  return {
+    subjects: getSubjects(),
+    chapters: getChapters(),
+    events: getEvents(),
+    blocks: getStudyBlocks(),
+    prefs: getPrefs(),
+    streak: getStreakData(),
+  }
+}
+
+export function writeSnapshot(snap) {
+  if (!snap) return
+  if (Array.isArray(snap.subjects)) saveSubjects(snap.subjects)
+  if (Array.isArray(snap.chapters)) saveChapters(snap.chapters)
+  if (Array.isArray(snap.events)) saveEvents(snap.events)
+  // The server blob may hold old-shape range plans if it was last written by
+  // a device that hasn't updated, so normalize on the way in rather than
+  // trusting the shape.
+  const blocks = snap.blocks ?? snap.plans
+  if (Array.isArray(blocks)) saveStudyBlocks(normalizeBlocks(blocks))
+  if (snap.prefs) savePrefs(snap.prefs)
+  if (snap.streak) saveStreakData(snap.streak)
+}
+
+/**
+ * Data written before storage was namespaced by user, sitting in the global
+ * keys. Claimed once by the first account to sign in on this browser, then
+ * cleared — so nobody's existing chapters vanish at the upgrade, and the
+ * next account to sign in doesn't inherit them.
+ */
+export function claimLegacyData() {
+  const prior = scope
+  scope = 'anon'
+  const legacy = readSnapshot()
+  const hasData = legacy.subjects.length > 0 || legacy.chapters.length > 0
+  if (hasData) {
+    localStorage.removeItem(BASE.subjects)
+    localStorage.removeItem(BASE.chapters)
+    localStorage.removeItem(BASE.events)
+    localStorage.removeItem(BASE.plans)
+    localStorage.removeItem(BASE.streak)
+    // Prefs go too, or the next account to sign in on this browser inherits
+    // the first one's theme — the same class of leak as the data itself.
+    localStorage.removeItem(BASE.prefs)
+  }
+  scope = prior
+  return hasData ? legacy : null
+}
+
 // ---------- Schedule migration ----------
-// The review cadence changed from a 7-step schedule to the current
-// 4-step one (+1 / +3 / +7 / +30 days from the studied date). Existing
-// chapters keep their studiedDate and their count of completed reviews
-// (currentReviewIndex) — only nextReviewDate is recalculated against the
-// new intervals, so nobody loses progress they'd already made. A chapter
-// that had already completed 4+ reviews under the old schedule is now
-// past every step of the new one, so it's considered fully mastered.
-// Runs once per browser, guarded by a flag so it never re-applies.
-const SCHEDULE_MIGRATION_KEY = 'cadence.scheduleMigrationV2'
+// The review cadence has changed twice: from a 7-step schedule to a 4-step
+// one, and now to the current 5-step one (+1 / +3 / +7 / +15 / +30 days
+// since the previous review). Existing chapters keep their studiedDate and
+// their count of completed reviews (currentReviewIndex) — only
+// nextReviewDate is recalculated against the new intervals, so nobody loses
+// progress they'd already made.
+//
+// The first three steps are unchanged (days 1, 4, 11), so only chapters
+// awaiting their 4th review actually move: that review was day 41 and is now
+// day 26, which can land it in the past and mark the chapter due or overdue.
+// That's the honest consequence of a denser schedule.
+//
+// Chapters already mastered stay mastered and are never reopened — the new
+// 5th step would otherwise resurrect work the student had finished.
+//
+// Applied to a chapter list rather than to storage directly, because data now
+// arrives from the server too and has to be migrated on the way in — a device
+// that hasn't updated can still push day-41 chapters up. Idempotent, so
+// running it on every sync is safe.
+export function migrateSchedule(chapters) {
+  if (!Array.isArray(chapters)) return []
+  return chapters.map((c) => {
+    if (!c || c.status === 'mastered') return c
+    if (typeof c.currentReviewIndex !== 'number') return c
+    if (c.currentReviewIndex >= MAX_REVIEW_INDEX) {
+      return { ...c, currentReviewIndex: MAX_REVIEW_INDEX, nextReviewDate: null, status: 'mastered' }
+    }
+    const expected = nextReviewDateForIndex(c.studiedDate, c.currentReviewIndex)
+    return c.nextReviewDate === expected ? c : { ...c, nextReviewDate: expected }
+  })
+}
 
 export function migrateScheduleIfNeeded() {
   try {
-    if (localStorage.getItem(SCHEDULE_MIGRATION_KEY) === '1') return
-    const chapters = getChapters()
-    const migrated = chapters.map((c) => {
-      if (c.status === 'mastered') return c
-      if (typeof c.currentReviewIndex !== 'number') return c
-      if (c.currentReviewIndex >= MAX_REVIEW_INDEX) {
-        return { ...c, currentReviewIndex: MAX_REVIEW_INDEX, nextReviewDate: null, status: 'mastered' }
-      }
-      return { ...c, nextReviewDate: nextReviewDateForIndex(c.studiedDate, c.currentReviewIndex) }
-    })
-    saveChapters(migrated)
-    localStorage.setItem(SCHEDULE_MIGRATION_KEY, '1')
+    saveChapters(migrateSchedule(getChapters()))
   } catch {
     // best-effort — never block app load on a migration failure
   }

@@ -14,6 +14,7 @@ import SettingsPage from './pages/SettingsPage'
 import { useCadence } from './lib/useCadence'
 import { useAuth } from './lib/useAuth'
 import { getLastNotifiedDate, setLastNotifiedDate } from './lib/storage'
+import { flushCloudData } from './lib/cloudSync'
 import { toISODate } from './lib/srs'
 
 const SIDEBAR_KEY = 'cadence.sidebarCollapsed'
@@ -37,6 +38,9 @@ export default function AppShell() {
   }
 
   async function handleSignOut() {
+    // Push anything still queued before the session goes away, otherwise the
+    // last few edits die with it and the next device pulls a stale copy.
+    await flushCloudData()
     await signOut()
     navigate('/login', { replace: true })
   }
