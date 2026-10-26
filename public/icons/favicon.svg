@@ -1,5 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-  <rect width="40" height="40" rx="11" fill="#3E3A8C"/>
-  <path d="M9 22c1.6 0 1.6-7 3.2-7s1.6 12 3.2 12 1.6-17 3.2-17 1.6 22 3.2 22 1.6-10 3.2-10 1.6 4 3.2 4"
-        stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
+  <defs>
+    <linearGradient id="fav-bg" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#8E7DFF"/>
+      <stop offset="0.5" stop-color="#5A48EE"/>
+      <stop offset="1" stop-color="#2A2390"/>
+    </linearGradient>
+    <radialGradient id="fav-sheen" cx="0.3" cy="0.02" r="0.85">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.42"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="fav-planet" cx="0.36" cy="0.3" r="0.78">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#E4E0FF"/>
+      <stop offset="1" stop-color="#A79DFF"/>
+    </radialGradient>
+    <linearGradient id="fav-ring" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.85"/>
+    </linearGradient>
+    <radialGradient id="fav-moon" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#FFF6D6"/>
+      <stop offset="0.6" stop-color="#FFD15C"/>
+      <stop offset="1" stop-color="#FF9F2E"/>
+    </radialGradient>
+    <radialGradient id="fav-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="url(#fav-bg)"/>
+         <rect width="1024" height="1024" rx="232" fill="url(#fav-sheen)"/>
+  <circle cx="512" cy="512" r="300" fill="url(#fav-glow)"/>
+  <g transform="translate(512 512) scale(1) rotate(-22)">
+    <path d="M -356 0 A 356 124 0 0 1 356 0" fill="none" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="44" stroke-linecap="butt"/>
+  </g>
+  <circle cx="512" cy="512" r="166" fill="url(#fav-planet)"/>
+  <g transform="translate(512 512) scale(1) rotate(-22)">
+    <path d="M -356 0 A 356 124 0 0 0 356 0" fill="none" stroke="#2A2390" stroke-opacity="0.22" stroke-width="64" stroke-linecap="butt"/>
+    <path d="M -356 0 A 356 124 0 0 0 356 0" fill="none" stroke="url(#fav-ring)" stroke-width="44" stroke-linecap="butt"/>
+    <circle cx="226" cy="96" r="50" fill="#2A2390" fill-opacity="0.25"/>
+    <circle cx="226" cy="92" r="44" fill="url(#fav-moon)"/>
+  </g>
 </svg>

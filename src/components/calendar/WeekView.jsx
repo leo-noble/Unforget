@@ -9,7 +9,7 @@ const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 // The day-header row's height, in px. It's a fixed number because the all-day
 // band pins directly beneath it — `sticky top-0` and `sticky top-41px` have to
 // agree, and a header sized by its content would let the two rows overlap.
-const HEADER_HEIGHT = 41
+const HEADER_HEIGHT = 54
 
 export default function WeekView({
   cursorDate,
@@ -98,43 +98,33 @@ export default function WeekView({
     // with the grid. One scrollport owning both axes is what keeps the gutter
     // and the day headers pinned.
     <div ref={panRef} className="h-full overflow-auto overscroll-contain">
-      <div className="min-w-[680px] md:min-w-0">
+      <div className="min-w-[720px] lg:min-w-0">
         {/* Day headers. Fixed height, because the all-day band below pins at
             exactly this offset — a header that grew with its content would
             leave the two rows overlapping. */}
-        <div className="flex border-b border-divider sticky top-0 bg-surface z-50" style={{ height: HEADER_HEIGHT }}>
-          <div
-            style={{ width: GUTTER_WIDTH }}
-            className="shrink-0 sticky left-0 z-10 bg-surface"
-          />
+        <div className="flex hairline-b sticky top-0 bg-card z-50" style={{ height: HEADER_HEIGHT }}>
+          <div style={{ width: GUTTER_WIDTH }} className="shrink-0 sticky left-0 z-10 bg-card" />
           {dates.map((iso, i) => {
             const d = new Date(iso + 'T00:00:00')
             const isToday = iso === todayISO
+            const isCursor = iso === cursorDate
             return (
               <button
                 key={iso}
                 onClick={() => onSelectDate?.(iso)}
                 title={d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
-                className="flex-1 min-w-0 flex items-center justify-center hover:bg-hover transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40"
+                className="flex-1 min-w-0 flex flex-col items-center justify-center gap-0.5 active:bg-fill hover:bg-fill/60 transition-colors duration-100"
               >
-                <span className="flex items-baseline gap-1.5 min-w-0">
-                <span
-                  className={`text-[11px] uppercase tracking-wideish font-medium ${
-                    isToday ? 'text-brand' : 'text-ink-soft'
-                  }`}
-                >
+                <span className={`text-[10.5px] uppercase tracking-[0.06em] font-semibold ${isToday ? 'text-tint' : 'text-label-2'}`}>
                   {WEEKDAY_LABELS[i]}
                 </span>
-                {/* Today is brand-coloured text, not a filled disc — one
-                    accent colour is enough to find it, and a disc turns the
-                    header row into a piece of calendar-app furniture. */}
+                {/* Today gets the filled accent disc, as in Calendar. */}
                 <span
-                  className={`text-[14px] font-semibold font-tabular ${
-                    isToday ? 'text-brand' : 'text-ink'
+                  className={`h-[26px] min-w-[26px] px-1 rounded-full flex items-center justify-center text-[15px] font-semibold tabular ${
+                    isToday ? 'bg-tint text-white' : isCursor ? 'bg-fill text-label' : 'text-label'
                   }`}
                 >
                   {d.getDate()}
-                </span>
                 </span>
               </button>
             )
@@ -146,12 +136,12 @@ export default function WeekView({
             shrinkable flex item so entries truncate instead of spilling sideways.
             Pinned under the headers so it doesn't scroll away from them. */}
         {hasAllDay && (
-          <div className="flex items-stretch border-b border-divider bg-surface-2/30 sticky z-40" style={{ top: HEADER_HEIGHT }}>
+          <div className="flex items-stretch hairline-b bg-card sticky z-40" style={{ top: HEADER_HEIGHT }}>
             <div
               style={{ width: GUTTER_WIDTH }}
-              className="shrink-0 sticky left-0 z-10 bg-surface-2/30 flex items-center justify-end pr-3"
+              className="shrink-0 sticky left-0 z-10 bg-card flex items-center justify-end pr-2.5"
             >
-              <span className="text-[10px] text-ink-soft/60 font-medium">All day</span>
+              <span className="text-[10px] text-label-3 font-semibold">all-day</span>
             </div>
             {dates.map((iso) => (
               <div key={iso} className="flex-1 min-w-0">

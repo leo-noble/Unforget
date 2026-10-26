@@ -8,10 +8,10 @@ clientsClaim()
 // the list of files to precache for offline support.
 precacheAndRoute(self.__WB_MANIFEST)
 
-// Real push notifications: shown even when Cadence isn't open in any tab.
+// Real push notifications: shown even when the app isn't open in any tab.
 // The payload comes from the send-due-reminders Edge Function.
 self.addEventListener('push', (event) => {
-  let payload = { title: 'Cadence', body: 'You have chapters due.' }
+  let payload = { title: 'Orbit', body: 'You have chapters to review.' }
   try {
     if (event.data) payload = event.data.json()
   } catch {
@@ -27,7 +27,7 @@ self.addEventListener('push', (event) => {
   )
 })
 
-// Clicking the notification focuses an existing Cadence tab if one is open,
+// Clicking the notification focuses an existing app tab if one is open,
 // or opens a new one straight to the dashboard.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()

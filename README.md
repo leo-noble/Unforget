@@ -1,49 +1,45 @@
-# Cadence — Study in rhythm
+# Orbit — Study that comes back around
 
-A calm, premium spaced-repetition study companion. Tells you exactly which
-chapters to revise today, on a fixed schedule (intervals of 1, 3, 7, 14,
-30, 90, and 180 days since the previous review) starting the moment you
-first studied something. Built as a React PWA per the product blueprint.
+(Formerly Cadence.) A spaced-repetition study planner, built as an installable
+PWA that looks and feels like a native iOS app. Log a chapter the day you
+study it; Orbit schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
+tells you each morning exactly what to revise.
+
+The name lives in `src/brand.js`. Storage keys and the Supabase table keep
+their original `cadence` prefix on purpose, so existing data carries over.
 
 ## Stack
 
-- **React 19 + Vite** — app shell, fast dev/build
-- **Tailwind CSS** — iOS/SwiftUI-inspired design tokens (system grouped
-  background colors, iOS corner radii, flat grouped-list shadows)
-- **System font stack** (San Francisco on Apple devices, sensible
-  fallbacks elsewhere) — no custom webfont to load, true to how SwiftUI
-  apps typically look
-- **lucide-react** — line icons
-- **localStorage** — offline-first local persistence (no backend required to
-  run this). Data model mirrors the blueprint's `Subject` / `Chapter` /
-  `ReviewEvent` tables.
-- **vite-plugin-pwa** — installable PWA, offline app-shell caching, manifest
-
-## Getting started
+- **React 19 + Vite**, **Tailwind CSS** (iOS semantic colour tokens, Dynamic
+  Type scale, liquid-glass utilities in `src/index.css`), **framer-motion**
+  springs, **lucide-react** icons, system font (SF Pro on Apple devices)
+- **Supabase** auth + one JSON row per user for multi-device sync
+- **vite-plugin-pwa** — manifest, offline app shell, push notifications
 
 ```bash
 npm install
 npm run dev       # http://localhost:5173
+npm run build
+npm run icons     # re-render public/icons from src/components/ui/iconArt.js
 ```
-
-```bash
-npm run build      # production build → dist/
-npm run preview    # serve the production build locally
-```
-
-The app starts empty — no demo data — so the first thing you'll want to
-do is add a chapter from the Dashboard or Library.
 
 ## Routes
 
-- `/` — marketing landing page (hero, schedule explainer, feature grid, install CTA)
-- `/login` — local sign-in (name + optional email, no password, nothing server-side)
-- `/app` — the actual Cadence app (Dashboard/Library/Calendar/Focus/Settings) —
-  redirects to `/login` if no local profile exists yet
+- `/` — signed in → straight to the app; signed out but used before → sign-in;
+  first visit → landing page
+- `/welcome` — the landing page, always
+- `/login`, `/reset-password`
+- `/app` (Today), `/app/library`, `/app/plan`, `/app/focus`
 
-Installing the PWA opens straight into `/app` (see `start_url` in
-`vite.config.js`); the landing page stays reachable via the logo link in
-the app's sidebar.
+## Auth redirect setup (Supabase)
+
+Sign-in emails and Google OAuth return to `<origin>/app` or
+`<origin>/reset-password`. In **Supabase → Authentication → URL
+Configuration**, set **Site URL** to the production domain
+(`https://cdnce.vercel.app`) and add `https://cdnce.vercel.app/**` and
+`http://localhost:5173/**` to **Redirect URLs**. Any return URL not on that
+list falls back to the Site URL — which is how sign-in previously landed on
+a password-protected Vercel deployment URL.
 
 ## Deploying
 

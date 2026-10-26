@@ -11,20 +11,31 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.js',
-      includeAssets: ['icons/icon-192.png', 'icons/icon-512.png'],
+      includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
-        name: 'Cadence — Study in rhythm',
-        short_name: 'Cadence',
-        description: 'A calm, premium spaced-repetition study companion.',
-        theme_color: '#3E3A8C',
-        background_color: '#FAF8F4',
-        display: 'standalone',
+        // Same identity the app had before it was renamed, so existing
+        // installs update in place instead of becoming a second app.
+        id: '/app',
+        name: 'Orbit — Study that comes back around',
+        short_name: 'Orbit',
+        description: 'Spaced-repetition study planner. Know exactly what to revise today.',
+        // Opening the installed app goes straight to Today. Signed-out users
+        // are bounced to sign-in from there, never to the marketing page.
         start_url: '/app',
         scope: '/',
+        display: 'standalone',
+        display_override: ['standalone'],
+        theme_color: '#F2F2F7',
+        background_color: '#F2F2F7',
+        categories: ['education', 'productivity'],
         icons: [
-          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+        shortcuts: [
+          { name: 'Today', url: '/app', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Focus', url: '/app/focus', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
         ],
       },
       injectManifest: {

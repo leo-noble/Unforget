@@ -3,237 +3,335 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Theme system — three theme families (Slate, Aurora, Forest), each with a
-   handcrafted light AND dark variant — six palettes total, not three plus
-   inversions. Selected via two independent attributes on <html>:
-   data-theme (slate | aurora | forest) and data-mode (light | dark). Every
-   surface, border, shadow, accent, hover, and selection tint is a CSS
-   variable so swapping either attribute changes the whole feel, not just
-   the background.
+   Design tokens — Apple's semantic system colours, one set per mode, with the
+   accent ("tint") chosen independently. <html data-mode data-accent> selects
+   them; see src/lib/appearance.js.
    ========================================================================== */
 
-/* ---------- Slate — clean, modern, professional; neutral grays with a
-   quiet steel-blue accent. Calm and productivity-focused. ---------- */
 :root,
-[data-theme='slate'][data-mode='light'] {
+:root[data-mode='light'] {
   color-scheme: light;
-  --color-paper: #f3f4f6;
-  --color-surface: #ffffff;
-  --color-surface-2: #e8eaed;
-  --color-ink: #1c2027;
-  --color-ink-soft: #6b7280;
-  --color-brand: #3f5872;
-  --color-brand-soft: #33475d;
-  --color-accent: #3f5872;
-  --color-divider: #e1e4e9;
-  --color-hover: rgba(63, 88, 114, 0.06);
-  --color-selected: rgba(63, 88, 114, 0.12);
-  --color-ring: rgba(63, 88, 114, 0.35);
-  --gradient-panel: linear-gradient(135deg, #eceef1 0%, #f3f4f6 55%, #e6e8ec 100%);
-  --shadow-elevated: 0 1px 2px rgba(28, 32, 39, 0.05), 0 10px 22px -10px rgba(28, 32, 39, 0.12);
-  --shadow-sheet: 0 -2px 26px rgba(28, 32, 39, 0.12), 0 -1px 2px rgba(28, 32, 39, 0.05);
-  --shadow-fab: 0 8px 20px -4px rgba(63, 88, 114, 0.32);
+  --canvas: #f2f2f7; /* systemGroupedBackground */
+  --card: #ffffff; /* secondarySystemGroupedBackground */
+  --card-2: #f2f2f7; /* tertiarySystemGroupedBackground */
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.6);
+  --label-3: rgba(60, 60, 67, 0.3);
+  --separator: rgba(60, 60, 67, 0.2);
+  --fill: rgba(118, 118, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --yellow: #ffcc00;
+  --green: #34c759;
+  --mint: #00c7be;
+  --teal: #30b0c7;
+  --cyan: #32ade6;
+  --blue: #007aff;
+  --indigo: #5856d6;
+  --purple: #af52de;
+  --pink: #ff2d55;
+
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-edge-soft: rgba(255, 255, 255, 0.35);
+  --glass-rim: rgba(0, 0, 0, 0.06);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 10px 34px -10px rgba(0, 0, 0, 0.22), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.12);
+  --scrim: rgba(0, 0, 0, 0.22);
 }
 
-[data-theme='slate'][data-mode='dark'] {
+:root[data-mode='dark'] {
   color-scheme: dark;
-  --color-paper: #101216;
-  --color-surface: #191c21;
-  --color-surface-2: #21252c;
-  --color-ink: #e7e9ec;
-  --color-ink-soft: #8b93a0;
-  --color-brand: #7fa1c4;
-  --color-brand-soft: #6c8db0;
-  --color-accent: #7fa1c4;
-  --color-divider: #2b2f38;
-  --color-hover: rgba(127, 161, 196, 0.08);
-  --color-selected: rgba(127, 161, 196, 0.16);
-  --color-ring: rgba(127, 161, 196, 0.4);
-  --gradient-panel: linear-gradient(135deg, #1b1e24 0%, #14161a 100%);
-  --shadow-elevated: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(0, 0, 0, 0.6);
-  --shadow-sheet: 0 -2px 32px rgba(0, 0, 0, 0.5), 0 -1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-fab: 0 8px 20px -4px rgba(127, 161, 196, 0.35);
+  --canvas: #000000;
+  --card: #1c1c1e;
+  --card-2: #2c2c2e;
+  --label: #ffffff;
+  --label-2: rgba(235, 235, 245, 0.6);
+  --label-3: rgba(235, 235, 245, 0.3);
+  --separator: rgba(84, 84, 88, 0.6);
+  --fill: rgba(118, 118, 128, 0.24);
+  --fill-2: rgba(120, 120, 128, 0.36);
+
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  --yellow: #ffd60a;
+  --green: #30d158;
+  --mint: #63e6e2;
+  --teal: #40c8e0;
+  --cyan: #64d2ff;
+  --blue: #0a84ff;
+  --indigo: #5e5ce6;
+  --purple: #bf5af2;
+  --pink: #ff375f;
+
+  --glass-bg: rgba(38, 38, 42, 0.58);
+  --glass-bg-strong: rgba(44, 44, 48, 0.78);
+  --glass-edge: rgba(255, 255, 255, 0.22);
+  --glass-edge-soft: rgba(255, 255, 255, 0.06);
+  --glass-rim: rgba(255, 255, 255, 0.06);
+
+  --shadow-card: none;
+  --shadow-float: 0 12px 36px -10px rgba(0, 0, 0, 0.7), 0 2px 10px -2px rgba(0, 0, 0, 0.5);
+  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(0, 0, 0, 0.5);
 }
 
-/* ---------- Aurora — elegant, with tasteful multi-color accents (violet,
-   teal, warm gold) used sparingly for depth rather than decoration.
-   Sophisticated, not flashy. ---------- */
-[data-theme='aurora'][data-mode='light'] {
-  color-scheme: light;
-  --color-paper: #f7f5fa;
-  --color-surface: #ffffff;
-  --color-surface-2: #ece7f2;
-  --color-ink: #201d29;
-  --color-ink-soft: #77728a;
-  --color-brand: #6c5cc2;
-  --color-brand-soft: #5b4dab;
-  --color-accent: #6c5cc2;
-  --color-divider: #e5e0ec;
-  --color-hover: rgba(108, 92, 194, 0.06);
-  --color-selected: rgba(108, 92, 194, 0.12);
-  --color-ring: rgba(108, 92, 194, 0.35);
-  /* Aurora is the one theme where the panel gradient genuinely sweeps
-     through more than one hue — teal, violet, and warm gold — kept low-
-     opacity so it reads as ambient light rather than a rainbow. */
-  --gradient-panel: linear-gradient(135deg, rgba(47, 168, 147, 0.14) 0%, rgba(108, 92, 194, 0.16) 50%, rgba(217, 164, 65, 0.13) 100%), #f7f5fa;
-  --shadow-elevated: 0 1px 2px rgba(32, 29, 41, 0.05), 0 10px 24px -10px rgba(70, 55, 120, 0.16);
-  --shadow-sheet: 0 -2px 28px rgba(70, 55, 120, 0.14), 0 -1px 2px rgba(32, 29, 41, 0.05);
-  --shadow-fab: 0 8px 22px -4px rgba(108, 92, 194, 0.38);
+/* Accent. --tint-2 is the second stop for gradients (icons, rings, hero). */
+:root,
+:root[data-accent='indigo'] { --tint: var(--indigo); --tint-2: var(--purple); }
+:root[data-accent='blue'] { --tint: var(--blue); --tint-2: var(--cyan); }
+:root[data-accent='teal'] { --tint: var(--teal); --tint-2: var(--mint); }
+:root[data-accent='green'] { --tint: var(--green); --tint-2: var(--mint); }
+:root[data-accent='orange'] { --tint: var(--orange); --tint-2: var(--yellow); }
+:root[data-accent='pink'] { --tint: var(--pink); --tint-2: var(--orange); }
+:root[data-accent='purple'] { --tint: var(--purple); --tint-2: var(--pink); }
+
+/* The floating sidebar's footprint on wide screens; fixed bars offset by it. */
+:root { --sidebar-w: 0px; }
+@media (min-width: 768px) {
+  :root { --sidebar-w: 284px; }
 }
 
-[data-theme='aurora'][data-mode='dark'] {
-  color-scheme: dark;
-  --color-paper: #0e0d14;
-  --color-surface: #17151f;
-  --color-surface-2: #201d2c;
-  --color-ink: #f0eef5;
-  --color-ink-soft: #9c96ac;
-  --color-brand: #9484e8;
-  --color-brand-soft: #8272d6;
-  --color-accent: #9484e8;
-  --color-divider: #322e3f;
-  --color-hover: rgba(148, 132, 232, 0.1);
-  --color-selected: rgba(148, 132, 232, 0.18);
-  --color-ring: rgba(148, 132, 232, 0.45);
-  --gradient-panel: linear-gradient(135deg, rgba(63, 200, 175, 0.22) 0%, rgba(148, 132, 232, 0.26) 50%, rgba(224, 176, 90, 0.18) 100%), #16141d;
-  --shadow-elevated: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(10, 6, 22, 0.65);
-  --shadow-sheet: 0 -2px 32px rgba(8, 5, 18, 0.55), 0 -1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-fab: 0 8px 22px -4px rgba(148, 132, 232, 0.45);
-}
+/* Older code paths (the calendar's block colour fallback) still name this. */
+:root { --color-brand: var(--tint); --color-surface: var(--card); }
 
-/* ---------- Forest — nature-inspired emerald, olive, and sandstone.
-   Relaxing, mature, minimal. ---------- */
-[data-theme='forest'][data-mode='light'] {
-  color-scheme: light;
-  --color-paper: #f3f1e6;
-  --color-surface: #fdfcf6;
-  --color-surface-2: #e7e2cf;
-  --color-ink: #23271e;
-  --color-ink-soft: #726c56;
-  --color-brand: #3f6b4a;
-  --color-brand-soft: #345a3e;
-  --color-accent: #3f6b4a;
-  --color-divider: #ddd6c0;
-  --color-hover: rgba(63, 107, 74, 0.07);
-  --color-selected: rgba(63, 107, 74, 0.13);
-  --color-ring: rgba(63, 107, 74, 0.35);
-  --gradient-panel: linear-gradient(135deg, #ece6d3 0%, #f3f1e6 55%, #e6dfc8 100%);
-  --shadow-elevated: 0 1px 2px rgba(35, 39, 30, 0.05), 0 10px 22px -10px rgba(35, 39, 30, 0.13);
-  --shadow-sheet: 0 -2px 26px rgba(35, 39, 30, 0.13), 0 -1px 2px rgba(35, 39, 30, 0.05);
-  --shadow-fab: 0 8px 20px -4px rgba(63, 107, 74, 0.32);
+/* Inside a sheet the whole stack steps up one level, the way iOS does it:
+   the sheet itself is the grouped background and its cells are lighter. */
+.elevated {
+  --canvas: var(--sheet-canvas);
+  --card: var(--sheet-card);
 }
+:root, :root[data-mode='light'] { --sheet-canvas: #f2f2f7; --sheet-card: #ffffff; --segment-pill: #ffffff; }
+:root[data-mode='dark'] { --sheet-canvas: #1c1c1e; --sheet-card: #2c2c2e; --segment-pill: #636366; }
 
-[data-theme='forest'][data-mode='dark'] {
-  color-scheme: dark;
-  --color-paper: #11140e;
-  --color-surface: #191c13;
-  --color-surface-2: #22271a;
-  --color-ink: #eae7d9;
-  --color-ink-soft: #9b9682;
-  --color-brand: #74b382;
-  --color-brand-soft: #63a172;
-  --color-accent: #74b382;
-  --color-divider: #2b3121;
-  --color-hover: rgba(116, 179, 130, 0.09);
-  --color-selected: rgba(116, 179, 130, 0.17);
-  --color-ring: rgba(116, 179, 130, 0.42);
-  --gradient-panel: linear-gradient(135deg, rgba(116, 179, 130, 0.24) 0%, rgba(150, 138, 92, 0.18) 55%, #171b11 100%);
-  --shadow-elevated: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(4, 10, 4, 0.65);
-  --shadow-sheet: 0 -2px 32px rgba(3, 8, 3, 0.55), 0 -1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-fab: 0 8px 22px -4px rgba(116, 179, 130, 0.4);
-}
+/* ========================================================================== */
 
-html, body, #root {
-  height: 100%;
+html {
+  background: var(--canvas);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  @apply bg-paper text-ink font-body antialiased;
-  font-feature-settings: 'tnum' 1;
+  @apply bg-canvas text-label font-sans antialiased;
+  font-size: 17px;
+  line-height: 22px;
+  -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Smooth cross-fade whenever the theme family or light/dark mode changes.
-   Wrapped in :where() so this carries zero specificity — any component's
-   own transition-duration utility (e.g. a 150ms hover) still wins outright;
-   this only fills in a transition for elements that don't already have one,
-   so backgrounds/borders/text/shadows glide instead of snapping. Suspended
-   until .theme-ready (added after first paint, see index.html) so nothing
-   animates in from a flash of unstyled color on initial load. */
-:where(html.theme-ready *) {
-  transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease, fill 240ms ease, stroke 240ms ease;
+#root {
+  min-height: 100%;
 }
 
-.font-tabular {
+/* Only while appearance is actually changing — see applyAppearance(). */
+html.appearance-switching,
+html.appearance-switching *,
+html.appearance-switching *::before,
+html.appearance-switching *::after {
+  transition: background-color 280ms ease, color 280ms ease, border-color 280ms ease, fill 280ms ease,
+    stroke 280ms ease !important;
+}
+
+button,
+[role='button'] {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iOS zooms the page into any focused field under 16px. Every input here is
+   17px (body), so this is just the floor for anything that forgets. */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+input[type='date'],
+input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 34px;
+}
+input[type='date']::-webkit-date-and-time-value,
+input[type='time']::-webkit-date-and-time-value {
+  text-align: center;
+}
+input[type='search']::-webkit-search-cancel-button {
+  display: none;
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--tint) 70%, transparent);
+  outline-offset: 2px;
+}
+
+@layer utilities {
+.tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* The little grabber bar at the top of an iOS-style bottom sheet */
-.sheet-grabber {
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+}
+
+@layer components {
+/* ---------- Liquid glass ----------
+   A translucent, saturated blur with a bright specular rim on the top-left
+   and a soft one on the bottom-right — the rim is what sells "glass" rather
+   than "frosted plastic". The rim is a masked gradient border on ::before so
+   it follows any border-radius. */
+.glass,
+.glass-strong,
+.glass-tint {
+  position: relative;
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  backdrop-filter: blur(22px) saturate(190%);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-float), inset 0 0 0 0.5px var(--glass-rim);
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+}
+.glass-tint {
+  background: color-mix(in srgb, var(--tint) 88%, transparent);
+  color: #fff;
+  box-shadow: 0 10px 26px -8px color-mix(in srgb, var(--tint) 60%, transparent),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.25);
+}
+.glass::before,
+.glass-strong::before,
+.glass-tint::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    var(--glass-edge) 0%,
+    var(--glass-edge-soft) 28%,
+    transparent 52%,
+    var(--glass-edge-soft) 78%,
+    var(--glass-edge) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.glass-tint::before {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.1) 40%, transparent 60%, rgba(255, 255, 255, 0.3));
+}
+
+/* A plain blur for full-width bars (nav bar), where a rim would read as a
+   border line across the screen. */
+.bar-glass {
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: color-mix(in srgb, var(--canvas) 72%, transparent);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .bar-glass {
+    background: var(--glass-bg-strong);
+  }
+}
+
+/* ---------- Grouped inset lists ----------
+   Hairline separators that start after the leading icon, never under it —
+   rows set --inset to their content's left edge. */
+.ios-list > * {
+  position: relative;
+}
+.ios-list > *:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: var(--inset, 16px);
+  height: 0.5px;
+  background: var(--separator);
+  pointer-events: none;
+}
+@media (max-resolution: 1dppx) {
+  .ios-list > *:not(:last-child)::after {
+    height: 1px;
+  }
+}
+
+.hairline-b {
+  box-shadow: inset 0 -0.5px 0 var(--separator);
+}
+.hairline-t {
+  box-shadow: inset 0 0.5px 0 var(--separator);
+}
+
+/* ---------- Ambient light ----------
+   The glass needs something behind it to refract. A static wash of the accent
+   at the top of each screen — radial gradients only, no blur filter and no
+   animation, so it costs nothing to scroll over on a phone. */
+.ambient {
+  background:
+    radial-gradient(60% 50% at 12% 0%, color-mix(in srgb, var(--tint) 24%, transparent), transparent 70%),
+    radial-gradient(50% 45% at 92% 6%, color-mix(in srgb, var(--tint-2) 18%, transparent), transparent 70%);
+}
+:root[data-mode='dark'] .ambient {
+  background:
+    radial-gradient(60% 50% at 12% 0%, color-mix(in srgb, var(--tint) 30%, transparent), transparent 70%),
+    radial-gradient(50% 45% at 92% 6%, color-mix(in srgb, var(--tint-2) 20%, transparent), transparent 70%);
+}
+
+.tint-gradient {
+  background-image: linear-gradient(135deg, var(--tint), var(--tint-2));
+}
+
+/* The filled accent button: a faint top-lit gradient so it reads as a lit
+   surface rather than a flat swatch. */
+.tint-fill {
+  background-color: var(--tint);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 60%);
+}
+
+/* The bar a sheet is dragged by. */
+.grabber {
   width: 36px;
   height: 5px;
   border-radius: 9999px;
-  margin: 8px auto 4px;
+  background: var(--fill-2);
+}
 }
 
-.glow-orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(64px);
-  pointer-events: none;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
 }
 
-.panel-gradient {
-  background-image: var(--gradient-panel);
+@keyframes shimmer-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-divider rounded-full;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* ---------- Landing page atmosphere ----------
-   The marketing page separates its sections with light and space rather than
-   rules, so it needs a couple of primitives Tailwind can't express: a very
-   slow drift on the background glows (so a static page still breathes), and
-   a dot field that fades out towards its own edges instead of stopping at a
-   hard line. */
-@keyframes orb-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(2%, -3%, 0) scale(1.06); }
-}
-.orb-drift {
-  animation: orb-drift 18s ease-in-out infinite;
-}
 @media (prefers-reduced-motion: reduce) {
-  .orb-drift { animation: none; }
-}
-
-.dot-field {
-  background-image: radial-gradient(currentColor 1px, transparent 1px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 72%);
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 72%);
-}
-
-/* A hairline that dissolves at both ends — used where a section genuinely
-   needs a horizon line (the footer) without the boxed-in look of a border. */
-.fade-rule {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-divider) 18%, var(--color-divider) 82%, transparent);
-}
-
-@keyframes confetti-pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.animate-confetti-pop {
-  animation: confetti-pop 320ms ease-out;
+  .pulse-dot {
+    animation: none;
+  }
 }

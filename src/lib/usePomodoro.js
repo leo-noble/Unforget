@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toISODate } from './srs'
 import { logPomodoroSession, getPomodoroLog, getTimerState, saveTimerState, clearTimerState } from './storage'
+import { APP_NAME } from '../brand'
 
 // The Pomodoro timer's whole brain. Extracted from FocusPage so the same
 // running timer can be rendered by two different shells — the normal page and
@@ -13,26 +14,26 @@ export const PHASE_META = {
   work: {
     label: 'Focus',
     short: 'Focus',
-    ring: 'stroke-brand',
-    text: 'text-brand',
-    chip: 'text-brand bg-brand/10',
+    ring: 'stroke-tint',
+    text: 'text-tint',
+    chip: 'text-tint bg-tint/10',
     // What to say when this phase ends.
     done: 'Focus session complete — time for a break.',
   },
   short_break: {
     label: 'Short break',
     short: 'Short',
-    ring: 'stroke-status-upcoming',
-    text: 'text-status-upcoming',
-    chip: 'text-status-upcoming bg-status-upcoming/10',
+    ring: 'stroke-green',
+    text: 'text-green',
+    chip: 'text-green bg-green/10',
     done: 'Break over — back to it.',
   },
   long_break: {
     label: 'Long break',
     short: 'Long',
-    ring: 'stroke-status-mastered',
-    text: 'text-status-mastered',
-    chip: 'text-status-mastered bg-status-mastered/10',
+    ring: 'stroke-teal',
+    text: 'text-teal',
+    chip: 'text-teal bg-teal/10',
     done: 'Long break over — back to it.',
   },
 }
@@ -77,7 +78,7 @@ function notifyPhaseEnd(phase) {
     if (typeof Notification === 'undefined') return
     if (Notification.permission !== 'granted') return
     if (document.visibilityState === 'visible') return
-    new Notification('Cadence', { body: PHASE_META[phase]?.done || 'Timer finished.', tag: 'cadence-pomodoro' })
+    new Notification(APP_NAME, { body: PHASE_META[phase]?.done || 'Timer finished.', tag: 'cadence-pomodoro' })
   } catch {
     // best-effort only
   }

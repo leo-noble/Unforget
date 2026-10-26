@@ -1,128 +1,116 @@
 import { Check } from 'lucide-react'
 import { formatRange, blockTitle, blockColor } from '../../lib/timeGrid'
+import { subjectColor } from '../../lib/colors'
 
 // One positioned study block in the hour canvas.
 //
-// Pointer events, not HTML5 drag-and-drop: HTML5 DnD has no touch support,
-// which would leave the phone with no way to move a block at all. A single
-// pointerdown handler covers mouse, touch and pen identically, and gives
-// continuous feedback while dragging instead of a snapshot on drop.
-//
-// The parent owns the drag maths (it's the one that knows the grid geometry
-// and which day column the pointer is over); this component only reports
-// where a gesture started and on which handle.
+// Pointer events rather than HTML5 drag-and-drop, which has no touch support.
+// The whole block is the drag surface; a press that doesn't move opens it
+// (the grid decides which, since it owns the gesture). The parent does the
+// geometry — this only reports where a gesture started and on which handle.
 export default function StudyBlock({
   block,
-  chapters, // every chapter this sitting covers, resolved
-  subject, // the first chapter's subject — the block's colour
-  layout, // { top, height, column, columns } in px / counts
+  chapters,
+  subject,
+  layout,
   dragging,
   onPointerDownMove,
   onPointerDownResize,
   onToggleDone,
   onOpen,
 }) {
-  const color = blockColor(block, subject)
+  const color = subjectColor(blockColor(block, subject))
   const title = blockTitle(block, chapters)
   const timed = Number.isFinite(block.startMinute)
   const extra = Math.max(0, chapters.length - 1)
 
-  // Side-by-side packing for overlapping blocks. A 2px gutter keeps the
-  // right edge of one block off the left rail of the next.
-  const width = `calc(${100 / layout.columns}% - 2px)`
-  const left = `calc(${(layout.column * 100) / layout.columns}% + 1px)`
+  // Side-by-side packing for overlapping blocks.
+  const width = `calc(${100 / layout.columns}% - 4px)`
+  const left = `calc(${(layout.column * 100) / layout.columns}% + 2px)`
 
   const timeLabel = timed ? formatRange(block.startMinute, block.endMinute) : 'All day'
   const fullLabel = extra > 0 ? `${timeLabel} — ${title} +${extra} more` : `${timeLabel} — ${title}`
 
-  // At 52px an hour a 45-minute block is 39px tall — a title and a time on
-  // separate lines don't fit. Under ~44px the time drops away and only the
-  // title survives; under ~26px the checkbox goes too (the block still opens
-  // on click, and its sheet carries the same toggle).
+  // At 52px an hour a 45-minute block is 39px tall — under ~44px the time
+  // drops away, under ~26px the checkbox goes too (the sheet carries it).
   const short = layout.height < 44
   const tiny = layout.height < 26
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={fullLabel}
+      title={fullLabel}
+      onPointerDown={onPointerDownMove}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onOpen()
+        }
+      }}
       style={{
-        top: layout.top,
-        height: Math.max(layout.height, 18),
+        top: layout.top + 1,
+        height: Math.max(layout.height - 2, 18),
         width,
         left,
-        // A tint of the subject's hue with a solid rail down the left. No
-        // border and no shadow: on a ruled grid both read as extra lines.
-        borderLeftColor: color,
-        backgroundColor: `color-mix(in srgb, ${color} 11%, var(--color-surface))`,
-        touchAction: 'none', // a vertical drag moves the block, it doesn't scroll the page
+        background: `color-mix(in srgb, ${color} ${dragging ? 30 : 18}%, var(--card))`,
+        boxShadow: dragging ? `0 12px 28px -8px color-mix(in srgb, ${color} 55%, transparent)` : 'none',
+        transform: dragging ? 'scale(1.02)' : 'none',
+        // Scrolling still starts on a block; a hold is what turns it into a drag.
+        touchAction: 'pan-x pan-y',
+        WebkitTouchCallout: 'none',
       }}
-      className={`group absolute rounded-[6px] border-l-[3px] overflow-hidden select-none transition-opacity duration-150 ${
-        dragging ? 'z-20 opacity-90' : 'z-10'
-      } ${block.done ? 'opacity-50' : ''}`}
+      className={`group absolute rounded-[9px] overflow-hidden select-none cursor-grab active:cursor-grabbing transition-[box-shadow,transform] duration-150 outline-none focus-visible:ring-2 focus-visible:ring-tint ${
+        dragging ? 'z-20' : 'z-10'
+      } ${block.done ? 'opacity-55' : ''}`}
     >
-      <div
-        onPointerDown={onPointerDownMove}
-        className={`h-full w-full cursor-grab active:cursor-grabbing pl-2 pr-1.5 ${
-          tiny ? 'py-0' : 'py-1'
-        }`}
-      >
+      <span aria-hidden="true" className="absolute left-0 inset-y-0 w-[3.5px]" style={{ background: color }} />
+      <div className={`h-full w-full pl-[9px] pr-1.5 ${tiny ? 'py-0' : 'py-1'}`}>
         <div className={`flex gap-1.5 ${tiny ? 'items-center h-full' : 'items-start'}`}>
           {!tiny && (
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()} // don't start a drag from the checkbox
-              onClick={onToggleDone}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggleDone()
+              }}
               role="checkbox"
               aria-checked={block.done}
               aria-label={`Mark ${title} studied`}
-              className={`mt-[2px] h-[15px] w-[15px] shrink-0 rounded-full border flex items-center justify-center transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 ${
-                block.done
-                  ? 'bg-brand border-brand text-white'
-                  : 'border-divider bg-surface hover:border-brand/60'
-              }`}
+              className="mt-[1px] h-4 w-4 shrink-0 rounded-full flex items-center justify-center text-white"
+              style={{
+                background: block.done ? color : 'var(--card)',
+                boxShadow: block.done ? 'none' : `inset 0 0 0 1.5px ${color}`,
+              }}
             >
-              {block.done && <Check size={9} strokeWidth={3.5} />}
+              {block.done && <Check size={10} strokeWidth={3.5} />}
             </button>
           )}
-          <button
-            type="button"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={onOpen}
-            title={fullLabel}
-            className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 rounded-[4px]"
-          >
+          <span className="min-w-0 flex-1">
             <span
-              className={`block text-[12px] leading-[1.35] font-medium truncate ${
-                block.done ? 'text-ink-soft line-through' : 'text-ink'
-              }`}
+              className={`block text-[12.5px] leading-[1.3] font-semibold truncate ${block.done ? 'line-through' : ''}`}
+              style={{ color: `color-mix(in srgb, ${color} 70%, var(--label))` }}
             >
               {title}
             </span>
-            {!short && (
-              <span className="block text-[11px] leading-[1.35] text-ink-soft truncate font-tabular">
-                {timeLabel}
-              </span>
-            )}
-            {/* What the block holds beyond its first chapter. Without it a
-                two-chapter sitting is indistinguishable from a one-chapter
-                one — the title only ever shows the first. */}
-            {extra > 0 && !short && (
-              <span className="block text-[11px] leading-[1.35] text-ink-soft/70 truncate">
-                +{extra} more
-              </span>
-            )}
-          </button>
+            {!short && <span className="block text-[11px] leading-[1.35] text-label-2 truncate tabular">{timeLabel}</span>}
+            {extra > 0 && !short && <span className="block text-[11px] leading-[1.35] text-label-2 truncate">+{extra} more</span>}
+          </span>
         </div>
       </div>
 
-      {/* Resize handle — only timed blocks have an end to drag. */}
       {timed && (
         <div
           onPointerDown={onPointerDownResize}
           role="separator"
           aria-label={`Resize ${title}`}
-          className="absolute bottom-0 inset-x-0 h-2 cursor-ns-resize group/resize"
+          className="absolute bottom-0 inset-x-0 h-3 cursor-ns-resize flex items-end justify-center pb-[3px]"
+          style={{ touchAction: 'none' }}
         >
-          <span className="block mx-auto mt-1 h-[2px] w-6 rounded-full bg-ink-soft/0 group-hover/resize:bg-ink-soft/40 transition-colors duration-150" />
+          <span className="h-[3px] w-7 rounded-full bg-label-3 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       )}
     </div>

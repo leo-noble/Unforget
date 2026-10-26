@@ -1,114 +1,82 @@
 /** @type {import('tailwindcss').Config} */
 
-// Every theme color is a CSS variable defined per theme+mode pair in index.css
-// (see [data-theme="..."][data-mode="..."] blocks) — one class works unchanged
-// across every combination, since the variable itself is what changes.
+// Every colour is a CSS variable from index.css, redefined per light/dark mode
+// and per accent — so one class works across every combination.
 //
-// The color-mix wrapper is what makes opacity modifiers work. Tailwind can only
-// inject an alpha into a color it can parse, and it cannot see through a bare
-// var() to the hex behind it — so with a plain `var(--color-x)` value it emits
-// `bg-surface-2` but silently drops `bg-surface-2/30` from the stylesheet
-// entirely, leaving the element transparent with no error anywhere. Tailwind
-// substitutes <alpha-value> with the modifier (or 1 when there is none), and
-// color-mix against `transparent` scales the color's alpha by that much:
-// `bg-surface-2` stays exactly the variable's color, `bg-surface-2/30` is it at
-// 30%. Going through color-mix rather than the more usual channel-triple
-// variables keeps the variables themselves as ordinary colors, so hover/
-// selected can carry their own baked-in alpha and anything reading
-// var(--color-x) directly from CSS still works.
-const themeColor = (name) =>
-  `color-mix(in srgb, var(--color-${name}) calc(<alpha-value> * 100%), transparent)`
+// The color-mix wrapper is what makes opacity modifiers work: Tailwind can't
+// see through a bare var() to inject an alpha, and silently drops classes like
+// `bg-tint/15` if the value is a plain var(). color-mix against transparent
+// scales the variable's own alpha by the modifier instead.
+const token = (name) => `color-mix(in srgb, var(--${name}) calc(<alpha-value> * 100%), transparent)`
+
+const SYSTEM = ['red', 'orange', 'yellow', 'green', 'mint', 'teal', 'cyan', 'blue', 'indigo', 'purple', 'pink']
 
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        paper: themeColor('paper'),
-        surface: themeColor('surface'),
-        'surface-2': themeColor('surface-2'),
-        ink: themeColor('ink'),
-        'ink-soft': themeColor('ink-soft'),
-        brand: themeColor('brand'),
-        'brand-soft': themeColor('brand-soft'),
-        accent: themeColor('accent'),
-        divider: themeColor('divider'),
-        // Per-theme hover/selection tints — e.g. hover:bg-hover, bg-selected —
-        // so interactive states pick up each theme's accent hue rather than a
-        // flat gray overlay that would look identical everywhere.
-        hover: themeColor('hover'),
-        selected: themeColor('selected'),
-
-        // Status colors stay constant across themes — they're semantic
-        // (overdue/due/upcoming/mastered), not part of the aesthetic skin,
-        // and were tuned to read clearly on both light and dark surfaces.
-        status: {
-          overdue: '#A5342A',
-          due: '#8F3D49',
-          upcoming: '#A8A3A6',
-          mastered: '#4A4448',
-        },
+        // iOS semantic colours: grouped background, cells, labels, fills.
+        canvas: token('canvas'),
+        card: token('card'),
+        'card-2': token('card-2'),
+        label: token('label'),
+        'label-2': token('label-2'),
+        'label-3': token('label-3'),
+        separator: token('separator'),
+        fill: token('fill'),
+        'fill-2': token('fill-2'),
+        tint: token('tint'),
+        'tint-2': token('tint-2'),
+        ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {
-        // A characterful serif for headlines paired with a clean grotesk
-        // for everything functional — set up once in index.html.
-        display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
-        body: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: [
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Text"',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
+        // SF Pro Rounded on Apple devices — what Clock and Fitness use for
+        // their big numerals. Falls back to the regular system face elsewhere.
+        rounded: ['ui-rounded', '"SF Pro Rounded"', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      // Apple's Dynamic Type scale at the default size, named by role.
+      fontSize: {
+        'large-title': ['34px', { lineHeight: '41px', letterSpacing: '-0.022em', fontWeight: '700' }],
+        'title-1': ['28px', { lineHeight: '34px', letterSpacing: '-0.02em' }],
+        'title-2': ['22px', { lineHeight: '28px', letterSpacing: '-0.016em' }],
+        'title-3': ['20px', { lineHeight: '25px', letterSpacing: '-0.012em' }],
+        headline: ['17px', { lineHeight: '22px', letterSpacing: '-0.01em' }],
+        body: ['17px', { lineHeight: '22px', letterSpacing: '-0.01em' }],
+        callout: ['16px', { lineHeight: '21px', letterSpacing: '-0.008em' }],
+        subhead: ['15px', { lineHeight: '20px', letterSpacing: '-0.006em' }],
+        footnote: ['13px', { lineHeight: '18px', letterSpacing: '-0.002em' }],
+        caption: ['12px', { lineHeight: '16px' }],
+        'caption-2': ['11px', { lineHeight: '13px', letterSpacing: '0.01em' }],
       },
       borderRadius: {
-        card: '20px',
-        control: '10px',
-        // The dense end of the scale: calendar blocks, all-day capsules and
-        // the checkboxes inside them, which a 10px control radius rounds
-        // into a pill at 16–20px tall.
-        chip: '6px',
+        cell: '22px',
+        sheet: '34px',
+        control: '12px',
         capsule: '9999px',
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(0,0,0,0.08)',
-        elevated: 'var(--shadow-elevated)',
+        card: 'var(--shadow-card)',
+        float: 'var(--shadow-float)',
         sheet: 'var(--shadow-sheet)',
-        fab: 'var(--shadow-fab)',
+        tint: '0 10px 24px -8px color-mix(in srgb, var(--tint) 55%, transparent)',
       },
-      backgroundImage: {
-        panel: 'var(--gradient-panel)',
+      transitionTimingFunction: {
+        ios: 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
-      // One type scale for the whole product. Before this, 33 distinct
-      // arbitrary `text-[Npx]` values were in use and 14/14.5/15/15.5/16/16.5/17
-      // all coexisted as "body" — differences too small to read as intentional
-      // but enough to stop anything from lining up. These are named by role
-      // rather than by size so a component asks for "lede" and cannot invent a
-      // 16.5px one-off. Deliberately additive: Tailwind's own text-sm/text-2xl
-      // still resolve, so existing app code keeps working during migration.
-      fontSize: {
-        eyebrow: ['11px', { lineHeight: '1.45', letterSpacing: '0.06em' }],
-        meta: ['12px', { lineHeight: '1.5' }],
-        ui: ['13px', { lineHeight: '1.5' }],
-        // The workhorse. Everything that was 13.5/14/14.5 collapses here.
-        body: ['15px', { lineHeight: '1.6' }],
-        // Body copy that carries an argument and needs the extra air.
-        prose: ['16px', { lineHeight: '1.7' }],
-        lede: ['17px', { lineHeight: '1.65' }],
-        // Display steps ~1.3x apart, so each is unmistakably a different level.
-        'display-xs': ['20px', { lineHeight: '1.3', letterSpacing: '-0.02em' }],
-        'display-sm': ['24px', { lineHeight: '1.25', letterSpacing: '-0.02em' }],
-        'display-md': ['30px', { lineHeight: '1.2', letterSpacing: '-0.025em' }],
-        'display-lg': ['40px', { lineHeight: '1.1', letterSpacing: '-0.03em' }],
-        'display-xl': ['56px', { lineHeight: '1.03', letterSpacing: '-0.03em' }],
-      },
-      letterSpacing: {
-        tightest: '-0.03em',
-        wideish: '0.06em',
-      },
-      spacing: {
-        18: '4.5rem',
-        // The vertical rhythm every section band pays. Named so a section
-        // can't quietly pick 160px when its neighbour picked 128px.
-        band: '6rem',
-        'band-lg': '7.5rem',
-      },
-      transitionDuration: {
-        180: '180ms',
+      screens: {
+        xs: '390px',
       },
     },
   },

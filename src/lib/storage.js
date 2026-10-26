@@ -65,8 +65,8 @@ function uid() {
 }
 
 export const DEFAULT_PREFS = {
-  theme: 'slate', // slate | aurora | forest — pick a family, then a mode
-  themeMode: 'light', // light | dark — independent of the theme family
+  theme: 'indigo', // accent colour — see ACCENTS in appearance.js
+  themeMode: 'system', // light | dark | system
   notificationsEnabled: false,
   notificationTime: '09:00',
   onboarded: false,
