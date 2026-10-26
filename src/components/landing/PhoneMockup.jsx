@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 import { SunMedium, LibraryBig, CalendarDays, Timer, Plus } from 'lucide-react'
 
 const ROWS = [
-  { title: 'Vector Algebra', meta: 'Physics · Review 2 of 5', when: '1D LATE', color: '#0A84FF', late: true },
-  { title: 'Periodic Trends', meta: 'Chemistry · Review 1 of 5', when: 'TODAY', color: '#FF9500' },
-  { title: 'Cell Division', meta: 'Biology · Review 3 of 5', when: 'TODAY', color: '#34C759' },
+  { title: 'Vector Algebra', meta: 'Physics · Review 2 of 5', when: '1d late', color: '#0A84FF', late: true },
+  { title: 'Periodic Trends', meta: 'Chemistry · Review 1 of 5', when: 'Today', color: '#FF9500' },
+  { title: 'Cell Division', meta: 'Biology · Review 3 of 5', when: 'Today', color: '#34C759' },
 ]
 
 const TABS = [
@@ -33,7 +33,7 @@ export default function PhoneMockup() {
 
           <div className="relative z-10 px-4 pt-7">
             <p className="font-mono text-[7.5px] tracking-[0.12em] uppercase text-label-2">Tuesday, Oct 28</p>
-            <p className="font-dot text-[27px] leading-none uppercase mt-1.5">Today</p>
+            <p className="font-display text-[26px] leading-none mt-1.5">Today</p>
 
             <div className="mt-3.5 bg-card rounded-[18px] p-3.5">
               <div className="flex justify-between font-mono text-[6.5px] tracking-[0.12em] uppercase">
@@ -43,7 +43,7 @@ export default function PhoneMockup() {
                 </span>
               </div>
               <div className="flex items-end gap-2 mt-2">
-                <span className="font-dot text-[54px] leading-[0.82]">03</span>
+                <span className="font-display text-[54px] leading-[0.82]">03</span>
                 <span className="text-[8.5px] leading-[1.35] text-label-2 pb-0.5">
                   Good morning, Sam.
                   <br />1 overdue — start there.
@@ -87,7 +87,7 @@ export default function PhoneMockup() {
                       {r.meta}
                     </span>
                   </span>
-                  <span className={`font-mono text-[7px] shrink-0 ${r.late ? 'text-red' : 'text-label'}`}>{r.when}</span>
+                  <span className={`text-[8px] font-medium shrink-0 ${r.late ? 'text-red' : 'text-label'}`}>{r.when}</span>
                 </motion.div>
               ))}
             </div>
@@ -99,7 +99,7 @@ export default function PhoneMockup() {
                 <span key={label} className={`relative flex-1 flex flex-col items-center justify-center gap-[3px] ${i === 0 ? 'text-label' : 'text-label-3'}`}>
                   {i === 0 && <span className="absolute top-[5px] right-[calc(50%-11px)] h-[3px] w-[3px] rounded-full bg-red" />}
                   <Icon size={14} strokeWidth={1.7} />
-                  <span className="font-mono text-[5.5px] uppercase tracking-[0.1em]">{label}</span>
+                  <span className="text-[6.5px] font-medium">{label}</span>
                 </span>
               ))}
             </div>

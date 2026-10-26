@@ -65,7 +65,7 @@ export default function Page({ title, eyebrow, subtitle, trailing, leading, wide
         <div className="pt-1 pb-5 flex items-end justify-between gap-4">
           <div className="min-w-0">
             {eyebrow && <p className="eyebrow text-label-2 mb-2">{eyebrow}</p>}
-            <h1 className="font-dot text-[40px] leading-[40px] uppercase truncate">{title}</h1>
+            <h1 className="font-display text-[38px] leading-[42px] truncate">{title}</h1>
             {subtitle && <p className="text-subhead text-label-2 mt-1">{subtitle}</p>}
           </div>
           {titleAccessory}

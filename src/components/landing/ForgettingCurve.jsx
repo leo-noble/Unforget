@@ -127,7 +127,7 @@ export default function ForgettingCurve() {
             transition={{ type: 'spring', stiffness: 340, damping: 20, delay: 0.5 + i * 0.15 }}
           />
         ))}
-        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--red)" fontSize="14" fontWeight="700" fontFamily="Space Mono, monospace" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
+        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--red)" fontSize="14" fontWeight="700" fontFamily="Geist, sans-serif" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
           {Math.round(END_SCHEDULED * 100)}%
         </motion.text>
         <motion.text x={W - PAD.r + 9} y={y(END_NO_REVIEW) + 4} fill="var(--label-2)" fontSize="13" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}>

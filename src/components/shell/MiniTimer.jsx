@@ -51,7 +51,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
             {chapterTitle || (running ? 'In progress' : 'Paused')}
           </span>
         </span>
-        <span className="font-dot text-[24px] leading-none tabular">
+        <span className="font-display text-[24px] leading-none tabular">
           {timer.mins}:{timer.secs}
         </span>
       </button>

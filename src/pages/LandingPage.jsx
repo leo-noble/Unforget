@@ -129,7 +129,7 @@ export default function LandingPage() {
         <div className={`relative ${WRAP} h-14 flex items-center justify-between`}>
           <a href="#top" className="flex items-center gap-2.5">
             <AppIcon size={28} />
-            <span className="font-dot text-[22px] leading-none lowercase">{APP_NAME}</span>
+            <span className="font-display text-[20px] leading-none tracking-[-0.04em]">{APP_NAME}</span>
           </a>
           <nav className="hidden md:flex items-center gap-8 eyebrow text-label-2">
             <a href="#what" className="hover:text-label">What it is</a>
@@ -156,7 +156,7 @@ export default function LandingPage() {
         <div className={`relative ${WRAP} pt-10 sm:pt-16 pb-16 sm:pb-24 grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-10 items-center`}>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: easeOut }}>
             <Label>Spaced-repetition study planner</Label>
-            <h1 className="font-dot uppercase text-[clamp(2.75rem,12.5vw,5.75rem)] leading-[0.92] tracking-[0.01em]">
+            <h1 className="font-display text-[clamp(2.9rem,13vw,5.75rem)] leading-[0.95]">
               Remember
               <br />
               what you
@@ -180,7 +180,7 @@ export default function LandingPage() {
             <dl className="mt-10 grid grid-cols-3 max-w-[460px] bg-card rounded-[22px]">
               {FACTS.map(([n, l], i) => (
                 <div key={l} className={`px-4 py-4 ${i > 0 ? 'border-l border-separator' : ''}`}>
-                  <dt className="font-dot text-[clamp(1.9rem,8vw,2.4rem)] leading-none">{n}</dt>
+                  <dt className="font-display text-[clamp(1.9rem,8vw,2.4rem)] leading-none">{n}</dt>
                   <dd className="eyebrow text-label-2 mt-2">{l}</dd>
                 </div>
               ))}
@@ -229,7 +229,7 @@ export default function LandingPage() {
           <div className="mt-10 grid sm:grid-cols-2 gap-3">
             {AUDIENCE.map(([title, body], i) => (
               <motion.div key={title} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.06 }} className="bg-card rounded-[26px] p-6 sm:p-7">
-                <p className="font-dot text-[34px] leading-none text-label-3">{String(i + 1).padStart(2, '0')}</p>
+                <p className="font-display text-[34px] leading-none text-label-3">{String(i + 1).padStart(2, '0')}</p>
                 <h3 className="text-title-3 font-medium mt-6">{title}</h3>
                 <p className="text-[16px] leading-[1.55] text-label-2 mt-2">{body}</p>
               </motion.div>
@@ -356,7 +356,7 @@ export default function LandingPage() {
             <div aria-hidden="true" className="dot-grid dot-grid-fade absolute inset-0 opacity-70" />
             <div className="relative flex flex-col items-center">
               <AppIcon size={64} />
-              <h2 className="font-dot uppercase text-[clamp(2rem,9vw,3.6rem)] leading-[0.95] mt-7 max-w-[680px]">
+              <h2 className="font-display text-[clamp(2.1rem,9vw,3.6rem)] leading-[1] mt-7 max-w-[680px]">
                 Start with today’s chapter<span className="text-red">.</span>
               </h2>
               <Link to={cta.to} className="mt-8 inline-flex h-[54px] px-8 items-center gap-2 rounded-full tint-fill text-tint-fg text-headline font-medium">

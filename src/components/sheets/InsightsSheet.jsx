@@ -17,7 +17,7 @@ function Tile({ icon: Icon, value, label, accent = false }) {
         <span className="eyebrow text-label-2">{label}</span>
         <Icon size={16} strokeWidth={1.75} className={accent ? 'text-red' : 'text-label-3'} />
       </div>
-      <p className="font-dot text-[44px] leading-none tabular mt-4">{value}</p>
+      <p className="font-display text-[44px] leading-none tabular mt-4">{value}</p>
     </div>
   )
 }
@@ -89,7 +89,7 @@ export default function InsightsSheet({ cadence, onClose }) {
           <div className="p-4">
             <div className="flex items-baseline justify-between mb-4 min-h-[44px]">
               <div>
-                <p className="font-dot text-[40px] leading-none tabular">
+                <p className="font-display text-[40px] leading-none tabular">
                   {sel ? sel.count : activity.total}
                   <span className="text-subhead font-medium text-label-2 ml-1.5">
                     {sel ? (sel.count === 1 ? 'review' : 'reviews') : activity.total === 1 ? 'review' : 'reviews'}

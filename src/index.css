@@ -176,12 +176,12 @@ input[type='search']::-webkit-search-cancel-button {
     display: none;
   }
 
-  /* Small uppercase monospace — the system's label voice. */
+  /* Small uppercase label — section headers, metadata. */
   .eyebrow {
-    font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 11px;
     line-height: 14px;
-    letter-spacing: 0.12em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 }
@@ -275,12 +275,12 @@ input[type='search']::-webkit-search-cancel-button {
     background: var(--fill-2);
   }
 
-  /* Dot-matrix display type: big numbers and screen titles. */
-  .font-dot {
-    font-family: 'Doto', 'Space Mono', ui-monospace, monospace;
-    font-weight: 800;
-    font-variation-settings: 'ROND' 100;
-    letter-spacing: 0.02em;
+  /* Display type: big numbers and screen titles. Tight tracking, tabular
+     figures so counts don't jitter as they change. */
+  .font-display {
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
   }
 }
 

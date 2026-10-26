@@ -58,7 +58,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
                   }`}
                 >
                   <Icon size={22} strokeWidth={selected ? 2 : 1.6} className="relative" />
-                  <span className="relative font-mono text-[9px] leading-none uppercase tracking-[0.12em]">{t.label}</span>
+                  <span className="relative text-[10px] leading-none font-medium">{t.label}</span>
                   {selected && (
                     <motion.span
                       layoutId="tabbar-dot"

@@ -52,7 +52,7 @@ export default function Sidebar({
     <aside className="hidden md:flex fixed left-3 top-3 bottom-3 z-40 w-[260px] glass-strong rounded-[28px] flex-col p-3">
       <div className="flex items-center gap-2.5 px-2 pt-1.5 pb-4">
         <AppIcon size={34} />
-        <span className="font-dot text-[24px] leading-none lowercase">{APP_NAME}</span>
+        <span className="font-display text-[22px] leading-none tracking-[-0.04em]">{APP_NAME}</span>
       </div>
 
       <motion.button

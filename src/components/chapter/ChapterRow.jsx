@@ -119,7 +119,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           </div>
           {when && (
             <span
-              className="shrink-0 font-mono text-[11px] uppercase tracking-[0.06em] tabular"
+              className="shrink-0 text-footnote font-medium tabular"
               style={{ color: chapter.derivedStatus === 'upcoming' ? 'var(--label-2)' : tone }}
             >
               {when}

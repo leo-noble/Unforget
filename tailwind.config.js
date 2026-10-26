@@ -33,12 +33,11 @@ export default {
         ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {
-        // A neutral grotesk for everything you read.
-        sans: ['"Space Grotesk"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-        // Labels, metadata and numbers in lists.
-        mono: ['"Space Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-        // Kept as an alias so older call sites resolve; display numbers use .font-dot.
-        rounded: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        // One typeface for everything: Geist — neutral, precise, modern.
+        sans: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        // Kept as aliases so older call sites resolve to the same face.
+        mono: ['Geist', 'system-ui', 'sans-serif'],
+        rounded: ['Geist', 'system-ui', 'sans-serif'],
       },
       // Type scale, named by role.
       fontSize: {

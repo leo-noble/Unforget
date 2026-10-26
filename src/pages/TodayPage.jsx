@@ -53,9 +53,9 @@ function TodayHero({ name, done, remaining, streak, overdue }) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={spring}
-          className="font-dot text-[96px] leading-[0.82] tabular"
+          className="font-display text-[96px] leading-[0.82] tabular"
         >
-          {allClear && total > 0 ? 'OK' : pad(remaining)}
+          {pad(remaining)}
         </motion.span>
         <span className="pb-1.5 text-subhead text-label-2">
           {first ? `${greeting()}, ${first}.` : `${greeting()}.`}
@@ -105,7 +105,7 @@ function WeekDots({ events }) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <p className="font-dot text-[56px] leading-[0.85] tabular">{pad(week)}</p>
+        <p className="font-display text-[56px] leading-[0.85] tabular">{pad(week)}</p>
         <p className="eyebrow text-label-2 mt-2">Reviews · 7 days</p>
       </div>
       <div className="flex items-end gap-[9px]">
@@ -248,7 +248,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
                         {subject?.name} · {reviewLabel(c)}
                       </span>
                     </span>
-                    <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.06em] text-label-2">{shortWhen(c)}</span>
+                    <span className="shrink-0 text-footnote text-label-2">{shortWhen(c)}</span>
                   </button>
                 )
               })}

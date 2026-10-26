@@ -97,7 +97,7 @@ export default function SettingsSheet({ cadence, onClose }) {
               [completed, 'Reviews'],
             ].map(([n, label], i) => (
               <div key={label} className={i > 0 ? 'border-l border-separator' : ''}>
-                <p className="font-dot text-[30px] leading-none tabular">{n}</p>
+                <p className="font-display text-[30px] leading-none tabular">{n}</p>
                 <p className="eyebrow text-label-2 mt-1.5">{label}</p>
               </div>
             ))}

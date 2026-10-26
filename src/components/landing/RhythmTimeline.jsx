@@ -59,7 +59,7 @@ export default function RhythmTimeline() {
             <div className="-translate-y-1/2">
               <Marker i={i} />
             </div>
-            <p className="font-dot text-[22px] leading-none tabular whitespace-nowrap mt-1">{String(day).padStart(2, '0')}</p>
+            <p className="font-display text-[22px] leading-none tabular whitespace-nowrap mt-1">{String(day).padStart(2, '0')}</p>
             <p className="eyebrow text-label-2 whitespace-nowrap mt-1.5">{LABELS[i]}</p>
           </motion.div>
         ))}
@@ -78,7 +78,7 @@ export default function RhythmTimeline() {
               <div className="w-8 flex justify-center shrink-0">
                 <Marker i={i} />
               </div>
-              <p className="font-dot text-[22px] leading-none tabular">Day {String(day).padStart(2, '0')}</p>
+              <p className="font-display text-[22px] leading-none tabular">Day {String(day).padStart(2, '0')}</p>
               <p className="eyebrow text-label-2 ml-auto">{LABELS[i]}</p>
             </motion.div>
             {i < REVIEW_GAPS.length && (
