@@ -1,24 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  ArrowRight,
-  BookOpen,
-  CalendarCheck,
-  CheckCheck,
-  Plus,
-  SunMedium,
-  LibraryBig,
-  CalendarDays,
-  Timer,
-  RefreshCw,
-  Bell,
-  Moon,
-  Smartphone,
-  Share,
-  SquarePlus,
-  Download,
-} from 'lucide-react'
+import { ArrowRight, ArrowDown, Plus, SunMedium, LibraryBig, CalendarDays, Timer, Share, SquarePlus, Download } from 'lucide-react'
 import AppIcon from '../components/ui/AppIcon'
 import PhoneMockup from '../components/landing/PhoneMockup'
 import RhythmTimeline from '../components/landing/RhythmTimeline'
@@ -29,60 +12,72 @@ import { APP_NAME } from '../brand'
 import { easeOut, snappy } from '../components/ui/motion'
 
 const reveal = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-60px' },
   transition: { duration: 0.6, ease: easeOut },
 }
 
-const CONTAINER = 'max-w-[1120px] mx-auto px-5 sm:px-8'
+const WRAP = 'w-full max-w-[1120px] mx-auto px-5 sm:px-8'
+const H2 = 'text-[clamp(1.9rem,7vw,3rem)] leading-[1.05] font-medium tracking-[-0.035em] text-balance'
+const LEDE = 'text-[clamp(1.0625rem,4.2vw,1.25rem)] leading-[1.5] text-label-2'
 
-function SectionHead({ eyebrow, title, lede, center = false }) {
+function Label({ n, children }) {
   return (
-    <motion.div {...reveal} className={`max-w-[640px] ${center ? 'mx-auto text-center' : ''}`}>
-      {eyebrow && <p className="text-subhead font-semibold text-tint mb-2">{eyebrow}</p>}
-      <h2 className="text-[34px] sm:text-[44px] leading-[1.08] font-bold tracking-[-0.03em] text-balance">{title}</h2>
-      {lede && <p className="text-[17px] sm:text-[19px] leading-[1.5] text-label-2 mt-4">{lede}</p>}
-    </motion.div>
+    <p className="eyebrow text-label-2 flex items-center gap-2 mb-5">
+      <span className="h-[6px] w-[6px] rounded-full bg-red" />
+      {n && <span className="text-label">{n}</span>}
+      {children}
+    </p>
   )
 }
 
-const STEPS = [
-  { icon: Plus, color: 'var(--tint)', title: 'Log it the day you study it', body: 'Subject, chapter, done. About ten seconds — the only typing it ever asks for.' },
-  { icon: CalendarCheck, color: 'var(--orange)', title: 'Five reviews appear on their own', body: 'Tomorrow, then 3, 7, 15 and 30 days after each one. Nothing to configure.' },
-  { icon: CheckCheck, color: 'var(--green)', title: 'Clear the short list each morning', body: 'Revise what’s due from your own notes and tick it off. Ring full, day done.' },
+const FACTS = [
+  ['05', 'Reviews'],
+  ['56', 'Days'],
+  ['~5', 'Min a day'],
 ]
 
-const FEATURES = [
-  { icon: SunMedium, color: 'var(--orange)', title: 'Today', body: 'A ring that fills as you revise. Overdue first, then due, then what’s coming.', wide: true },
-  { icon: LibraryBig, color: 'var(--blue)', title: 'Library', body: 'Every chapter by subject, with mastery progress at a glance.' },
-  { icon: CalendarDays, color: 'var(--red)', title: 'Plan', body: 'Day, week and month views. Drag study sessions into place.' },
-  { icon: Timer, color: 'var(--tint)', title: 'Focus', body: 'A Pomodoro timer that keeps running while you use the rest of the app.' },
-  { icon: RefreshCw, color: 'var(--teal)', title: 'Syncs everywhere', body: 'Tick a review on your phone, see it on your laptop.' },
-  { icon: Bell, color: 'var(--pink)', title: 'Daily reminders', body: 'One nudge at the time you choose, only when something’s due.' },
-  { icon: Moon, color: 'var(--purple)', title: 'Light, dark, your colour', body: 'Follows your system appearance, in the accent you pick.', wide: true },
+const AUDIENCE = [
+  ['School students', 'Board exams, finals and unit tests. Every chapter stays fresh until exam day — not just the last few.'],
+  ['University students', 'Lectures pile up fast. Review each one on time instead of cramming the whole module the week before.'],
+  ['Exam prep', 'SAT, IELTS, MCAT, medical and engineering entrance. Long syllabuses, months of preparation, nothing forgotten.'],
+  ['Self-learners', 'Languages, coding, certifications — anything you want to still know a year from now.'],
+]
+
+const STEPS = [
+  ['Log it after you study', 'Type the chapter and pick its subject. About ten seconds — the only typing it ever asks for.'],
+  ['Five reviews get scheduled', 'One day later, then 3, 7, 15 and 30 days after each review. Each gap is wider because the memory lasts longer.'],
+  ['Open Today each morning', 'It lists exactly what to revise. Go over each one from your own notes, tick it off, and you’re done.'],
+]
+
+const INSIDE = [
+  [SunMedium, 'Today', 'What to revise right now — overdue first. Tap the circle or swipe to tick one off.'],
+  [LibraryBig, 'Library', 'Every chapter, grouped by subject, with how close each subject is to mastered.'],
+  [CalendarDays, 'Plan', 'Day, week and month calendar. See busy days coming and block out study time.'],
+  [Timer, 'Focus', 'A Pomodoro timer that keeps running while you use the rest of the app.'],
 ]
 
 const FAQ = [
-  { q: 'Do I have to make flashcards?', a: `No. ${APP_NAME} plans your revision but never stores it — you revise from the textbook and notes you already have. It tells you which chapter and which day.` },
-  { q: 'Why 1, 3, 7, 15 and 30 days?', a: 'Each review lands just before you’d start losing the chapter. Going over it right then makes the memory hold longer, which earns the next, wider gap.' },
-  { q: 'What if I miss a day?', a: 'Nothing resets. Missed reviews move to the top of Today marked overdue. You can push a review back twice at most, so it can’t drift forever.' },
-  { q: 'How long does it take each day?', a: 'A few minutes. Most days have two to four chapters due, and a review is re-reading something you already know.' },
+  ['Do I have to make flashcards?', `No. ${APP_NAME} plans your revision; it doesn’t hold your notes. You revise from the textbook and notes you already use — it tells you which chapter, and when.`],
+  ['Why 1, 3, 7, 15 and 30 days?', 'Each review lands just before you’d start to forget. Recalling it right then makes the memory last longer, which earns the next, wider gap. Five reviews and it sticks.'],
+  ['What if I miss a day?', 'Nothing resets. Missed reviews move to the top of Today, marked overdue. You can push a review back by a day, twice at most, so nothing drifts forever.'],
+  ['Does it work on my phone?', 'Yes — add it to your Home Screen and it opens full-screen like an app. Your chapters sync between your phone and computer.'],
 ]
 
-function FaqItem({ item, open, onToggle }) {
+function FaqItem({ q, a, open, onToggle }) {
   return (
-    <div className="hairline-b last:shadow-none">
+    <div className="hairline-b">
       <button type="button" onClick={onToggle} aria-expanded={open} className="w-full flex items-center justify-between gap-4 text-left py-5">
-        <span className="text-[17px] font-semibold">{item.q}</span>
-        <motion.span animate={{ rotate: open ? 45 : 0 }} transition={snappy} className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${open ? 'bg-tint text-white' : 'bg-fill text-label'}`}>
-          <Plus size={17} strokeWidth={2.6} />
+        <span className="text-[17px] font-medium">{q}</span>
+        <motion.span animate={{ rotate: open ? 45 : 0 }} transition={snappy} className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${open ? 'bg-red text-white' : 'bg-fill'}`}>
+          <Plus size={16} strokeWidth={2} />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: easeOut }} className="overflow-hidden">
-            <p className="text-[17px] leading-[1.55] text-label-2 pb-5 pr-10">{item.a}</p>
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.28, ease: easeOut }} className="overflow-hidden">
+            <p className="text-[16px] leading-[1.6] text-label-2 pb-5 pr-10">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -94,7 +89,7 @@ export default function LandingPage() {
   const { session } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [installPrompt, setInstallPrompt] = useState(null)
-  const [openFaq, setOpenFaq] = useState(null)
+  const [openFaq, setOpenFaq] = useState(0)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -124,33 +119,32 @@ export default function LandingPage() {
     setInstallPrompt(null)
   }
 
-  const primary = session ? { to: '/app', label: 'Open Today' } : { to: '/login', label: 'Get Started' }
-  const ios = isIOS()
+  const cta = session ? { to: '/app', label: 'Open Today' } : { to: '/login', label: 'Get started' }
 
   return (
     <div className="min-h-screen bg-canvas overflow-x-clip">
-      {/* Nav */}
+      {/* Header */}
       <header className="sticky top-0 z-40" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className={`absolute inset-0 bar-glass hairline-b transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
-        <div className={`relative ${CONTAINER} h-14 flex items-center justify-between`}>
+        <div className={`relative ${WRAP} h-14 flex items-center justify-between`}>
           <a href="#top" className="flex items-center gap-2.5">
-            <AppIcon size={30} shadow={false} />
-            <span className="text-headline font-bold">{APP_NAME}</span>
+            <AppIcon size={28} />
+            <span className="font-dot text-[22px] leading-none lowercase">{APP_NAME}</span>
           </a>
-          <nav className="hidden md:flex items-center gap-7 text-subhead text-label-2">
+          <nav className="hidden md:flex items-center gap-8 eyebrow text-label-2">
+            <a href="#what" className="hover:text-label">What it is</a>
+            <a href="#who" className="hover:text-label">Who it’s for</a>
             <a href="#how" className="hover:text-label">How it works</a>
-            <a href="#schedule" className="hover:text-label">Schedule</a>
-            <a href="#features" className="hover:text-label">Features</a>
             <a href="#faq" className="hover:text-label">FAQ</a>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {!session && (
-              <Link to="/login" className="hidden sm:inline-flex h-9 px-4 items-center rounded-full text-subhead font-semibold text-tint hover:bg-tint/10">
-                Sign In
+              <Link to="/login" className="hidden sm:inline-flex h-9 px-4 items-center rounded-full text-subhead hover:bg-fill">
+                Sign in
               </Link>
             )}
-            <Link to={primary.to} className="inline-flex h-9 px-4 items-center gap-1 rounded-full tint-fill text-white text-subhead font-semibold">
-              {primary.label}
+            <Link to={cta.to} className="inline-flex h-9 px-4 items-center rounded-full tint-fill text-tint-fg text-subhead font-medium">
+              {cta.label}
             </Link>
           </div>
         </div>
@@ -158,177 +152,182 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section id="top" className="relative">
-        <div aria-hidden="true" className="ambient absolute inset-x-0 -top-14 h-[760px] pointer-events-none" />
-        <div className={`relative ${CONTAINER} pt-10 sm:pt-16 pb-16 grid lg:grid-cols-[1.1fr_1fr] gap-14 items-center`}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 h-8 pl-1.5 pr-3.5 rounded-full glass text-footnote font-semibold">
-              <span className="h-5 w-5 rounded-full tint-gradient text-white flex items-center justify-center">
-                <RefreshCw size={11} strokeWidth={3} />
-              </span>
-              Spaced repetition, on autopilot
-            </span>
-            <h1 className="mt-6 text-[44px] sm:text-[64px] lg:text-[72px] leading-[1.02] font-bold tracking-[-0.04em] text-balance">
-              Remember what you <span className="bg-clip-text text-transparent tint-gradient">study.</span>
+        <div aria-hidden="true" className="ambient absolute inset-x-0 -top-14 h-[640px] pointer-events-none" />
+        <div className={`relative ${WRAP} pt-10 sm:pt-16 pb-16 sm:pb-24 grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-10 items-center`}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: easeOut }}>
+            <Label>Spaced-repetition study planner</Label>
+            <h1 className="font-dot uppercase text-[clamp(2.75rem,12.5vw,5.75rem)] leading-[0.92] tracking-[0.01em]">
+              Remember
+              <br />
+              what you
+              <br />
+              study<span className="text-red">.</span>
             </h1>
-            <p className="mt-5 text-[18px] sm:text-[21px] leading-[1.45] text-label-2 max-w-[540px] mx-auto lg:mx-0">
-              Log a chapter the day you learn it. {APP_NAME} brings it back 1, 3, 7, 15 and 30 days later — and tells you each morning exactly what to revise.
+            <p className={`${LEDE} mt-6 max-w-[520px]`}>
+              {APP_NAME} tells you exactly which chapters to revise each day. Log a chapter when you study it, and it brings it back
+              1, 3, 7, 15 and 30 days later — right before you’d forget it.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <motion.div whileTap={{ scale: 0.96 }}>
-                <Link to={primary.to} className="inline-flex h-[54px] px-7 items-center gap-2 rounded-full tint-fill text-white text-headline font-semibold shadow-tint">
-                  {primary.label} <ArrowRight size={19} strokeWidth={2.4} />
+            <div className="mt-8 flex flex-col xs:flex-row gap-3">
+              <motion.div whileTap={{ scale: 0.97 }} className="xs:w-auto">
+                <Link to={cta.to} className="flex h-[54px] px-7 items-center justify-center gap-2 rounded-full tint-fill text-tint-fg text-headline font-medium">
+                  {session ? 'Open Today' : 'Get started — free'} <ArrowRight size={18} strokeWidth={2} />
                 </Link>
               </motion.div>
-              {installPrompt && (
-                <button onClick={install} className="inline-flex h-[54px] px-6 items-center gap-2 rounded-full glass text-headline font-semibold">
-                  <Download size={19} /> Install
-                </button>
-              )}
+              <a href="#how" className="flex h-[54px] px-6 items-center justify-center gap-2 rounded-full bg-card text-headline">
+                How it works <ArrowDown size={17} strokeWidth={1.8} />
+              </a>
             </div>
-            <p className="mt-4 text-footnote text-label-2">Free · iPhone, Android, Mac and PC</p>
+            <dl className="mt-10 grid grid-cols-3 max-w-[460px] bg-card rounded-[22px]">
+              {FACTS.map(([n, l], i) => (
+                <div key={l} className={`px-4 py-4 ${i > 0 ? 'border-l border-separator' : ''}`}>
+                  <dt className="font-dot text-[clamp(1.9rem,8vw,2.4rem)] leading-none">{n}</dt>
+                  <dd className="eyebrow text-label-2 mt-2">{l}</dd>
+                </div>
+              ))}
+            </dl>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 40, rotate: -2 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.15 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.15 }}
             className="relative flex justify-center"
           >
+            <div aria-hidden="true" className="dot-grid dot-grid-fade absolute inset-[-10%] opacity-80" />
             <PhoneMockup />
-            <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 1.2 }}
-              className="glass-strong absolute top-16 -left-2 sm:left-0 lg:-left-10 w-[230px] rounded-[22px] p-3 hidden sm:flex items-start gap-2.5 text-left"
-            >
-              <AppIcon size={34} shadow={false} />
-              <span className="min-w-0">
-                <span className="flex justify-between text-caption text-label-2">
-                  <span className="font-semibold uppercase tracking-[0.02em]">{APP_NAME}</span>
-                  <span>now</span>
-                </span>
-                <span className="block text-footnote font-semibold">3 chapters to review today</span>
-                <span className="block text-caption text-label-2 truncate">Vector Algebra is 1 day overdue</span>
-              </span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 1.6 }}
-              className="glass-strong absolute bottom-24 -right-1 sm:right-2 lg:-right-6 rounded-full h-12 pl-1.5 pr-4 hidden sm:flex items-center gap-2.5"
-            >
-              <span className="h-9 w-9 rounded-full bg-green text-white flex items-center justify-center">
-                <CheckCheck size={18} strokeWidth={2.6} />
-              </span>
-              <span className="text-left">
-                <span className="block text-footnote font-semibold leading-tight">Marked as revised</span>
-                <span className="block text-caption text-label-2 leading-tight">Next review in 7 days</span>
-              </span>
-            </motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* What it is */}
+      <section id="what" className="scroll-mt-16 py-20 sm:py-28 bg-card">
+        <div className={`${WRAP} grid md:grid-cols-[0.9fr_1.1fr] gap-10 md:gap-16 items-center`}>
+          <motion.div {...reveal}>
+            <Label n="01">What it’s for</Label>
+            <h2 className={H2}>You forget most of what you study within a week.</h2>
+            <p className={`${LEDE} mt-5`}>
+              That’s the forgetting curve. Re-reading the night before an exam doesn’t beat it — reviewing at spaced intervals does.
+            </p>
+            <p className={`${LEDE} mt-4`}>
+              The hard part is remembering <em>when</em> each chapter is due. With twenty chapters across five subjects, nobody can track
+              that by hand. <span className="text-label">{APP_NAME} does the tracking, so you only do the revising.</span>
+            </p>
+          </motion.div>
+          <motion.div {...reveal} className="[&>div]:bg-canvas">
+            <ForgettingCurve />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Who it's for */}
+      <section id="who" className="scroll-mt-16 py-20 sm:py-28">
+        <div className={WRAP}>
+          <motion.div {...reveal} className="max-w-[640px]">
+            <Label n="02">Who it’s for</Label>
+            <h2 className={H2}>Anyone with a syllabus to keep in their head.</h2>
+          </motion.div>
+          <div className="mt-10 grid sm:grid-cols-2 gap-3">
+            {AUDIENCE.map(([title, body], i) => (
+              <motion.div key={title} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.06 }} className="bg-card rounded-[26px] p-6 sm:p-7">
+                <p className="font-dot text-[34px] leading-none text-label-3">{String(i + 1).padStart(2, '0')}</p>
+                <h3 className="text-title-3 font-medium mt-6">{title}</h3>
+                <p className="text-[16px] leading-[1.55] text-label-2 mt-2">{body}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section id="how" className="scroll-mt-20 py-20 sm:py-28">
-        <div className={CONTAINER}>
-          <SectionHead center eyebrow="How it works" title="Ten seconds of typing a day." lede="There’s no system to learn and nothing to set up. Three small habits, and the schedule does the rest." />
-          <div className="mt-14 grid sm:grid-cols-3 gap-4">
-            {STEPS.map((s, i) => (
-              <motion.div key={s.title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.08 }} className="bg-card rounded-[28px] p-6 shadow-card">
-                <div className="flex items-center justify-between">
-                  <span className="h-11 w-11 rounded-[13px] flex items-center justify-center text-white" style={{ background: s.color }}>
-                    <s.icon size={22} strokeWidth={2.3} />
-                  </span>
-                  <span className="font-rounded text-title-1 font-bold text-label-3 tabular">{i + 1}</span>
+      <section id="how" className="scroll-mt-16 py-20 sm:py-28 bg-card">
+        <div className={WRAP}>
+          <motion.div {...reveal} className="max-w-[640px]">
+            <Label n="03">How it works</Label>
+            <h2 className={H2}>Three steps. Ten seconds of typing a day.</h2>
+          </motion.div>
+          <ol className="mt-10 grid md:grid-cols-3 gap-3">
+            {STEPS.map(([title, body], i) => (
+              <motion.li key={title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }} className="bg-canvas rounded-[26px] p-6 sm:p-7">
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  {[0, 1, 2].map((d) => (
+                    <span key={d} className={`h-[9px] w-[9px] rounded-full ${d <= i ? (d === i ? 'bg-red' : 'bg-label') : 'bg-fill-2'}`} />
+                  ))}
                 </div>
-                <h3 className="text-title-3 font-bold mt-5">{s.title}</h3>
-                <p className="text-body text-label-2 mt-2">{s.body}</p>
-              </motion.div>
+                <h3 className="text-title-3 font-medium mt-6">{title}</h3>
+                <p className="text-[16px] leading-[1.55] text-label-2 mt-2">{body}</p>
+              </motion.li>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Schedule */}
-      <section id="schedule" className="scroll-mt-20 py-20 sm:py-28 bg-card/50">
-        <div className={CONTAINER}>
-          <SectionHead eyebrow="The schedule" title="One chapter. Five reviews. Eight weeks." lede="Every gap is wider than the last, because each review makes the memory hold longer. Clear the fifth and the chapter is mastered." />
-          <motion.div {...reveal} className="mt-16 bg-card rounded-[28px] shadow-card p-6 sm:p-10">
+          </ol>
+          <motion.div {...reveal} className="mt-3 bg-canvas rounded-[26px] p-6 sm:p-10">
+            <p className="eyebrow text-label-2 mb-10 md:mb-14">One chapter’s schedule</p>
             <RhythmTimeline />
           </motion.div>
-          <div className="grid md:grid-cols-[0.8fr_1.2fr] gap-10 md:gap-14 items-center mt-16">
-            <motion.div {...reveal}>
-              <h3 className="text-title-1 font-bold">Timed for just before you forget.</h3>
-              <p className="text-[17px] leading-[1.55] text-label-2 mt-3">
-                You lose most of a chapter in the first few days, then the decline flattens. Each review arrives just before the drop and resets recall to full — buying more time than the one before.
-              </p>
-            </motion.div>
-            <motion.div {...reveal}>
-              <ForgettingCurve />
-            </motion.div>
-          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="scroll-mt-20 py-20 sm:py-28">
-        <div className={CONTAINER}>
-          <SectionHead center eyebrow="Built like an app" title="Four tabs. Nothing to learn." lede="Designed to feel at home on your iPhone’s Home Screen — liquid glass, springy motion and all." />
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURES.map((f, i) => (
-              <motion.div
-                key={f.title}
-                {...reveal}
-                transition={{ ...reveal.transition, delay: (i % 3) * 0.06 }}
-                className={`relative overflow-hidden bg-card rounded-[28px] p-6 shadow-card ${f.wide ? 'lg:col-span-2' : ''}`}
-              >
-                <div aria-hidden="true" className="absolute -right-10 -top-10 h-36 w-36 rounded-full opacity-[0.12]" style={{ background: f.color, filter: 'blur(30px)' }} />
-                <span className="relative h-11 w-11 rounded-[13px] flex items-center justify-center text-white" style={{ background: f.color }}>
-                  <f.icon size={22} strokeWidth={2.3} />
+      {/* Inside the app */}
+      <section className="py-20 sm:py-28">
+        <div className={WRAP}>
+          <motion.div {...reveal} className="max-w-[640px]">
+            <Label n="04">Inside the app</Label>
+            <h2 className={H2}>Four tabs. Nothing else to learn.</h2>
+          </motion.div>
+          <div className="mt-10 bg-card rounded-[26px] overflow-hidden ios-list">
+            {INSIDE.map(([Icon, title, body]) => (
+              <motion.div key={title} {...reveal} className="flex items-start gap-4 p-5 sm:p-6" style={{ '--inset': '20px' }}>
+                <span className="h-11 w-11 rounded-full bg-fill flex items-center justify-center shrink-0">
+                  <Icon size={20} strokeWidth={1.6} />
                 </span>
-                <h3 className="relative text-title-3 font-bold mt-5">{f.title}</h3>
-                <p className="relative text-body text-label-2 mt-1.5">{f.body}</p>
+                <div className="min-w-0">
+                  <h3 className="eyebrow text-label mt-1">{title}</h3>
+                  <p className="text-[16px] leading-[1.5] text-label-2 mt-1.5">{body}</p>
+                </div>
               </motion.div>
             ))}
           </div>
+          <motion.ul {...reveal} className="mt-4 flex flex-wrap gap-2">
+            {['Syncs phone ↔ computer', 'Daily reminder', 'Light & dark', 'Installs like an app'].map((t) => (
+              <li key={t} className="eyebrow text-label-2 h-9 px-4 rounded-full bg-card flex items-center">
+                {t}
+              </li>
+            ))}
+          </motion.ul>
         </div>
       </section>
 
       {/* Install */}
       {!isStandalone() && (
         <section className="pb-20 sm:pb-28">
-          <div className={CONTAINER}>
-            <motion.div {...reveal} className="relative overflow-hidden rounded-[36px] tint-gradient text-white p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
-              <div aria-hidden="true" className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 10% 0%, rgba(255,255,255,0.28), transparent 60%)' }} />
+          <div className={WRAP}>
+            <motion.div {...reveal} className="relative overflow-hidden rounded-[30px] bg-[#0a0a0a] text-white p-7 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+              <div aria-hidden="true" className="absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.14) 1.1px, transparent 1.4px)', backgroundSize: '16px 16px' }} />
               <div className="relative">
-                <h2 className="text-[30px] sm:text-[38px] leading-[1.1] font-bold tracking-[-0.03em]">Put it on your Home Screen.</h2>
-                <p className="text-[17px] text-white/80 mt-3 max-w-[460px]">
-                  It opens full-screen like any other app, straight to Today — no browser bar, no sign-in page.
+                <p className="eyebrow text-white/60 flex items-center gap-2 mb-5">
+                  <span className="h-[6px] w-[6px] rounded-full bg-red" /> On your phone
                 </p>
-                {ios ? (
-                  <ol className="mt-5 space-y-2 text-[17px]">
-                    <li className="flex items-center gap-2.5">
-                      <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center"><Share size={15} /></span>
+                <h2 className="text-[clamp(1.75rem,6.5vw,2.6rem)] leading-[1.08] font-medium tracking-[-0.03em]">Put it on your Home Screen.</h2>
+                <p className="text-[16px] text-white/65 mt-3 max-w-[440px]">Opens full-screen, straight to today’s list. No browser bar, no sign-in page every time.</p>
+                {isIOS() ? (
+                  <ol className="mt-6 space-y-2.5 text-[16px]">
+                    <li className="flex items-center gap-3">
+                      <span className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center"><Share size={15} /></span>
                       Tap Share in Safari
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center"><SquarePlus size={15} /></span>
-                      Choose Add to Home Screen
+                    <li className="flex items-center gap-3">
+                      <span className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center"><SquarePlus size={15} /></span>
+                      Choose “Add to Home Screen”
                     </li>
                   </ol>
                 ) : installPrompt ? (
-                  <button onClick={install} className="mt-6 inline-flex h-[50px] px-6 items-center gap-2 rounded-full bg-white text-[#2A2390] text-headline font-semibold">
-                    <Download size={19} /> Install {APP_NAME}
+                  <button onClick={install} className="mt-6 inline-flex h-[50px] px-6 items-center gap-2 rounded-full bg-white text-black text-headline font-medium">
+                    <Download size={18} /> Install {APP_NAME}
                   </button>
                 ) : (
-                  <p className="mt-5 text-[17px] flex items-center gap-2 text-white/90">
-                    <Smartphone size={18} /> Use your browser’s “Install app” or “Add to Home Screen”.
-                  </p>
+                  <p className="mt-6 text-[16px] text-white/80">Use your browser’s “Install app” or “Add to Home Screen”.</p>
                 )}
               </div>
-              <div className="relative justify-self-center">
-                <AppIcon size={132} />
+              <div className="relative justify-self-start md:justify-self-center">
+                <AppIcon size={112} />
               </div>
             </motion.div>
           </div>
@@ -336,38 +335,45 @@ export default function LandingPage() {
       )}
 
       {/* FAQ */}
-      <section id="faq" className="scroll-mt-20 pb-20 sm:pb-28">
-        <div className={`${CONTAINER} max-w-[760px]`}>
-          <SectionHead center title="Fair questions." />
-          <motion.div {...reveal} className="mt-10 bg-card rounded-[28px] shadow-card px-6">
-            {FAQ.map((item, i) => (
-              <FaqItem key={item.q} item={item} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />
+      <section id="faq" className="scroll-mt-16 pb-20 sm:pb-28">
+        <div className={`${WRAP} max-w-[780px]`}>
+          <motion.div {...reveal}>
+            <Label n="05">Questions</Label>
+            <h2 className={H2}>Fair questions.</h2>
+          </motion.div>
+          <motion.div {...reveal} className="mt-8 bg-card rounded-[26px] px-6">
+            {FAQ.map(([q, a], i) => (
+              <FaqItem key={q} q={q} a={a} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Closing CTA */}
+      {/* Closing */}
       <section className="pb-24">
-        <div className={`${CONTAINER} text-center`}>
-          <motion.div {...reveal} className="flex flex-col items-center">
-            <AppIcon size={72} />
-            <h2 className="mt-6 text-[34px] sm:text-[48px] leading-[1.06] font-bold tracking-[-0.035em] max-w-[640px] text-balance">
-              Start with the chapter you studied today.
-            </h2>
-            <Link to={primary.to} className="mt-8 inline-flex h-[54px] px-8 items-center gap-2 rounded-full tint-fill text-white text-headline font-semibold shadow-tint">
-              {session ? 'Open Today' : 'Create your free account'} <ArrowRight size={19} strokeWidth={2.4} />
-            </Link>
+        <div className={WRAP}>
+          <motion.div {...reveal} className="relative overflow-hidden bg-card rounded-[30px] px-6 py-14 sm:py-20 text-center">
+            <div aria-hidden="true" className="dot-grid dot-grid-fade absolute inset-0 opacity-70" />
+            <div className="relative flex flex-col items-center">
+              <AppIcon size={64} />
+              <h2 className="font-dot uppercase text-[clamp(2rem,9vw,3.6rem)] leading-[0.95] mt-7 max-w-[680px]">
+                Start with today’s chapter<span className="text-red">.</span>
+              </h2>
+              <Link to={cta.to} className="mt-8 inline-flex h-[54px] px-8 items-center gap-2 rounded-full tint-fill text-tint-fg text-headline font-medium">
+                {session ? 'Open Today' : 'Create your account'} <ArrowRight size={18} strokeWidth={2} />
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
 
       <footer className="hairline-t" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className={`${CONTAINER} py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-footnote text-label-2`}>
-          <span className="flex items-center gap-2">
-            <BookOpen size={14} /> © {new Date().getFullYear()} {APP_NAME} — made for students who’d rather study than plan.
+        <div className={`${WRAP} py-8 flex flex-col sm:flex-row items-center justify-between gap-4`}>
+          <span className="flex items-center gap-2.5">
+            <AppIcon size={22} />
+            <span className="eyebrow text-label-2">© {new Date().getFullYear()} {APP_NAME}</span>
           </span>
-          <span className="flex gap-5">
+          <span className="flex gap-6 eyebrow text-label-2">
             <a href="#how" className="hover:text-label">How it works</a>
             <a href="#faq" className="hover:text-label">FAQ</a>
             <Link to={session ? '/app' : '/login'} className="hover:text-label">{session ? 'Open app' : 'Sign in'}</Link>

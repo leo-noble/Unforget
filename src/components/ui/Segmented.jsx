@@ -31,7 +31,7 @@ export default function Segmented({ options, value, onChange, layoutId, classNam
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.id)}
-            className="relative flex-1 min-w-0 px-3.5 rounded-full text-footnote font-semibold whitespace-nowrap"
+            className="relative flex-1 min-w-0 px-3.5 rounded-full text-footnote font-medium whitespace-nowrap"
           >
             {active && (
               <motion.span

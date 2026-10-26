@@ -44,16 +44,16 @@ export default function TimerSettingsSheet({ prefs, updatePrefs, isIdle, onClose
           title="Durations"
           footer={isIdle ? undefined : 'New lengths apply from the next session — the one running keeps its length.'}
         >
-          <Row icon={Timer} iconColor="var(--tint)" title="Focus" trailing={
+          <Row icon={Timer} title="Focus" trailing={
             <Stepper label="focus length" unit="m" min={1} max={120} value={prefs.pomodoroWork ?? 25} onChange={(v) => updatePrefs({ pomodoroWork: v })} />
           } />
-          <Row icon={Coffee} iconColor="var(--green)" title="Short break" trailing={
+          <Row icon={Coffee} title="Short break" trailing={
             <Stepper label="short break" unit="m" min={1} max={60} value={prefs.pomodoroShortBreak ?? 5} onChange={(v) => updatePrefs({ pomodoroShortBreak: v })} />
           } />
-          <Row icon={Armchair} iconColor="var(--teal)" title="Long break" trailing={
+          <Row icon={Armchair} title="Long break" trailing={
             <Stepper label="long break" unit="m" min={1} max={60} value={prefs.pomodoroLongBreak ?? 15} onChange={(v) => updatePrefs({ pomodoroLongBreak: v })} />
           } />
-          <Row icon={Repeat} iconColor="var(--orange)" title="Long break every" trailing={
+          <Row icon={Repeat} title="Long break every" trailing={
             <Stepper label="sessions per long break" unit="" min={2} max={8} value={prefs.pomodoroCycleLength ?? 4} onChange={(v) => updatePrefs({ pomodoroCycleLength: v })} />
           } />
         </Section>
@@ -61,13 +61,11 @@ export default function TimerSettingsSheet({ prefs, updatePrefs, isIdle, onClose
         <Section>
           <Row
             icon={PlayCircle}
-            iconColor="var(--blue)"
             title="Auto-start next session"
             trailing={<Switch label="Auto-start next session" checked={!!prefs.pomodoroAutoTransition} onChange={(v) => updatePrefs({ pomodoroAutoTransition: v })} />}
           />
           <Row
             icon={Volume2}
-            iconColor="var(--pink)"
             title="Chime"
             trailing={<Switch label="Chime" checked={prefs.pomodoroSound !== false} onChange={(v) => updatePrefs({ pomodoroSound: v })} />}
           />
@@ -81,7 +79,7 @@ export default function TimerSettingsSheet({ prefs, updatePrefs, isIdle, onClose
             ['F', 'Fullscreen'],
             ['1 · 2 · 3', 'Focus · short · long'],
           ].map(([k, what]) => (
-            <Row key={k} title={what} trailing={<kbd className="text-footnote font-semibold text-label-2 bg-fill rounded-[6px] px-2 py-0.5 font-sans">{k}</kbd>} />
+            <Row key={k} title={what} trailing={<kbd className="text-footnote font-medium text-label-2 bg-fill rounded-[6px] px-2 py-0.5 font-sans">{k}</kbd>} />
           ))}
         </Section>
       </div>

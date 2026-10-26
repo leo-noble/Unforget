@@ -20,7 +20,7 @@ export default function Avatar({ name, src, size = 36, className = '' }) {
   return (
     <span
       aria-hidden="true"
-      className={`tint-gradient rounded-full shrink-0 flex items-center justify-center text-white font-semibold ${className}`}
+      className={`tint-gradient rounded-full shrink-0 flex items-center justify-center text-tint-fg font-medium ${className}`}
       style={{ width: size, height: size, fontSize: size * 0.42 }}
     >
       {initial}

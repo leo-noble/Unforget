@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Check, BookOpen } from 'lucide-react'
 import { REVIEW_DAYS, REVIEW_GAPS, dayToFraction, formatGap } from '../../lib/reviewSchedule'
 
 // A chapter's whole life on one line. The spacing is the message: each wait is
@@ -14,21 +13,8 @@ const at = (day) => LEFT + dayToFraction(day) * SPAN
 
 function Marker({ i }) {
   const last = i === REVIEW_DAYS.length - 1
-  if (i === 0)
-    return (
-      <span className="h-8 w-8 rounded-full bg-label text-canvas flex items-center justify-center">
-        <BookOpen size={15} strokeWidth={2.4} />
-      </span>
-    )
-  if (last)
-    return (
-      <span className="h-8 w-8 rounded-full bg-green text-white flex items-center justify-center shadow-[0_6px_16px_-4px_var(--green)]">
-        <Check size={17} strokeWidth={3} />
-      </span>
-    )
-  return (
-    <span className="h-7 w-7 rounded-full tint-gradient text-white flex items-center justify-center text-footnote font-bold tabular">{i}</span>
-  )
+  if (i === 0) return <span className="block h-5 w-5 rounded-full bg-canvas" style={{ boxShadow: 'inset 0 0 0 2px var(--label)' }} />
+  return <span className={`block h-5 w-5 rounded-full ${last ? 'bg-red' : 'bg-label'}`} />
 }
 
 export default function RhythmTimeline() {
@@ -45,13 +31,13 @@ export default function RhythmTimeline() {
           return (
             <div key={i} className="absolute top-1/2" style={{ left: `${left}%`, width: `${width}%` }}>
               <motion.div
-                className="h-[3px] rounded-full bg-fill-2 origin-left"
+                className="h-[2px] bg-[repeating-linear-gradient(90deg,var(--label-3)_0_2px,transparent_2px_7px)] origin-left"
                 initial={{ scaleX: 0 }}
                 animate={inView ? { scaleX: 1 } : {}}
                 transition={{ duration: 0.45, delay: 0.2 + i * 0.25, ease: 'easeOut' }}
               />
               <motion.span
-                className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap text-footnote font-semibold text-label-2 bg-card rounded-full px-2.5 py-1 shadow-card"
+                className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap eyebrow text-label-3"
                 initial={{ opacity: 0, y: 6 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.3, delay: 0.45 + i * 0.25 }}
@@ -73,8 +59,8 @@ export default function RhythmTimeline() {
             <div className="-translate-y-1/2">
               <Marker i={i} />
             </div>
-            <p className="text-headline font-semibold tabular whitespace-nowrap -mt-1">Day {day}</p>
-            <p className="text-footnote text-label-2 whitespace-nowrap">{LABELS[i]}</p>
+            <p className="font-dot text-[22px] leading-none tabular whitespace-nowrap mt-1">{String(day).padStart(2, '0')}</p>
+            <p className="eyebrow text-label-2 whitespace-nowrap mt-1.5">{LABELS[i]}</p>
           </motion.div>
         ))}
       </div>
@@ -92,20 +78,20 @@ export default function RhythmTimeline() {
               <div className="w-8 flex justify-center shrink-0">
                 <Marker i={i} />
               </div>
-              <p className="text-headline font-semibold tabular">Day {day}</p>
-              <p className="text-subhead text-label-2 ml-auto">{LABELS[i]}</p>
+              <p className="font-dot text-[22px] leading-none tabular">Day {String(day).padStart(2, '0')}</p>
+              <p className="eyebrow text-label-2 ml-auto">{LABELS[i]}</p>
             </motion.div>
             {i < REVIEW_GAPS.length && (
               <div className="flex items-center gap-4" style={{ height: 34 + i * 16 }}>
                 <div className="w-8 flex justify-center shrink-0 self-stretch py-1.5">
                   <motion.div
-                    className="w-[3px] rounded-full bg-fill-2 origin-top"
+                    className="w-[2px] bg-[repeating-linear-gradient(180deg,var(--label-3)_0_2px,transparent_2px_7px)] origin-top"
                     initial={{ scaleY: 0 }}
                     animate={inView ? { scaleY: 1 } : {}}
                     transition={{ duration: 0.3, delay: 0.2 + i * 0.16 }}
                   />
                 </div>
-                <span className="text-footnote font-semibold text-label-2">+{formatGap(REVIEW_GAPS[i])}</span>
+                <span className="eyebrow text-label-3">+{formatGap(REVIEW_GAPS[i])}</span>
               </div>
             )}
           </div>

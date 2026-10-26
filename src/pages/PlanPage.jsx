@@ -47,7 +47,7 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
         const today = iso === todayISO
         return (
           <button key={iso} onClick={() => onSelect(iso)} className="flex flex-col items-center gap-1 py-1">
-            <span className={`text-[11px] font-semibold uppercase ${today ? 'text-tint' : 'text-label-2'}`}>
+            <span className={`text-[11px] font-medium uppercase ${today ? 'text-red' : 'text-label-2'}`}>
               {d.toLocaleDateString(undefined, { weekday: 'narrow' })}
             </span>
             <span className="relative h-9 w-9 flex items-center justify-center">
@@ -55,11 +55,11 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
                 <motion.span
                   layoutId="weekstrip-sel"
                   transition={snappy}
-                  className={`absolute inset-0 rounded-full ${today ? 'bg-tint' : 'bg-label'}`}
+                  className={`absolute inset-0 rounded-full ${today ? 'bg-red' : 'bg-label'}`}
                 />
               )}
               <span
-                className={`relative text-[17px] tabular ${sel ? (today ? 'text-white' : 'text-canvas') + ' font-semibold' : today ? 'text-tint font-semibold' : ''}`}
+                className={`relative text-[17px] tabular ${sel ? (today ? 'text-white' : 'text-canvas') + ' font-medium' : today ? 'text-red font-medium' : ''}`}
               >
                 {d.getDate()}
               </span>
@@ -204,7 +204,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
             aria-expanded={pickerOpen}
             className="flex items-center gap-1 min-w-0 h-9 pl-1 pr-2 rounded-full hover:bg-fill active:bg-fill"
           >
-            <span className="text-title-3 font-bold truncate">{rangeLabel}</span>
+            <span className="text-title-3 font-medium truncate">{rangeLabel}</span>
             <motion.span animate={{ rotate: pickerOpen ? 180 : 0 }} transition={snappy} className="text-tint shrink-0">
               <ChevronDown size={18} strokeWidth={2.6} />
             </motion.span>
@@ -240,7 +240,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
 
         <div className="ml-auto flex items-center gap-1.5">
           {cursor !== todayISO && (
-            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-full bg-tint/15 text-tint text-footnote font-semibold">
+            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-full bg-tint/15 text-tint text-footnote font-medium">
               Today
             </button>
           )}

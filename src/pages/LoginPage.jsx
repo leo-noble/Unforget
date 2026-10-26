@@ -27,10 +27,10 @@ const NAME_MAX = 80
 function Sent({ title, body, onBack }) {
   return (
     <div className="bg-card rounded-cell p-6 text-center shadow-card">
-      <span className="mx-auto h-14 w-14 rounded-full bg-tint/15 text-tint flex items-center justify-center">
+      <span className="mx-auto h-14 w-14 rounded-full bg-fill text-label flex items-center justify-center">
         <MailCheck size={26} />
       </span>
-      <h2 className="text-title-3 font-bold mt-4">{title}</h2>
+      <h2 className="text-title-3 font-medium mt-4">{title}</h2>
       <p className="text-subhead text-label-2 mt-1.5">{body}</p>
       <Button variant="tinted" className="mt-5" onClick={onBack}>
         Back to sign in
@@ -153,13 +153,13 @@ export default function LoginPage() {
       subtitle={titles[mode][1]}
       footer={
         mode === 'forgot' ? (
-          <button type="button" onClick={() => switchMode('signin')} className="font-semibold text-tint">
+          <button type="button" onClick={() => switchMode('signin')} className="font-medium text-tint">
             Back to sign in
           </button>
         ) : (
           <>
             {mode === 'signin' ? 'New here? ' : 'Have an account? '}
-            <button type="button" onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')} className="font-semibold text-tint">
+            <button type="button" onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')} className="font-medium text-tint">
               {mode === 'signin' ? 'Create an account' : 'Sign in'}
             </button>
           </>
@@ -173,15 +173,15 @@ export default function LoginPage() {
             whileTap={{ scale: 0.97 }}
             onClick={google}
             disabled={googleLoading || submitting}
-            className="w-full h-[52px] rounded-full bg-card shadow-card flex items-center justify-center gap-2.5 text-headline font-semibold disabled:opacity-50"
-            style={{ boxShadow: 'inset 0 0 0 0.5px var(--separator), var(--shadow-card)' }}
+            className="w-full h-[52px] rounded-full bg-card flex items-center justify-center gap-2.5 text-headline font-medium disabled:opacity-50"
+            style={{ boxShadow: 'inset 0 0 0 1px var(--separator)' }}
           >
             <GoogleGlyph />
             {googleLoading ? 'Opening Google…' : 'Continue with Google'}
           </motion.button>
           <div className="flex items-center gap-3 my-5">
             <span className="h-px flex-1 bg-separator" />
-            <span className="text-footnote text-label-2">or use email</span>
+            <span className="eyebrow text-label-3">or email</span>
             <span className="h-px flex-1 bg-separator" />
           </div>
         </>
@@ -232,7 +232,7 @@ export default function LoginPage() {
 
         {mode === 'signin' && (
           <div className="text-right mt-2.5 px-1">
-            <button type="button" onClick={() => switchMode('forgot')} className="text-footnote font-semibold text-tint">
+            <button type="button" onClick={() => switchMode('forgot')} className="text-footnote font-medium text-tint">
               Forgot password?
             </button>
           </div>

@@ -22,7 +22,7 @@ export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjec
                 key={`review-${entry.chapterId}`}
                 onClick={() => entry.onOpen?.(chapter)}
                 title={`Review ${entry.reviewNumber} — ${chapter.title}`}
-                className={`inline-flex items-center gap-1 rounded-full bg-tint/15 text-tint font-semibold active:bg-tint/25 hover:bg-tint/20 transition-colors duration-100 ${
+                className={`inline-flex items-center gap-1 rounded-full bg-tint/15 text-tint font-medium active:bg-tint/25 hover:bg-tint/20 transition-colors duration-100 ${
                   compact ? 'w-full min-w-0 px-1.5 h-[22px] text-[10.5px]' : 'px-2.5 h-7 text-footnote'
                 }`}
               >
@@ -57,7 +57,7 @@ export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjec
                 role="checkbox"
                 aria-checked={entry.done}
                 aria-label={`Mark ${title} studied`}
-                className="h-[15px] w-[15px] shrink-0 rounded-full flex items-center justify-center text-white"
+                className="h-[15px] w-[15px] shrink-0 rounded-full flex items-center justify-center text-tint-fg"
                 style={{ background: entry.done ? color : 'var(--card)', boxShadow: entry.done ? 'none' : `inset 0 0 0 1.5px ${color}` }}
               >
                 {entry.done && <Check size={9} strokeWidth={3.5} />}
@@ -66,7 +66,7 @@ export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjec
                 type="button"
                 onClick={() => onOpenBlock(entry)}
                 title={extra > 0 ? `${title} +${extra} more` : title}
-                className={`font-semibold truncate text-left ${compact ? 'min-w-0 flex-1 text-[11px]' : 'max-w-[180px] text-footnote'} ${
+                className={`font-medium truncate text-left ${compact ? 'min-w-0 flex-1 text-[11px]' : 'max-w-[180px] text-footnote'} ${
                   entry.done ? 'line-through' : ''
                 }`}
                 style={{ color: `color-mix(in srgb, ${color} 70%, var(--label))` }}

@@ -4,7 +4,7 @@ import { press, snappy } from './motion'
 
 const VARIANT = {
   // Filled with the accent — one per screen, for the thing you came to do.
-  primary: 'tint-fill text-white shadow-tint',
+  primary: 'tint-fill text-tint-fg',
   // Accent text on a soft accent wash — iOS's "tinted" button style.
   tinted: 'bg-tint/15 text-tint',
   // Neutral fill — secondary actions that sit beside a primary.
@@ -15,9 +15,9 @@ const VARIANT = {
 }
 
 const SIZE = {
-  lg: 'h-[52px] px-6 text-headline font-semibold gap-2',
-  md: 'h-11 px-5 text-subhead font-semibold gap-1.5',
-  sm: 'h-[34px] px-3.5 text-footnote font-semibold gap-1.5',
+  lg: 'h-[52px] px-6 text-headline font-medium gap-2',
+  md: 'h-11 px-5 text-subhead font-medium gap-1.5',
+  sm: 'h-[34px] px-3.5 text-footnote font-medium gap-1.5',
 }
 
 export const Button = forwardRef(function Button(

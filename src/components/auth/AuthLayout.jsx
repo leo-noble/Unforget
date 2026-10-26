@@ -10,11 +10,11 @@ import { easeOut } from '../ui/motion'
 export default function AuthLayout({ title, subtitle, children, footer, back = true }) {
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-canvas overflow-hidden">
-      <div aria-hidden="true" className="ambient pointer-events-none absolute inset-x-0 top-0 h-[560px]" />
+      <div aria-hidden="true" className="ambient pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
       {back && (
         <div className="relative px-4 sm:px-6" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)' }}>
-          <Link to="/welcome" className="inline-flex items-center gap-1 h-9 pl-2 pr-3.5 rounded-full glass text-subhead font-semibold">
-            <ArrowLeft size={17} strokeWidth={2.4} /> About
+          <Link to="/welcome" className="inline-flex items-center gap-1.5 h-9 pl-2.5 pr-4 rounded-full bg-card eyebrow text-label">
+            <ArrowLeft size={14} strokeWidth={2} /> About
           </Link>
         </div>
       )}
@@ -27,13 +27,13 @@ export default function AuthLayout({ title, subtitle, children, footer, back = t
         >
           <div className="flex flex-col items-center text-center mb-7">
             <motion.div
-              initial={{ scale: 0.8, rotate: -8 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.05 }}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.05 }}
             >
-              <AppIcon size={76} />
+              <AppIcon size={68} />
             </motion.div>
-            <h1 className="text-title-1 font-bold mt-5">{title}</h1>
+            <h1 className="text-title-1 font-medium mt-6 tracking-[-0.02em]">{title}</h1>
             {subtitle && <p className="text-body text-label-2 mt-1.5 max-w-[320px]">{subtitle}</p>}
           </div>
           {children}
@@ -67,7 +67,7 @@ export function ErrorNote({ children }) {
     <motion.p
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-3 px-4 py-3 rounded-[16px] bg-red/10 text-red text-footnote font-medium"
+      className="mt-3 px-4 py-3 rounded-[16px] bg-red/10 text-red text-footnote"
       role="alert"
     >
       {children}

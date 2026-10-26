@@ -52,14 +52,14 @@ export function ToastProvider({ children }) {
               >
                 {toast.icon && (
                   <span
-                    className="h-9 w-9 rounded-full flex items-center justify-center text-white shrink-0"
+                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${toast.tone === 'red' ? 'text-white' : 'text-tint-fg'}`}
                     style={{ background: `var(--${toast.tone || 'tint'})` }}
                   >
                     <toast.icon size={18} strokeWidth={2.6} />
                   </span>
                 )}
                 <span className="min-w-0">
-                  <span className="block text-subhead font-semibold truncate">{toast.title}</span>
+                  <span className="block text-subhead font-medium truncate">{toast.title}</span>
                   {toast.message && <span className="block text-footnote text-label-2 truncate">{toast.message}</span>}
                 </span>
               </motion.div>

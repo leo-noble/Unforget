@@ -1,13 +1,14 @@
-// Each timer phase gets its own system colour, so the dial, the dock pill and
-// the ambient glow all tell you at a glance whether you're working or resting.
+// Focus is red — the one colour, like a recording light. Breaks are plain ink,
+// so a glance at the dial says whether you should be working or resting.
 export const PHASE_COLOR = {
-  work: 'var(--tint)',
-  short_break: 'var(--green)',
-  long_break: 'var(--teal)',
+  work: 'var(--red)',
+  short_break: 'var(--label)',
+  long_break: 'var(--label)',
 }
 
-export const PHASE_COLOR_2 = {
-  work: 'var(--tint-2)',
-  short_break: 'var(--mint)',
-  long_break: 'var(--cyan)',
+// Foreground for anything filled with the phase colour.
+export const PHASE_FG = {
+  work: '#ffffff',
+  short_break: 'var(--tint-fg)',
+  long_break: 'var(--tint-fg)',
 }

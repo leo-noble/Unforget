@@ -14,7 +14,7 @@ export default function Switch({ checked, onChange, label, disabled = false }) {
       onClick={() => onChange?.(!checked)}
       whileTap="pressed"
       className={`relative flex w-[51px] h-[31px] shrink-0 rounded-full p-[2px] transition-colors duration-200 disabled:opacity-40 ${
-        checked ? 'bg-green' : 'bg-fill-2'
+        checked ? 'bg-red' : 'bg-fill-2'
       }`}
     >
       <motion.span

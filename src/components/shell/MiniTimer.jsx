@@ -46,12 +46,12 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
           <span className={`h-2 w-2 rounded-full ${running ? 'pulse-dot' : ''}`} style={{ background: color }} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-footnote font-semibold truncate">{timer.meta.label}</span>
+          <span className="block eyebrow text-label truncate">{timer.meta.label}</span>
           <span className="block text-caption text-label-2 truncate">
             {chapterTitle || (running ? 'In progress' : 'Paused')}
           </span>
         </span>
-        <span className="font-rounded text-title-3 font-semibold tabular">
+        <span className="font-dot text-[24px] leading-none tabular">
           {timer.mins}:{timer.secs}
         </span>
       </button>

@@ -1,66 +1,38 @@
-// The Retavo mark: a planet with one ring and a small moon on it — the
-// chapter, and the review that keeps coming back around to it. Kept as a plain string builder
-// (no JSX) so the same art renders the in-app icon and, via
-// scripts/generate-icons.mjs, every PNG the Home Screen and browsers use.
+// The Fivedot mark: a dot-matrix field with five lit dots on its middle row,
+// each gap one step wider than the last (1, 2, 3, 4) — the shape of the
+// review schedule itself. The fifth dot, mastery, is the red one.
 //
-// `id` namespaces the gradient ids: two inline SVGs sharing an id would both
-// resolve to whichever came first, which breaks if that one is display:none.
+// A plain string builder (no JSX) so the same art renders the in-app icon
+// and, via scripts/generate-icons.mjs, every PNG the Home Screen uses.
 
-export function appIconSVG({ id = 'appicon', shape = 'squircle', glyphScale = 1 } = {}) {
-  const g = (name) => `${id}-${name}`
-  const bg =
-    shape === 'squircle'
-      ? `<rect width="1024" height="1024" rx="232" fill="url(#${g('bg')})"/>
-         <rect width="1024" height="1024" rx="232" fill="url(#${g('sheen')})"/>`
-      : `<rect width="1024" height="1024" fill="url(#${g('bg')})"/>
-         <rect width="1024" height="1024" fill="url(#${g('sheen')})"/>`
+const COLS = 13
+const LIT = [1, 2, 4, 7, 11] // gaps of 1, 2, 3, 4 across a 13-dot row
+const ROW = 6
 
-  const s = glyphScale
-  const t = `translate(512 512) scale(${s}) rotate(-22)`
+export function appIconSVG({ shape = 'squircle', glyphScale = 1, outline = false } = {}) {
+  const step = 1024 / COLS
+  const c = (i) => (step * (i + 0.5)).toFixed(1)
+  const field = []
+  for (let r = 0; r < COLS; r++) {
+    for (let col = 0; col < COLS; col++) {
+      if (r === ROW && LIT.includes(col)) continue
+      // Dots fade toward the edges so the field reads as a glow, not a grid.
+      const o = Math.max(0, 0.22 - (Math.hypot(col - 6, r - 6) / 8.5) * 0.18)
+      if (o > 0.01) field.push(`<circle cx="${c(col)}" cy="${c(r)}" r="9" fill="#fff" fill-opacity="${o.toFixed(3)}"/>`)
+    }
+  }
+  const lit = LIT.map(
+    (col, i) => `<circle cx="${c(col)}" cy="${c(ROW)}" r="34" fill="${i === LIT.length - 1 ? '#D71921' : '#FFFFFF'}"/>`
+  ).join('')
+
+  const rx = shape === 'squircle' ? 232 : 0
+  const edge = outline
+    ? `<rect x="2" y="2" width="1020" height="1020" rx="${rx}" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="4"/>`
+    : ''
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
-  <defs>
-    <linearGradient id="${g('bg')}" x1="0.1" y1="0" x2="0.9" y2="1">
-      <stop offset="0" stop-color="#8E7DFF"/>
-      <stop offset="0.5" stop-color="#5A48EE"/>
-      <stop offset="1" stop-color="#2A2390"/>
-    </linearGradient>
-    <radialGradient id="${g('sheen')}" cx="0.3" cy="0.02" r="0.85">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.42"/>
-      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.06"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="${g('planet')}" cx="0.36" cy="0.3" r="0.78">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="0.55" stop-color="#E4E0FF"/>
-      <stop offset="1" stop-color="#A79DFF"/>
-    </radialGradient>
-    <linearGradient id="${g('ring')}" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
-      <stop offset="0.5" stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.85"/>
-    </linearGradient>
-    <radialGradient id="${g('moon')}" cx="0.35" cy="0.3" r="0.8">
-      <stop offset="0" stop-color="#FFF6D6"/>
-      <stop offset="0.6" stop-color="#FFD15C"/>
-      <stop offset="1" stop-color="#FF9F2E"/>
-    </radialGradient>
-    <radialGradient id="${g('glow')}" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  ${bg}
-  <circle cx="512" cy="512" r="${300 * s}" fill="url(#${g('glow')})"/>
-  <g transform="${t}">
-    <path d="M -356 0 A 356 124 0 0 1 356 0" fill="none" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="44" stroke-linecap="butt"/>
-  </g>
-  <circle cx="512" cy="512" r="${166 * s}" fill="url(#${g('planet')})"/>
-  <g transform="${t}">
-    <path d="M -356 0 A 356 124 0 0 0 356 0" fill="none" stroke="#2A2390" stroke-opacity="0.22" stroke-width="64" stroke-linecap="butt"/>
-    <path d="M -356 0 A 356 124 0 0 0 356 0" fill="none" stroke="url(#${g('ring')})" stroke-width="44" stroke-linecap="butt"/>
-    <circle cx="226" cy="96" r="50" fill="#2A2390" fill-opacity="0.25"/>
-    <circle cx="226" cy="92" r="44" fill="url(#${g('moon')})"/>
-  </g>
+  <rect width="1024" height="1024" rx="${rx}" fill="#000"/>
+  <g transform="translate(512 512) scale(${glyphScale}) translate(-512 -512)">${field.join('')}${lit}</g>
+  ${edge}
 </svg>`
 }

@@ -80,7 +80,7 @@ export default function StudyBlock({
               role="checkbox"
               aria-checked={block.done}
               aria-label={`Mark ${title} studied`}
-              className="mt-[1px] h-4 w-4 shrink-0 rounded-full flex items-center justify-center text-white"
+              className="mt-[1px] h-4 w-4 shrink-0 rounded-full flex items-center justify-center text-tint-fg"
               style={{
                 background: block.done ? color : 'var(--card)',
                 boxShadow: block.done ? 'none' : `inset 0 0 0 1.5px ${color}`,
@@ -91,7 +91,7 @@ export default function StudyBlock({
           )}
           <span className="min-w-0 flex-1">
             <span
-              className={`block text-[12.5px] leading-[1.3] font-semibold truncate ${block.done ? 'line-through' : ''}`}
+              className={`block text-[12.5px] leading-[1.3] font-medium truncate ${block.done ? 'line-through' : ''}`}
               style={{ color: `color-mix(in srgb, ${color} 70%, var(--label))` }}
             >
               {title}

@@ -197,7 +197,7 @@ export default function StudyPlanSheet({
                       className="w-full flex items-center gap-3 px-4 min-h-[52px] text-left active:bg-fill"
                     >
                       <span
-                        className={`h-6 w-6 shrink-0 rounded-full flex items-center justify-center transition-colors duration-150 ${on ? 'bg-tint text-white' : ''}`}
+                        className={`h-6 w-6 shrink-0 rounded-full flex items-center justify-center transition-colors duration-150 ${on ? 'bg-tint text-tint-fg' : ''}`}
                         style={on ? undefined : { boxShadow: 'inset 0 0 0 1.5px var(--label-3)' }}
                       >
                         {on && <Check size={14} strokeWidth={3} />}
@@ -304,7 +304,7 @@ export default function StudyPlanSheet({
             title={`${rows.length} sessions · ${shortDate(rows[0].date)} – ${shortDate(rows[rows.length - 1].date)}`}
             footer={
               dropped.size > 0 ? (
-                <button type="button" onClick={() => setDropped(new Set())} className="text-tint font-semibold">
+                <button type="button" onClick={() => setDropped(new Set())} className="text-tint font-medium">
                   Restore {dropped.size} dropped day{dropped.size === 1 ? '' : 's'}
                 </button>
               ) : (
@@ -361,7 +361,7 @@ export default function StudyPlanSheet({
                   boxShadow: !color ? `0 0 0 2px var(--card), 0 0 0 4px ${activeSubjectColor || 'var(--label-3)'}` : 'none',
                 }}
               >
-                <span className="text-[9px] font-bold text-white">AUTO</span>
+                <span className="text-[9px] font-medium text-white">AUTO</span>
               </button>
               {SUBJECT_PALETTE.map((hex) => (
                 <button

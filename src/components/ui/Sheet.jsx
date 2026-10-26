@@ -151,7 +151,7 @@ export default function Sheet({
             <div className="flex items-center gap-3 min-h-[40px]">
               <div className="flex-1 flex justify-start">{leadingNode}</div>
               {title && (
-                <h2 className="text-headline font-semibold text-center truncate max-w-[60%]">{title}</h2>
+                <h2 className="text-headline font-medium text-center truncate max-w-[60%]">{title}</h2>
               )}
               <div className="flex-1 flex justify-end">{trailingNode}</div>
             </div>

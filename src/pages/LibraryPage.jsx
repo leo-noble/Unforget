@@ -84,7 +84,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
           placeholder="Search chapters and subjects"
           aria-label="Search chapters and subjects"
           enterKeyHint="search"
-          className="w-full h-11 rounded-full bg-fill pl-10 pr-10 text-body outline-none placeholder:text-label-2 focus:ring-2 focus:ring-tint/30"
+          className="w-full h-11 rounded-full bg-card pl-10 pr-10 text-body outline-none placeholder:text-label-3 focus:ring-1 focus:ring-label-3"
         />
         <AnimatePresence>
           {query && (
@@ -117,13 +117,13 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
                 whileTap={{ scale: 0.94 }}
                 transition={snappy}
                 onClick={() => setFilter(f.id)}
-                className={`relative h-9 px-4 rounded-full text-subhead font-semibold flex items-center gap-1.5 ${
-                  on ? 'text-white' : 'bg-card text-label shadow-card'
+                className={`relative h-9 px-4 rounded-full text-subhead flex items-center gap-1.5 ${
+                  on ? 'text-tint-fg' : 'bg-card text-label'
                 }`}
               >
                 {on && <motion.span layoutId="library-chip" transition={snappy} className="absolute inset-0 rounded-full tint-fill" />}
                 <span className="relative">{f.label}</span>
-                <span className={`relative tabular ${on ? 'text-white/80' : 'text-label-2'}`}>{counts[f.id] || 0}</span>
+                <span className={`relative font-mono text-[12px] tabular ${on ? 'text-tint-fg/70' : 'text-label-2'}`}>{counts[f.id] || 0}</span>
               </motion.button>
             )
           })}
@@ -132,10 +132,10 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
 
       {chapters.length === 0 ? (
         <div className="bg-card rounded-[28px] px-6 py-10 text-center">
-          <span className="mx-auto h-14 w-14 rounded-[18px] bg-tint/15 text-tint flex items-center justify-center">
-            <LibraryBig size={26} />
+          <span className="mx-auto h-14 w-14 rounded-full bg-fill text-label flex items-center justify-center">
+            <LibraryBig size={24} strokeWidth={1.6} />
           </span>
-          <h2 className="text-title-2 font-bold mt-4">Your library is empty</h2>
+          <h2 className="text-title-2 font-medium mt-4">Your library is empty</h2>
           <p className="text-subhead text-label-2 mt-1.5 max-w-[300px] mx-auto">
             Every chapter you log lands here, grouped by subject.
           </p>
@@ -165,9 +165,9 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
                 transition={{ duration: 0.35, ease: easeOut }}
               >
                 <div className="flex items-center gap-3 px-1 mb-2.5">
-                  <span className="h-3 w-3 rounded-full shrink-0" style={{ background: color }} />
-                  <h2 className="text-title-3 font-bold truncate flex-1 min-w-0">{subject.name}</h2>
-                  <span className="text-subhead text-label-2 tabular shrink-0">{Math.round(progress * 100)}%</span>
+                  <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: color }} />
+                  <h2 className="text-title-3 font-medium truncate flex-1 min-w-0">{subject.name}</h2>
+                  <span className="font-mono text-[12px] text-label-2 tabular shrink-0">{Math.round(progress * 100)}%</span>
                   <button
                     type="button"
                     onClick={() => deleteSubject(subject, all.length)}

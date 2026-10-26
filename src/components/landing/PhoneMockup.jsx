@@ -1,96 +1,113 @@
 import { motion } from 'framer-motion'
-import { SunMedium, LibraryBig, CalendarDays, Timer, Plus, Flame, ChevronRight } from 'lucide-react'
-import ProgressRing from '../ui/ProgressRing'
+import { SunMedium, LibraryBig, CalendarDays, Timer, Plus } from 'lucide-react'
 
 const ROWS = [
-  { title: 'Vector Algebra', meta: 'Physics · Review 2 of 5', when: '1d late', color: 'var(--blue)', tone: 'var(--red)' },
-  { title: 'Periodic Trends', meta: 'Chemistry · Review 1 of 5', when: 'Today', color: 'var(--orange)', tone: 'var(--tint)' },
-  { title: 'Cell Division', meta: 'Biology · Review 3 of 5', when: 'Today', color: 'var(--green)', tone: 'var(--tint)' },
+  { title: 'Vector Algebra', meta: 'Physics · Review 2 of 5', when: '1D LATE', color: '#0A84FF', late: true },
+  { title: 'Periodic Trends', meta: 'Chemistry · Review 1 of 5', when: 'TODAY', color: '#FF9500' },
+  { title: 'Cell Division', meta: 'Biology · Review 3 of 5', when: 'TODAY', color: '#34C759' },
 ]
 
-// A faithful miniature of the Today screen inside an iPhone — the thing a
-// returning user actually sees every morning, glass tab bar and all.
+const TABS = [
+  [SunMedium, 'Today'],
+  [LibraryBig, 'Library'],
+  [CalendarDays, 'Plan'],
+  [Timer, 'Focus'],
+]
+
+// A faithful miniature of the Today screen in a phone frame — what a student
+// actually opens every morning. Sized in px against a fixed 300px-wide screen
+// and scaled as a whole, so it keeps its proportions on any viewport.
 export default function PhoneMockup() {
   return (
-    <div className="relative w-[272px] sm:w-[300px] select-none" aria-hidden="true">
-      <div className="relative rounded-[52px] bg-[#0c0c10] p-[9px] shadow-[0_40px_80px_-24px_rgba(20,16,80,0.45),0_0_0_1.5px_rgba(255,255,255,0.06)_inset]">
-        <div className="relative overflow-hidden rounded-[44px] bg-canvas aspect-[9/19.5]">
-          <div className="ambient absolute inset-x-0 top-0 h-[60%]" />
-          {/* Dynamic Island */}
-          <div className="absolute top-[10px] left-1/2 -translate-x-1/2 h-[26px] w-[88px] rounded-full bg-black z-20" />
-          <div className="relative z-10 flex items-center justify-between px-7 pt-[13px] text-[12px] font-semibold">
+    <div className="relative w-[min(76vw,300px)] select-none" aria-hidden="true">
+      <div className="relative rounded-[48px] bg-[#0a0a0a] p-[8px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
+        <div className="relative overflow-hidden rounded-[40px] bg-canvas aspect-[9/19.5]">
+          <div className="ambient absolute inset-x-0 top-0 h-[45%]" />
+          <div className="absolute top-[9px] left-1/2 -translate-x-1/2 h-[24px] w-[84px] rounded-full bg-black z-20" />
+          <div className="relative z-10 flex items-center justify-between px-7 pt-[12px] font-mono text-[10px]">
             <span>9:41</span>
-            <span className="flex items-center gap-1">
-              <span className="h-[9px] w-[16px] rounded-[3px] border border-label/60 p-[1px]">
-                <span className="block h-full w-[70%] rounded-[1px] bg-label" />
-              </span>
+            <span className="h-[8px] w-[15px] rounded-[2px] border border-label/60 p-[1px]">
+              <span className="block h-full w-[70%] rounded-[1px] bg-label" />
             </span>
           </div>
 
-          <div className="relative z-10 px-4 pt-6">
-            <p className="text-[9.5px] font-semibold uppercase tracking-[0.04em] text-label-2">Tuesday, October 28</p>
-            <p className="text-[25px] font-bold leading-tight tracking-tight">Today</p>
+          <div className="relative z-10 px-4 pt-7">
+            <p className="font-mono text-[7.5px] tracking-[0.12em] uppercase text-label-2">Tuesday, Oct 28</p>
+            <p className="font-dot text-[27px] leading-none uppercase mt-1.5">Today</p>
 
-            <div className="mt-3 bg-card rounded-[20px] p-3 flex items-center gap-3 shadow-card">
-              <ProgressRing progress={0.4} size={62} stroke={8}>
-                <span className="font-rounded text-[18px] font-bold leading-none">3</span>
-                <span className="text-[8px] text-label-2">to go</span>
-              </ProgressRing>
-              <div className="min-w-0">
-                <p className="text-[13px] font-bold leading-tight">Good morning, Sam</p>
-                <p className="text-[10px] text-label-2 mt-0.5">3 reviews left · 1 overdue</p>
-                <span className="mt-1.5 inline-flex items-center gap-1 h-[18px] px-1.5 rounded-full bg-orange/15 text-orange text-[9px] font-semibold">
-                  <Flame size={9} /> 12-day streak
+            <div className="mt-3.5 bg-card rounded-[18px] p-3.5">
+              <div className="flex justify-between font-mono text-[6.5px] tracking-[0.12em] uppercase">
+                <span className="text-label-2">To review</span>
+                <span className="flex items-center gap-1">
+                  <span className="h-[4px] w-[4px] rounded-full bg-red" /> 12 day streak
                 </span>
+              </div>
+              <div className="flex items-end gap-2 mt-2">
+                <span className="font-dot text-[54px] leading-[0.82]">03</span>
+                <span className="text-[8.5px] leading-[1.35] text-label-2 pb-0.5">
+                  Good morning, Sam.
+                  <br />1 overdue — start there.
+                </span>
+              </div>
+              <div className="flex gap-[4px] mt-3">
+                {[1, 1, 0, 0, 0].map((on, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 22, delay: 0.5 + i * 0.06 }}
+                    className="h-[7px] w-[7px] rounded-full"
+                    style={{
+                      background: on ? 'var(--label)' : 'transparent',
+                      boxShadow: on ? 'none' : `inset 0 0 0 1px ${i === 2 ? 'var(--red)' : 'var(--label-3)'}`,
+                    }}
+                  />
+                ))}
               </div>
             </div>
 
-            <p className="text-[14px] font-bold mt-4 mb-1.5 px-0.5">Due Today</p>
-            <div className="bg-card rounded-[16px] overflow-hidden shadow-card">
+            <p className="font-mono text-[6.5px] tracking-[0.12em] uppercase mt-4 mb-1.5 px-0.5">Due today · 03</p>
+            <div className="bg-card rounded-[16px] overflow-hidden">
               {ROWS.map((r, i) => (
                 <motion.div
                   key={r.title}
-                  initial={{ opacity: 0, x: -12 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 + i * 0.12, ease: [0.32, 0.72, 0, 1] }}
-                  className={`flex items-center gap-2.5 px-3 py-2 ${i > 0 ? 'hairline-t' : ''}`}
+                  transition={{ duration: 0.5, delay: 0.7 + i * 0.1, ease: [0.32, 0.72, 0, 1] }}
+                  className={`flex items-center gap-2.5 px-3 py-[7px] ${i > 0 ? 'hairline-t' : ''}`}
                 >
-                  <span className="h-[15px] w-[15px] rounded-full shrink-0" style={{ boxShadow: `inset 0 0 0 1.4px ${r.tone}` }} />
+                  <span
+                    className="h-[13px] w-[13px] rounded-full shrink-0"
+                    style={{ boxShadow: `inset 0 0 0 1px ${r.late ? 'var(--red)' : 'var(--label)'}` }}
+                  />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[11.5px] truncate">{r.title}</span>
-                    <span className="block text-[9px] text-label-2 truncate">
-                      <span className="inline-block h-[5px] w-[5px] rounded-full mr-1 align-[1px]" style={{ background: r.color }} />
+                    <span className="block text-[10.5px] truncate">{r.title}</span>
+                    <span className="block text-[8px] text-label-2 truncate">
+                      <span className="inline-block h-[4px] w-[4px] rounded-full mr-1 align-[1px]" style={{ background: r.color }} />
                       {r.meta}
                     </span>
                   </span>
-                  <span className="text-[9.5px] font-semibold shrink-0" style={{ color: r.tone }}>
-                    {r.when}
-                  </span>
-                  <ChevronRight size={11} className="text-label-3 shrink-0" />
+                  <span className={`font-mono text-[7px] shrink-0 ${r.late ? 'text-red' : 'text-label'}`}>{r.when}</span>
                 </motion.div>
               ))}
             </div>
           </div>
 
-          {/* Floating glass tab bar + add button */}
-          <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[18px] flex items-center gap-2">
-            <div className="glass flex-1 h-[46px] rounded-full p-[3px] flex">
-              {[SunMedium, LibraryBig, CalendarDays, Timer].map((Icon, i) => (
-                <span
-                  key={i}
-                  className={`relative flex-1 flex flex-col items-center justify-center gap-[2px] rounded-full ${i === 0 ? 'bg-fill text-tint' : ''}`}
-                >
-                  <Icon size={15} strokeWidth={2.2} />
-                  <span className="text-[7px] font-semibold">{['Today', 'Library', 'Plan', 'Focus'][i]}</span>
+          <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[16px] flex items-center gap-2">
+            <div className="glass flex-1 h-[44px] rounded-full px-1 flex">
+              {TABS.map(([Icon, label], i) => (
+                <span key={label} className={`relative flex-1 flex flex-col items-center justify-center gap-[3px] ${i === 0 ? 'text-label' : 'text-label-3'}`}>
+                  {i === 0 && <span className="absolute top-[5px] right-[calc(50%-11px)] h-[3px] w-[3px] rounded-full bg-red" />}
+                  <Icon size={14} strokeWidth={1.7} />
+                  <span className="font-mono text-[5.5px] uppercase tracking-[0.1em]">{label}</span>
                 </span>
               ))}
             </div>
-            <span className="glass-tint h-[46px] w-[46px] rounded-full flex items-center justify-center">
-              <Plus size={20} strokeWidth={2.6} />
+            <span className="h-[44px] w-[44px] rounded-full bg-red text-white flex items-center justify-center">
+              <Plus size={18} strokeWidth={2} />
             </span>
           </div>
-          {/* Home indicator */}
-          <div className="absolute bottom-[6px] left-1/2 -translate-x-1/2 h-[4px] w-[96px] rounded-full bg-label/80 z-20" />
+          <div className="absolute bottom-[5px] left-1/2 -translate-x-1/2 h-[4px] w-[90px] rounded-full bg-label/80 z-20" />
         </div>
       </div>
     </div>

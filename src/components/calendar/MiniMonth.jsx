@@ -19,7 +19,7 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
   return (
     <div className="select-none">
       <div className="flex items-center justify-between mb-2 pl-1.5">
-        <p className="text-headline font-semibold">
+        <p className="text-headline font-medium">
           {new Date(year, month, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
         </p>
         <div className="flex items-center">
@@ -33,7 +33,7 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
       </div>
       <div className="grid grid-cols-7">
         {WEEKDAYS.map((w, i) => (
-          <div key={i} className="text-center text-[10.5px] font-semibold text-label-3 pb-1">
+          <div key={i} className="text-center text-[10.5px] font-medium text-label-3 pb-1">
             {w}
           </div>
         ))}
@@ -53,7 +53,7 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
             >
               <span
                 className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                  isToday ? 'bg-tint text-white font-semibold' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
+                  isToday ? 'bg-red text-white font-medium' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
                 }`}
               >
                 {cell.date.getDate()}

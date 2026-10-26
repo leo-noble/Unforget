@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Check, Smartphone, Share, SquarePlus, Cloud, CloudOff } from 'lucide-react'
+import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -11,10 +11,8 @@ import { useAuth } from '../../lib/useAuth'
 import { useConfirm } from '../ui/Alert'
 import { enablePushNotifications, disablePushNotifications } from '../../lib/push'
 import { flushCloudData } from '../../lib/cloudSync'
-import { ACCENTS, resolveAccent, resolveMode } from '../../lib/appearance'
 import { isIOS, isStandalone } from '../ui/useMediaQuery'
 import { APP_NAME, TAGLINE } from '../../brand'
-import { snappy } from '../ui/motion'
 
 const SYNC_LABEL = {
   synced: 'Up to date',
@@ -30,7 +28,6 @@ export default function SettingsSheet({ cadence, onClose }) {
   const { user, displayName, avatarUrl, signOut } = useAuth()
   const [message, setMessage] = useState('')
 
-  const accent = resolveAccent(prefs.theme)
   const mode = prefs.themeMode === 'light' || prefs.themeMode === 'dark' ? prefs.themeMode : 'system'
   const completed = events.filter((e) => e.action === 'completed').length
 
@@ -91,17 +88,17 @@ export default function SettingsSheet({ cadence, onClose }) {
         {/* Account */}
         <div className="flex flex-col items-center text-center pt-1">
           <Avatar name={displayName} src={avatarUrl} size={76} />
-          <p className="text-title-2 font-bold mt-3">{displayName || 'Your account'}</p>
+          <p className="text-title-2 font-medium mt-4">{displayName || 'Your account'}</p>
           {user?.email && <p className="text-subhead text-label-2">{user.email}</p>}
-          <div className="mt-4 grid grid-cols-3 w-full max-w-[360px] bg-card rounded-cell py-3">
+          <div className="mt-5 grid grid-cols-3 w-full max-w-[360px] bg-card rounded-cell py-4">
             {[
               [subjects.length, 'Subjects'],
               [chapters.length, 'Chapters'],
               [completed, 'Reviews'],
             ].map(([n, label], i) => (
               <div key={label} className={i > 0 ? 'border-l border-separator' : ''}>
-                <p className="font-rounded text-title-2 font-semibold tabular">{n}</p>
-                <p className="text-caption text-label-2">{label}</p>
+                <p className="font-dot text-[30px] leading-none tabular">{n}</p>
+                <p className="eyebrow text-label-2 mt-1.5">{label}</p>
               </div>
             ))}
           </div>
@@ -118,37 +115,10 @@ export default function SettingsSheet({ cadence, onClose }) {
               options={[
                 { id: 'light', label: 'Light' },
                 { id: 'dark', label: 'Dark' },
-                { id: 'system', label: 'Automatic' },
+                { id: 'system', label: 'Auto' },
               ]}
               className="w-full"
             />
-          </div>
-          <div className="px-4 py-3.5">
-            <p className="text-subhead text-label-2 mb-3">Accent colour</p>
-            <div className="flex justify-between gap-2 max-w-[360px]">
-              {ACCENTS.map((a) => {
-                const on = accent === a.id
-                const hex = resolveMode(prefs.themeMode) === 'dark' ? a.dark : a.light
-                return (
-                  <motion.button
-                    key={a.id}
-                    type="button"
-                    whileTap={{ scale: 0.88 }}
-                    transition={snappy}
-                    onClick={() => updatePrefs({ theme: a.id })}
-                    aria-label={a.label}
-                    aria-pressed={on}
-                    className="h-9 w-9 rounded-full flex items-center justify-center"
-                    style={{
-                      background: hex,
-                      boxShadow: on ? `0 0 0 2.5px var(--card), 0 0 0 4.5px ${hex}` : 'none',
-                    }}
-                  >
-                    {on && <Check size={17} strokeWidth={3} className="text-white" />}
-                  </motion.button>
-                )
-              })}
-            </div>
           </div>
         </Section>
 
@@ -166,7 +136,6 @@ export default function SettingsSheet({ cadence, onClose }) {
         >
           <Row
             icon={Bell}
-            iconColor="var(--red)"
             title="Daily reminder"
             trailing={
               <Switch
@@ -180,7 +149,6 @@ export default function SettingsSheet({ cadence, onClose }) {
             <>
               <Row
                 icon={Clock}
-                iconColor="var(--orange)"
                 title="Time"
                 trailing={
                   <input
@@ -192,7 +160,7 @@ export default function SettingsSheet({ cadence, onClose }) {
                   />
                 }
               />
-              <Row icon={BellRing} iconColor="var(--purple)" title="Send a test notification" onClick={testNotification} chevron />
+              <Row icon={BellRing} title="Send a test notification" onClick={testNotification} chevron />
             </>
           )}
         </Section>
@@ -201,7 +169,6 @@ export default function SettingsSheet({ cadence, onClose }) {
         <Section title="Sync" footer="Your chapters sync to every device you sign in on.">
           <Row
             icon={syncState === 'offline' ? CloudOff : Cloud}
-            iconColor="var(--blue)"
             title="Cloud sync"
             subtitle={SYNC_LABEL[syncState] || SYNC_LABEL.synced}
             trailing={
@@ -211,7 +178,7 @@ export default function SettingsSheet({ cadence, onClose }) {
                 onClick={() => syncNow()}
                 disabled={syncState === 'syncing'}
                 aria-label="Sync now"
-                className="h-9 w-9 rounded-full bg-fill flex items-center justify-center text-tint disabled:opacity-40"
+                className="h-9 w-9 rounded-full bg-fill flex items-center justify-center text-label disabled:opacity-40"
               >
                 <RefreshCw size={17} className={syncState === 'syncing' ? 'animate-spin' : ''} />
               </motion.button>
@@ -221,7 +188,7 @@ export default function SettingsSheet({ cadence, onClose }) {
 
         {showInstallHint && (
           <Section title="Install">
-            <Row icon={Smartphone} iconColor="var(--green)" title="Add to Home Screen">
+            <Row icon={Smartphone} title="Add to Home Screen">
               <span className="flex-1 min-w-0">
                 <span className="block text-body">Add to Home Screen</span>
                 <span className="block text-footnote text-label-2 mt-0.5">
@@ -233,7 +200,7 @@ export default function SettingsSheet({ cadence, onClose }) {
         )}
 
         <Section>
-          <Row icon={Info} iconColor="var(--label-2)" title={`About ${APP_NAME}`} chevron onClick={() => navigate('/welcome')} />
+          <Row icon={Info} title={`About ${APP_NAME}`} chevron onClick={() => navigate('/welcome')} />
         </Section>
 
         <Section>

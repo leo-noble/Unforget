@@ -15,7 +15,7 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
   if (status === 'mastered') {
     return (
       <span
-        className="h-[26px] w-[26px] shrink-0 rounded-full flex items-center justify-center text-white"
+        className="h-[26px] w-[26px] shrink-0 rounded-full flex items-center justify-center text-tint-fg"
         style={{ background: STATUS_TONE.mastered }}
         aria-label="Mastered"
         role="img"
@@ -55,14 +55,14 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
       }}
       aria-label={`Mark ${label} as revised`}
       className="relative h-[26px] w-[26px] shrink-0 rounded-full flex items-center justify-center"
-      style={{ boxShadow: `inset 0 0 0 1.8px ${color}` }}
+      style={{ boxShadow: `inset 0 0 0 1.5px ${color}` }}
     >
       <motion.span
         initial={false}
         animate={{ scale: checking ? 1 : 0, opacity: checking ? 1 : 0 }}
         transition={bouncy}
-        className="absolute inset-0 rounded-full flex items-center justify-center text-white"
-        style={{ background: color }}
+        className="absolute inset-0 rounded-full flex items-center justify-center"
+        style={{ background: color, color: status === 'overdue' ? '#fff' : 'var(--tint-fg)' }}
       >
         <Check size={15} strokeWidth={3.2} />
       </motion.span>

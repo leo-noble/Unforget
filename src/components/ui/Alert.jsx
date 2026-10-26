@@ -78,7 +78,7 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
         transition={snappy}
         className="glass-strong relative w-full max-w-[300px] rounded-[30px] p-5 pt-6 text-center"
       >
-        <h2 id="alert-title" className="text-headline font-semibold">
+        <h2 id="alert-title" className="text-headline font-medium">
           {title}
         </h2>
         {message && <p className="text-footnote text-label-2 mt-1.5">{message}</p>}
@@ -86,7 +86,7 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
           <button
             type="button"
             onClick={() => onSettle(false)}
-            className="h-11 rounded-full bg-fill text-subhead font-semibold active:bg-fill-2"
+            className="h-11 rounded-full bg-fill text-subhead font-medium active:bg-fill-2"
           >
             {cancelLabel}
           </button>
@@ -94,7 +94,7 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
             ref={confirmRef}
             type="button"
             onClick={() => onSettle(true)}
-            className={`h-11 rounded-full text-subhead font-semibold ${
+            className={`h-11 rounded-full text-subhead font-medium ${
               destructive ? 'bg-red text-white' : 'tint-fill text-white'
             } active:opacity-80`}
           >

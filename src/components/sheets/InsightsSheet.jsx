@@ -10,14 +10,14 @@ import { easeOut } from '../ui/motion'
 
 const DAYS = 30
 
-function Tile({ icon: Icon, color, value, label }) {
+function Tile({ icon: Icon, value, label, accent = false }) {
   return (
-    <div className="bg-card rounded-cell p-4">
-      <span className="h-8 w-8 rounded-full flex items-center justify-center text-white" style={{ background: color }}>
-        <Icon size={17} strokeWidth={2.4} />
-      </span>
-      <p className="font-rounded text-title-1 font-bold tabular mt-3">{value}</p>
-      <p className="text-footnote text-label-2">{label}</p>
+    <div className="relative overflow-hidden bg-card rounded-cell p-4 min-h-[124px] flex flex-col justify-between">
+      <div className="flex items-start justify-between">
+        <span className="eyebrow text-label-2">{label}</span>
+        <Icon size={16} strokeWidth={1.75} className={accent ? 'text-red' : 'text-label-3'} />
+      </div>
+      <p className="font-dot text-[44px] leading-none tabular mt-4">{value}</p>
     </div>
   )
 }
@@ -75,22 +75,21 @@ export default function InsightsSheet({ cadence, onClose }) {
     <Sheet title="Insights" onClose={onClose} size="lg" trailing={null}>
       <div className="space-y-7">
         <div className="grid grid-cols-2 gap-3">
-          <Tile icon={Flame} color="var(--orange)" value={streak.count} label="day streak" />
+          <Tile icon={Flame} accent value={streak.count} label="Day streak" />
           <Tile
             icon={Target}
-            color="var(--pink)"
-            value={totals.retention === null ? '—' : `${totals.retention}%`}
-            label="retention"
+                        value={totals.retention === null ? '—' : `${totals.retention}%`}
+            label="Retention"
           />
-          <Tile icon={CheckCheck} color="var(--tint)" value={totals.completed} label="reviews done" />
-          <Tile icon={Award} color="var(--green)" value={totals.mastered} label="chapters mastered" />
+          <Tile icon={CheckCheck} value={totals.completed} label="Reviews done" />
+          <Tile icon={Award} value={totals.mastered} label="Mastered" />
         </div>
 
         <Section title="Last 30 days">
           <div className="p-4">
             <div className="flex items-baseline justify-between mb-4 min-h-[44px]">
               <div>
-                <p className="font-rounded text-title-2 font-bold tabular">
+                <p className="font-dot text-[40px] leading-none tabular">
                   {sel ? sel.count : activity.total}
                   <span className="text-subhead font-medium text-label-2 ml-1.5">
                     {sel ? (sel.count === 1 ? 'review' : 'reviews') : activity.total === 1 ? 'review' : 'reviews'}
@@ -114,8 +113,8 @@ export default function InsightsSheet({ cadence, onClose }) {
                     animate={{ scaleY: Math.max(0.04, d.pct) }}
                     transition={{ duration: 0.5, delay: i * 0.012, ease: easeOut }}
                     style={{ originY: 1 }}
-                    className={`block w-full h-full rounded-[4px] ${
-                      d.count > 0 ? (picked === i ? 'bg-tint' : 'tint-gradient') : 'bg-fill'
+                    className={`block w-full h-full rounded-full ${
+                      d.count > 0 ? (picked === i || i === activity.bars.length - 1 ? 'bg-red' : 'bg-label') : 'bg-fill'
                     } ${picked != null && picked !== i ? 'opacity-50' : ''}`}
                   />
                 </button>

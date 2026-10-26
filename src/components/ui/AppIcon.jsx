@@ -1,22 +1,16 @@
-import { useId, useMemo } from 'react'
+import { useMemo } from 'react'
 import { appIconSVG } from './iconArt'
 
-// The app icon, drawn inline. Same art as the Home Screen icon, so the app's
-// own chrome and what's on the user's phone are visibly the same thing.
-export default function AppIcon({ size = 56, className = '', shadow = true }) {
-  const raw = useId()
-  const id = `ai${raw.replace(/[^a-zA-Z0-9]/g, '')}`
-  const html = useMemo(() => appIconSVG({ id }), [id])
+// The app icon, drawn inline — same art as the Home Screen icon. A hairline
+// edge keeps the black tile visible on a black canvas.
+export default function AppIcon({ size = 56, className = '' }) {
+  const html = useMemo(() => appIconSVG({ outline: true }), [])
   return (
     <span
       role="img"
-      aria-label="Retavo"
+      aria-label="Fivedot"
       className={`inline-block shrink-0 ${className}`}
-      style={{
-        width: size,
-        height: size,
-        filter: shadow ? `drop-shadow(0 ${size * 0.08}px ${size * 0.16}px rgba(42, 35, 144, 0.28))` : undefined,
-      }}
+      style={{ width: size, height: size }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

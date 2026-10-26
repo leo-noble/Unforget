@@ -13,7 +13,7 @@ import { spring } from '../ui/motion'
 function StateDot({ state }) {
   if (state === 'done') {
     return (
-      <span className="h-6 w-6 rounded-full bg-green text-white flex items-center justify-center shrink-0">
+      <span className="h-6 w-6 rounded-full bg-green text-tint-fg flex items-center justify-center shrink-0">
         <Check size={14} strokeWidth={3} />
       </span>
     )
@@ -79,7 +79,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 setRenaming(false)
               }
             }}
-            className="mt-1 w-full bg-card rounded-[14px] px-3 py-1.5 text-title-1 font-bold outline-none ring-2 ring-tint/40"
+            className="mt-1 w-full bg-card rounded-[14px] px-3 py-1.5 text-title-1 font-medium outline-none ring-1 ring-red"
           />
         ) : (
           <button
@@ -91,21 +91,21 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
             className="group mt-1 w-full flex items-start gap-2 text-left"
             title="Rename"
           >
-            <h2 className="text-title-1 font-bold break-words min-w-0">{chapter.title}</h2>
+            <h2 className="text-title-1 font-medium break-words min-w-0">{chapter.title}</h2>
             <Pencil size={16} className="mt-2.5 shrink-0 text-label-3 group-hover:text-tint" />
           </button>
         )}
 
         <div className="flex flex-wrap items-center gap-2 mt-3">
           <span
-            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-semibold"
+            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium"
             style={{ color: tone, background: `color-mix(in srgb, ${tone} 14%, transparent)` }}
           >
             {mastered ? <Award size={14} /> : <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone }} />}
             {mastered ? 'Mastered' : whenLabel(chapter)}
           </span>
           {chapter.struggleFlag && !mastered && (
-            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-semibold text-orange bg-orange/15">
+            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium text-orange bg-orange/15">
               <AlertCircle size={14} /> Needs attention
             </span>
           )}
@@ -114,36 +114,42 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
 
       {/* Progress through the five reviews */}
       <div className="mt-5 bg-card rounded-cell p-4">
-        <div className="flex items-baseline justify-between mb-3">
-          <span className="text-headline font-semibold">{reviewLabel(chapter)}</span>
-          <span className="text-footnote text-label-2 tabular">
+        <div className="flex items-baseline justify-between mb-4">
+          <span className="eyebrow text-label">{reviewLabel(chapter)}</span>
+          <span className="eyebrow text-label-2 tabular">
             {done}/{MAX_REVIEW_INDEX} done
           </span>
         </div>
-        <div className="flex gap-1.5">
-          {Array.from({ length: MAX_REVIEW_INDEX }).map((_, i) => (
-            <div key={i} className="h-2 flex-1 rounded-full bg-fill overflow-hidden">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: i < done ? 1 : i === done && !mastered ? 0.35 : 0 }}
-                transition={{ ...spring, delay: 0.1 + i * 0.05 }}
-                style={{ originX: 0 }}
-                className={`h-full rounded-full ${i < done ? 'bg-green' : 'bg-tint'}`}
+        <div className="flex items-center justify-between px-1">
+          {Array.from({ length: MAX_REVIEW_INDEX }).map((_, i) => {
+            const isDone = i < done
+            const isNext = i === done && !mastered
+            return (
+              <motion.span
+                key={i}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ ...spring, delay: 0.08 + i * 0.05 }}
+                className="h-[22px] w-[22px] rounded-full"
+                style={{
+                  background: isDone ? 'var(--label)' : 'transparent',
+                  boxShadow: isDone ? 'none' : `inset 0 0 0 1.5px ${isNext ? 'var(--red)' : 'var(--label-3)'}`,
+                }}
               />
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
       {/* What you can do right now */}
       <div className="mt-4">
         {mastered ? (
-          <div className="rounded-cell bg-green/15 p-4 flex items-center gap-3">
-            <span className="h-10 w-10 rounded-full bg-green text-white flex items-center justify-center shrink-0">
+          <div className="rounded-cell bg-card p-4 flex items-center gap-3">
+            <span className="h-10 w-10 rounded-full bg-green text-tint-fg flex items-center justify-center shrink-0">
               <Award size={20} />
             </span>
             <p className="text-subhead">
-              <span className="font-semibold block">Fully retained.</span>
+              <span className="font-medium block">Fully retained.</span>
               <span className="text-label-2">All five reviews are done — this one's yours.</span>
             </p>
           </div>
@@ -184,7 +190,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
               <Lock size={18} />
             </span>
             <p className="text-subhead">
-              <span className="font-semibold block">
+              <span className="font-medium block">
                 Unlocks {daysUntil === 1 ? 'tomorrow' : `in ${plural(daysUntil, 'day')}`}
               </span>
               <span className="text-label-2">
@@ -213,7 +219,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
             leading={<StateDot state={t.state} />}
             inset={52}
             title={
-              <span className={t.state === 'next' ? 'font-semibold' : t.state === 'done' ? 'text-label-2' : ''}>
+              <span className={t.state === 'next' ? 'font-medium' : t.state === 'done' ? 'text-label-2' : ''}>
                 Review {t.reviewNumber}
               </span>
             }

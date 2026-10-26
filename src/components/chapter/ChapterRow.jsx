@@ -45,19 +45,19 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           <motion.div
             aria-hidden="true"
             style={{ opacity: reviseOpacity }}
-            className="absolute inset-0 bg-green flex items-center pl-6 text-white"
+            className="absolute inset-0 bg-green flex items-center pl-6 text-tint-fg"
           >
-            <motion.span style={{ scale: reviseScale }} className="flex items-center gap-2 text-subhead font-semibold">
-              <Check size={20} strokeWidth={3} /> Revised
+            <motion.span style={{ scale: reviseScale }} className="flex items-center gap-2 eyebrow">
+              <Check size={18} strokeWidth={2.4} /> Revised
             </motion.span>
           </motion.div>
           <motion.div
             aria-hidden="true"
             style={{ opacity: snoozeOpacity }}
-            className="absolute inset-0 bg-orange flex items-center justify-end pr-6 text-white"
+            className="absolute inset-0 bg-red flex items-center justify-end pr-6 text-white"
           >
-            <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 text-subhead font-semibold">
-              Tomorrow <Clock size={20} strokeWidth={2.6} />
+            <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 eyebrow">
+              Tomorrow <Clock size={18} strokeWidth={2} />
             </motion.span>
           </motion.div>
         </>
@@ -119,7 +119,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           </div>
           {when && (
             <span
-              className="shrink-0 text-footnote font-semibold tabular"
+              className="shrink-0 font-mono text-[11px] uppercase tracking-[0.06em] tabular"
               style={{ color: chapter.derivedStatus === 'upcoming' ? 'var(--label-2)' : tone }}
             >
               {when}

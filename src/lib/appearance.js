@@ -40,12 +40,12 @@ export function resolveMode(themeMode) {
 
 // Mirrors the canvas colour so the status bar and the browser chrome blend
 // into the page instead of sitting on it as a separate stripe.
-const CANVAS = { light: '#F2F2F7', dark: '#000000' }
+const CANVAS = { light: '#EFEFEF', dark: '#000000' }
 
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it
 // reads, so a returning user's first frame is already in their colours.
-const BOOT_KEY = 'retavo.appearance'
+const BOOT_KEY = 'fivedot.appearance'
 
 export function applyAppearance({ theme, themeMode } = {}) {
   if (typeof document === 'undefined') return

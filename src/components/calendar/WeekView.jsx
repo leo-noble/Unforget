@@ -115,13 +115,13 @@ export default function WeekView({
                 title={d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
                 className="flex-1 min-w-0 flex flex-col items-center justify-center gap-0.5 active:bg-fill hover:bg-fill/60 transition-colors duration-100"
               >
-                <span className={`text-[10.5px] uppercase tracking-[0.06em] font-semibold ${isToday ? 'text-tint' : 'text-label-2'}`}>
+                <span className={`text-[10.5px] uppercase tracking-[0.06em] font-medium ${isToday ? 'text-red' : 'text-label-2'}`}>
                   {WEEKDAY_LABELS[i]}
                 </span>
                 {/* Today gets the filled accent disc, as in Calendar. */}
                 <span
-                  className={`h-[26px] min-w-[26px] px-1 rounded-full flex items-center justify-center text-[15px] font-semibold tabular ${
-                    isToday ? 'bg-tint text-white' : isCursor ? 'bg-fill text-label' : 'text-label'
+                  className={`h-[26px] min-w-[26px] px-1 rounded-full flex items-center justify-center text-[15px] font-medium tabular ${
+                    isToday ? 'bg-red text-white' : isCursor ? 'bg-fill text-label' : 'text-label'
                   }`}
                 >
                   {d.getDate()}
@@ -141,7 +141,7 @@ export default function WeekView({
               style={{ width: GUTTER_WIDTH }}
               className="shrink-0 sticky left-0 z-10 bg-card flex items-center justify-end pr-2.5"
             >
-              <span className="text-[10px] text-label-3 font-semibold">all-day</span>
+              <span className="text-[10px] text-label-3 font-medium">all-day</span>
             </div>
             {dates.map((iso) => (
               <div key={iso} className="flex-1 min-w-0">

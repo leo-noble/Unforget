@@ -16,17 +16,18 @@ function Item({ icon: Icon, label, selected, onClick, badge }) {
       whileTap={{ scale: 0.97 }}
       transition={snappy}
       aria-current={selected ? 'page' : undefined}
-      className={`relative w-full h-11 flex items-center gap-3 px-3 rounded-[14px] text-body ${
-        selected ? 'text-tint font-semibold' : 'text-label hover:bg-fill'
+      className={`relative w-full h-11 flex items-center gap-3 px-3 rounded-full text-body ${
+        selected ? 'text-label font-medium' : 'text-label-2 hover:bg-fill hover:text-label'
       }`}
     >
       {selected && (
-        <motion.span layoutId="sidebar-pill" transition={snappy} className="absolute inset-0 rounded-[14px] bg-tint/15" />
+        <motion.span layoutId="sidebar-pill" transition={snappy} className="absolute inset-0 rounded-full bg-fill" />
       )}
-      <Icon size={21} strokeWidth={selected ? 2.3 : 2} className={`relative ${selected ? '' : 'text-tint'}`} />
+      <Icon size={20} strokeWidth={selected ? 2 : 1.6} className="relative" />
       <span className="relative flex-1 text-left">{label}</span>
+      {selected && !(badge > 0) && <span className="relative h-[6px] w-[6px] rounded-full bg-red" />}
       {badge > 0 && (
-        <span className="relative min-w-[22px] h-[22px] px-1.5 rounded-full bg-red text-white text-caption font-semibold flex items-center justify-center tabular">
+        <span className="relative min-w-[22px] h-[22px] px-1.5 rounded-full bg-red text-white text-caption font-medium flex items-center justify-center tabular">
           {badge}
         </span>
       )}
@@ -48,10 +49,10 @@ export default function Sidebar({
   const { status } = useTimerStatus()
   const showTimer = status !== 'idle' && active !== 'focus'
   return (
-    <aside className="hidden md:flex fixed left-3 top-3 bottom-3 z-40 w-[260px] glass-strong rounded-[30px] flex-col p-3">
+    <aside className="hidden md:flex fixed left-3 top-3 bottom-3 z-40 w-[260px] glass-strong rounded-[28px] flex-col p-3">
       <div className="flex items-center gap-2.5 px-2 pt-1.5 pb-4">
-        <AppIcon size={34} shadow={false} />
-        <span className="text-title-3 font-bold">{APP_NAME}</span>
+        <AppIcon size={34} />
+        <span className="font-dot text-[24px] leading-none lowercase">{APP_NAME}</span>
       </div>
 
       <motion.button
@@ -59,7 +60,7 @@ export default function Sidebar({
         onClick={onAdd}
         whileTap={{ scale: 0.97 }}
         transition={snappy}
-        className="tint-fill text-white shadow-tint h-11 rounded-full flex items-center justify-center gap-2 text-subhead font-semibold mb-4"
+        className="tint-fill text-tint-fg h-11 rounded-full flex items-center justify-center gap-2 text-subhead font-medium mb-4"
       >
         <Plus size={18} strokeWidth={2.6} /> New Chapter
       </motion.button>
@@ -99,7 +100,7 @@ export default function Sidebar({
         >
           <Avatar name={profile?.name} src={profile?.avatarUrl} size={38} />
           <span className="min-w-0 flex-1">
-            <span className="block text-subhead font-semibold truncate">{profile?.name || 'Account'}</span>
+            <span className="block text-subhead font-medium truncate">{profile?.name || 'Account'}</span>
             <span className="block text-caption text-label-2 truncate">{profile?.email || 'Settings'}</span>
           </span>
         </button>

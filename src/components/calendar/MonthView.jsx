@@ -19,7 +19,7 @@ function Chip({ entry, onClick }) {
         className="w-full min-w-0 flex items-center gap-1 rounded-[6px] px-1.5 h-[19px] text-left bg-tint/10 hover:bg-tint/20"
       >
         <RefreshCw size={9} strokeWidth={3} className="shrink-0 text-tint" />
-        <span className="truncate text-[11px] text-tint font-semibold">{entry.title}</span>
+        <span className="truncate text-[11px] text-tint font-medium">{entry.title}</span>
       </button>
     )
   }
@@ -97,7 +97,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
       <div className="h-full flex flex-col min-h-0">
         <div className="grid grid-cols-7 shrink-0 pt-2">
           {WEEKDAYS.map((w) => (
-            <div key={w} className="text-center text-[10.5px] font-semibold uppercase text-label-3 pb-1">
+            <div key={w} className="text-center text-[10.5px] font-medium uppercase text-label-3 pb-1">
               {w.charAt(0)}
             </div>
           ))}
@@ -117,7 +117,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
               >
                 <span
                   className={`h-[30px] w-[30px] rounded-full flex items-center justify-center text-[16px] tabular ${
-                    isSel ? (isToday ? 'bg-tint text-white font-semibold' : 'bg-label text-canvas font-semibold') : isToday ? 'text-tint font-semibold' : cell.inMonth ? '' : 'text-label-3'
+                    isSel ? (isToday ? 'bg-red text-white font-medium' : 'bg-label text-canvas font-medium') : isToday ? 'text-red font-medium' : cell.inMonth ? '' : 'text-label-3'
                   }`}
                 >
                   {cell.date.getDate()}
@@ -134,10 +134,10 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
 
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
           <div className="flex items-center justify-between px-4 pt-3 pb-1.5">
-            <p className="text-footnote font-semibold uppercase tracking-[0.03em] text-label-2">
+            <p className="text-footnote font-medium uppercase tracking-[0.03em] text-label-2">
               {startOfDay(selected).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
             </p>
-            <button onClick={() => onOpenDay(selected)} className="text-footnote font-semibold text-tint flex items-center">
+            <button onClick={() => onOpenDay(selected)} className="text-footnote font-medium text-tint flex items-center">
               Day view <ChevronRight size={14} />
             </button>
           </div>
@@ -145,7 +145,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
             <motion.div key={selected} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
               {agenda.length === 0 ? (
                 <button onClick={() => onCreateOnDate(selected)} className="w-full text-left px-4 py-3 text-subhead text-label-2">
-                  Nothing planned. <span className="text-tint font-semibold">Plan a session</span>
+                  Nothing planned. <span className="text-tint font-medium">Plan a session</span>
                 </button>
               ) : (
                 <div className="ios-list">
@@ -179,7 +179,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
     <div className="h-full flex flex-col min-h-0">
       <div className="grid grid-cols-7 hairline-b shrink-0">
         {WEEKDAYS.map((w) => (
-          <div key={w} className="text-center text-[10.5px] uppercase tracking-[0.06em] text-label-2 font-semibold py-2">
+          <div key={w} className="text-center text-[10.5px] uppercase tracking-[0.06em] text-label-2 font-medium py-2">
             {w}
           </div>
         ))}
@@ -203,8 +203,8 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
               <div className="px-1.5 pt-1.5 shrink-0">
                 <button
                   onClick={() => onOpenDay(iso)}
-                  className={`h-6 min-w-6 px-1.5 rounded-full inline-flex items-center gap-1 text-[12.5px] font-semibold tabular hover:bg-fill ${
-                    isToday ? 'bg-tint text-white hover:bg-tint' : cell.inMonth ? '' : 'text-label-3'
+                  className={`h-6 min-w-6 px-1.5 rounded-full inline-flex items-center gap-1 text-[12.5px] font-medium tabular hover:bg-fill ${
+                    isToday ? 'bg-red text-white hover:bg-red' : cell.inMonth ? '' : 'text-label-3'
                   }`}
                 >
                   {cell.date.getDate() === 1 && <span>{cell.date.toLocaleDateString(undefined, { month: 'short' })}</span>}
@@ -218,7 +218,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
                 {hidden > 0 && (
                   <button
                     onClick={() => setExpanded((prev) => new Set(prev).add(iso))}
-                    className="px-1.5 text-left text-[10.5px] font-semibold text-label-2 hover:text-tint shrink-0"
+                    className="px-1.5 text-left text-[10.5px] font-medium text-label-2 hover:text-tint shrink-0"
                   >
                     +{hidden} more
                   </button>

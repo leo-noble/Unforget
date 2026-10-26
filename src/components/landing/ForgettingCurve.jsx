@@ -67,15 +67,15 @@ export default function ForgettingCurve() {
   const draw = inView ? { pathLength: 1 } : {}
 
   return (
-    <div ref={ref} className="bg-card rounded-[28px] shadow-card p-5 sm:p-6">
+    <div ref={ref} className="bg-card rounded-[28px] p-5 sm:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-        <h3 className="text-headline font-semibold">How much you still remember</h3>
-        <div className="flex items-center gap-4 text-footnote font-semibold">
+        <h3 className="text-headline font-medium">How much you still remember</h3>
+        <div className="flex items-center gap-4 text-footnote font-medium">
           <span className="flex items-center gap-2">
-            <span className="h-[3px] w-5 rounded-full bg-tint" /> With {APP_NAME}
+            <span className="h-[3px] w-5 rounded-full bg-red" /> With {APP_NAME}
           </span>
           <span className="flex items-center gap-2 text-label-2">
-            <span className="h-[3px] w-5 rounded-full bg-red/70" /> No reviews
+            <span className="h-[3px] w-5 rounded-full bg-label-3" /> No reviews
           </span>
         </div>
       </div>
@@ -87,8 +87,8 @@ export default function ForgettingCurve() {
       >
         <defs>
           <linearGradient id="fc-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--tint)" stopOpacity="0.22" />
-            <stop offset="100%" stopColor="var(--tint)" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--red)" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="var(--red)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[1, 0.5, 0].map((g) => (
@@ -99,14 +99,14 @@ export default function ForgettingCurve() {
             </text>
           </g>
         ))}
-        <motion.path d={close(NO_REVIEW_PATH)} fill="var(--red)" fillOpacity="0.06" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 0.7 }} />
+        <motion.path d={close(NO_REVIEW_PATH)} fill="var(--label)" fillOpacity="0.04" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 0.7 }} />
         <motion.path d={close(SCHEDULED_PATH)} fill="url(#fc-area)" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 0.9 }} />
-        <motion.path d={NO_REVIEW_PATH} fill="none" stroke="var(--red)" strokeOpacity="0.7" strokeWidth="2" strokeLinecap="round" initial={{ pathLength: 0 }} animate={draw} transition={{ duration: 1, ease: 'easeInOut' }} />
+        <motion.path d={NO_REVIEW_PATH} fill="none" stroke="var(--label-3)" strokeWidth="2" strokeDasharray="2 5" strokeLinecap="round" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }} />
         <motion.path
           d={SCHEDULED_PATH}
           fill="none"
-          stroke="var(--tint)"
-          strokeWidth="3"
+          stroke="var(--red)"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           initial={{ pathLength: 0 }}
@@ -119,7 +119,7 @@ export default function ForgettingCurve() {
             cx={x(day)}
             cy={y(1)}
             r="5"
-            fill="var(--tint)"
+            fill="var(--red)"
             stroke="var(--card)"
             strokeWidth="2.5"
             initial={{ opacity: 0, scale: 0 }}
@@ -127,7 +127,7 @@ export default function ForgettingCurve() {
             transition={{ type: 'spring', stiffness: 340, damping: 20, delay: 0.5 + i * 0.15 }}
           />
         ))}
-        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--tint)" fontSize="14" fontWeight="700" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
+        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--red)" fontSize="14" fontWeight="700" fontFamily="Space Mono, monospace" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
           {Math.round(END_SCHEDULED * 100)}%
         </motion.text>
         <motion.text x={W - PAD.r + 9} y={y(END_NO_REVIEW) + 4} fill="var(--label-2)" fontSize="13" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}>

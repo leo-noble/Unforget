@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, SkipForward, Maximize2, Minimize2, Settings2, BookOpen, ChevronsUpDown, Zap, Square } from 'lucide-react'
@@ -9,85 +9,64 @@ import Segmented from '../components/ui/Segmented'
 import TimerSettingsSheet from '../components/focus/TimerSettingsSheet'
 import { useTimer } from '../lib/TimerContext'
 import { PHASES, PHASE_META } from '../lib/usePomodoro'
-import { PHASE_COLOR, PHASE_COLOR_2 } from '../components/focus/phase'
+import { PHASE_COLOR, PHASE_FG } from '../components/focus/phase'
 import { lockScroll } from '../components/ui/scrollLock'
 import { snappy, bouncy, easeOut } from '../components/ui/motion'
 
 const MODE_OPTIONS = PHASES.map((id) => ({ id, label: PHASE_META[id].label }))
 
-// The countdown — one component so the page and fullscreen can never show the
-// same timer two different ways.
+// The countdown as a ring of sixty dots — one per second-hand tick — that
+// light up as the session runs. One component, so the page and fullscreen can
+// never show the same timer two different ways.
+const TICKS = 60
+
 function Dial({ timer, big = false }) {
-  const gid = `dial${useId().replace(/[^a-zA-Z0-9]/g, '')}`
-  const size = 100
-  const stroke = big ? 3.2 : 5.5
-  const R = (size - stroke) / 2 - 1
-  const C = 2 * Math.PI * R
   const running = timer.status === 'running'
+  const color = PHASE_COLOR[timer.phase]
+  const lit = Math.round(timer.progress * TICKS)
   return (
     <motion.div
-      animate={timer.justCompleted ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+      animate={timer.justCompleted ? { scale: [1, 1.04, 1] } : { scale: 1 }}
       transition={{ duration: 0.5, ease: easeOut }}
-      className={`relative ${big ? 'w-[min(78vw,62vh,30rem)]' : 'w-[min(72vw,288px)]'} aspect-square`}
+      className={`relative ${big ? 'w-[min(80vw,62vh,30rem)]' : 'w-[min(76vw,300px)]'} aspect-square`}
     >
-      {/* Soft glow behind the ring that breathes while the clock runs. */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute inset-[12%] rounded-full"
-        style={{
-          background: `radial-gradient(circle, color-mix(in srgb, ${PHASE_COLOR[timer.phase]} 30%, transparent), transparent 70%)`,
-        }}
-        animate={running ? { scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] } : { scale: 1, opacity: 0.55 }}
-        transition={running ? { duration: 4, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.4 }}
-      />
-      <svg viewBox={`0 0 ${size} ${size}`} className="absolute inset-0 -rotate-90" aria-hidden="true">
-        <defs>
-          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={PHASE_COLOR[timer.phase]} />
-            <stop offset="1" stopColor={PHASE_COLOR_2[timer.phase]} />
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r={R} fill="none" stroke="var(--fill)" strokeWidth={stroke} />
-        <motion.circle
-          cx="50"
-          cy="50"
-          r={R}
-          fill="none"
-          stroke={`url(#${gid})`}
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={C}
-          animate={{ strokeDashoffset: C * (1 - timer.progress) }}
-          transition={{ duration: 0.35, ease: 'linear' }}
-        />
+      <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
+        {Array.from({ length: TICKS }).map((_, i) => {
+          const a = (i / TICKS) * Math.PI * 2 - Math.PI / 2
+          const on = i < lit
+          const head = running && i === lit
+          return (
+            <circle
+              key={i}
+              cx={50 + Math.cos(a) * 46}
+              cy={50 + Math.sin(a) * 46}
+              r={i % 5 === 0 ? 1.55 : 1.15}
+              fill={on || head ? color : 'var(--fill-2)'}
+              className={head ? 'pulse-dot' : undefined}
+              style={{ transition: 'fill 0.3s' }}
+            />
+          )
+        })}
       </svg>
       <div role="timer" aria-label={timer.timeLabel} className="absolute inset-0 flex flex-col items-center justify-center">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={timer.phase}
-            initial={{ opacity: 0, scale: 0.94 }}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.94 }}
-            transition={{ duration: 0.25, ease: easeOut }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.22, ease: easeOut }}
             className="flex flex-col items-center"
           >
-            <span
-              aria-hidden="true"
-              className={`font-rounded font-semibold tabular tracking-[-0.03em] leading-none ${
-                big ? 'text-[clamp(4rem,14vw,8rem)]' : 'text-[clamp(3.25rem,15vw,4.25rem)]'
-              }`}
-            >
-              {timer.mins}:{timer.secs}
+            <span className="eyebrow text-label-2 mb-3 flex items-center gap-1.5">
+              <span className={`h-[6px] w-[6px] rounded-full ${running ? 'pulse-dot' : ''}`} style={{ background: color }} />
+              {timer.status === 'paused' ? 'Paused' : timer.meta.label}
             </span>
             <span
-              className="mt-3 inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-semibold"
-              style={{
-                color: PHASE_COLOR[timer.phase],
-                background: `color-mix(in srgb, ${PHASE_COLOR[timer.phase]} 15%, transparent)`,
-              }}
+              aria-hidden="true"
+              className={`font-dot tabular leading-none ${big ? 'text-[clamp(4.5rem,16vw,9rem)]' : 'text-[clamp(3.6rem,17vw,4.8rem)]'}`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${running ? 'pulse-dot' : ''}`} style={{ background: 'currentColor' }} />
-              {timer.status === 'paused' ? 'Paused' : timer.meta.label}
+              {timer.mins}:{timer.secs}
             </span>
           </motion.div>
         </AnimatePresence>
@@ -113,13 +92,8 @@ function Controls({ timer, big = false }) {
         transition={bouncy}
         aria-label={running ? 'Pause' : timer.status === 'paused' ? 'Resume' : 'Start'}
         aria-keyshortcuts="Space"
-        className="rounded-full flex items-center justify-center text-white"
-        style={{
-          width: main,
-          height: main,
-          background: PHASE_COLOR[timer.phase],
-          boxShadow: `0 14px 30px -10px color-mix(in srgb, ${PHASE_COLOR[timer.phase]} 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.25)`,
-        }}
+        className="rounded-full flex items-center justify-center"
+        style={{ width: main, height: main, background: PHASE_COLOR[timer.phase], color: PHASE_FG[timer.phase] }}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -187,10 +161,7 @@ function FullscreenTimer({ timer, chapterTitle, onExit }) {
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(70% 55% at 50% 45%, color-mix(in srgb, ${PHASE_COLOR[timer.phase]} 16%, transparent), transparent 75%)`,
-        }}
+        className="dot-grid dot-grid-fade absolute inset-0 pointer-events-none opacity-60"
       />
       <IconButton
         ref={exitRef}
@@ -296,9 +267,13 @@ export default function FocusPage({ cadence, account }) {
           {Array.from({ length: timer.cycleLength }).map((_, i) => (
             <motion.span
               key={i}
-              animate={{ width: i < inCycle ? 22 : 7 }}
+              animate={{ scale: i < inCycle ? 1 : 0.7 }}
               transition={snappy}
-              className={`h-[7px] rounded-full ${i < inCycle ? 'bg-tint' : 'bg-fill-2'}`}
+              className="h-[9px] w-[9px] rounded-full"
+              style={{
+                background: i < inCycle ? 'var(--label)' : 'transparent',
+                boxShadow: i < inCycle ? 'none' : 'inset 0 0 0 1.5px var(--label-3)',
+              }}
             />
           ))}
         </div>
@@ -317,7 +292,7 @@ export default function FocusPage({ cadence, account }) {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               onClick={timer.stop}
-              className="mt-4 flex items-center gap-1.5 text-footnote font-semibold text-label-2 active:text-red overflow-hidden"
+              className="mt-4 flex items-center gap-1.5 text-footnote font-medium text-label-2 active:text-red overflow-hidden"
             >
               <Square size={12} fill="currentColor" /> End and reset the cycle
             </motion.button>
@@ -331,8 +306,8 @@ export default function FocusPage({ cadence, account }) {
             {/* A native select laid over the row: on a phone it opens the
                 system wheel picker, which is exactly the iOS behaviour. */}
             <label className="relative flex items-center gap-3 px-4 min-h-[56px] active:bg-fill">
-              <span className="h-[30px] w-[30px] rounded-[8px] bg-tint text-white flex items-center justify-center shrink-0">
-                <BookOpen size={16} strokeWidth={2.3} />
+              <span className="h-[30px] w-[30px] rounded-full bg-fill text-label flex items-center justify-center shrink-0">
+                <BookOpen size={15} strokeWidth={1.75} />
               </span>
               <span className="min-w-0 flex-1">
                 <span className={`block text-body truncate ${linked ? '' : 'text-label-2'}`}>
@@ -364,7 +339,6 @@ export default function FocusPage({ cadence, account }) {
         <Section title="Today">
           <Row
             icon={Zap}
-            iconColor="var(--orange)"
             title={`${timer.todayStats.sessions} session${timer.todayStats.sessions === 1 ? '' : 's'}`}
             detail={`${timer.todayStats.minutes} min`}
           />

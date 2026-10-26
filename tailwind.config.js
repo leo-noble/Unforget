@@ -28,27 +28,21 @@ export default {
         'fill-2': token('fill-2'),
         tint: token('tint'),
         'tint-2': token('tint-2'),
+        // Text and icons placed on a tint-filled surface.
+        'tint-fg': token('tint-fg'),
         ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {
-        sans: [
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"SF Pro Text"',
-          '"Segoe UI"',
-          'Roboto',
-          '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
-        ],
-        // SF Pro Rounded on Apple devices — what Clock and Fitness use for
-        // their big numerals. Falls back to the regular system face elsewhere.
-        rounded: ['ui-rounded', '"SF Pro Rounded"', 'system-ui', '-apple-system', 'sans-serif'],
+        // A neutral grotesk for everything you read.
+        sans: ['"Space Grotesk"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        // Labels, metadata and numbers in lists.
+        mono: ['"Space Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // Kept as an alias so older call sites resolve; display numbers use .font-dot.
+        rounded: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
       },
-      // Apple's Dynamic Type scale at the default size, named by role.
+      // Type scale, named by role.
       fontSize: {
-        'large-title': ['34px', { lineHeight: '41px', letterSpacing: '-0.022em', fontWeight: '700' }],
+        'large-title': ['34px', { lineHeight: '40px', letterSpacing: '-0.03em', fontWeight: '500' }],
         'title-1': ['28px', { lineHeight: '34px', letterSpacing: '-0.02em' }],
         'title-2': ['22px', { lineHeight: '28px', letterSpacing: '-0.016em' }],
         'title-3': ['20px', { lineHeight: '25px', letterSpacing: '-0.012em' }],

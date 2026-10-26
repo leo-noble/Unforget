@@ -75,7 +75,7 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
               <button
                 type="button"
                 onClick={() => setCreatingSubject((v) => !v)}
-                className="text-footnote font-semibold text-tint"
+                className="text-footnote font-medium text-tint"
               >
                 {creatingSubject ? 'Choose existing' : 'New subject'}
               </button>
@@ -148,7 +148,7 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
                 <button
                   type="button"
                   onClick={() => setCreatingSubject(true)}
-                  className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-subhead font-medium text-tint bg-tint/10"
+                  className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-subhead font-medium text-label bg-transparent ring-1 ring-inset ring-separator"
                 >
                   <Plus size={15} strokeWidth={2.6} /> New
                 </button>
@@ -171,8 +171,8 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
           }
         >
           <label className="flex items-center gap-3 px-4 min-h-[52px]" style={{ '--inset': '16px' }}>
-            <span className="h-[30px] w-[30px] rounded-[8px] bg-red text-white flex items-center justify-center shrink-0">
-              <CalendarDays size={17} strokeWidth={2.2} />
+            <span className="h-[30px] w-[30px] rounded-full bg-fill text-label flex items-center justify-center shrink-0">
+              <CalendarDays size={16} strokeWidth={1.75} />
             </span>
             <span className="flex-1 text-body">Studied on</span>
             <input

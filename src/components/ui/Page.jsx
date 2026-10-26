@@ -42,7 +42,7 @@ export function NavBar({ title, leading, trailing }) {
           initial={false}
           animate={{ opacity: scrolled ? 1 : 0, y: scrolled ? 0 : 6 }}
           transition={{ duration: 0.2, ease: easeOut }}
-          className="text-headline font-semibold truncate max-w-[50%] text-center"
+          className="eyebrow text-label truncate max-w-[50%] text-center"
         >
           {title}
         </motion.p>
@@ -64,10 +64,8 @@ export default function Page({ title, eyebrow, subtitle, trailing, leading, wide
       >
         <div className="pt-1 pb-5 flex items-end justify-between gap-4">
           <div className="min-w-0">
-            {eyebrow && (
-              <p className="text-footnote font-semibold uppercase tracking-[0.04em] text-label-2 mb-0.5">{eyebrow}</p>
-            )}
-            <h1 className="text-large-title font-bold truncate">{title}</h1>
+            {eyebrow && <p className="eyebrow text-label-2 mb-2">{eyebrow}</p>}
+            <h1 className="font-dot text-[40px] leading-[40px] uppercase truncate">{title}</h1>
             {subtitle && <p className="text-subhead text-label-2 mt-1">{subtitle}</p>}
           </div>
           {titleAccessory}

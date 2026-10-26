@@ -46,7 +46,7 @@ export default function DayView({
       {(reviews.length > 0 || untimed.length > 0) && (
         <div className="flex hairline-b bg-card sticky top-0 z-50">
           <div style={{ width: GUTTER_WIDTH }} className="shrink-0 flex items-start justify-end pr-2.5 pt-2.5">
-            <span className="text-[10px] text-label-3 font-semibold">all-day</span>
+            <span className="text-[10px] text-label-3 font-medium">all-day</span>
           </div>
           <div className="flex-1 min-w-0">
             <AllDayStrip

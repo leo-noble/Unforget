@@ -18,38 +18,37 @@ export function Section({
     <section className={className}>
       {title &&
         (prominent ? (
-          <div className="flex items-end justify-between gap-3 px-1 mb-2.5">
-            <h2 className={`text-title-3 font-bold ${titleClassName}`}>{title}</h2>
+          <div className="flex items-center justify-between gap-3 px-1 mb-3">
+            <h2 className={`eyebrow text-label ${titleClassName}`}>{title}</h2>
             {action}
           </div>
         ) : (
           <div className="flex items-end justify-between gap-3 px-4 mb-1.5">
-            <h3 className={`text-footnote uppercase tracking-[0.02em] text-label-2 ${titleClassName}`}>{title}</h3>
+            <h3 className={`eyebrow text-label-2 ${titleClassName}`}>{title}</h3>
             {action}
           </div>
         ))}
-      <div className={`ios-list bg-card rounded-cell overflow-hidden shadow-card ${listClassName}`}>{children}</div>
+      <div className={`ios-list bg-card rounded-cell overflow-hidden ${listClassName}`}>{children}</div>
       {footer && <div className="text-footnote text-label-2 px-4 mt-2">{footer}</div>}
     </section>
   )
 }
 
 // Settings.app-style leading glyph: a white symbol on a coloured squircle.
-export function RowIcon({ icon: Icon, color = 'var(--tint)', size = 30 }) {
+export function RowIcon({ icon: Icon, size = 30 }) {
   return (
     <span
-      className="shrink-0 rounded-[8px] flex items-center justify-center text-white"
-      style={{ width: size, height: size, background: color }}
+      className="shrink-0 rounded-full flex items-center justify-center text-label bg-fill"
+      style={{ width: size, height: size }}
       aria-hidden="true"
     >
-      <Icon size={size * 0.56} strokeWidth={2.2} />
+      <Icon size={size * 0.52} strokeWidth={1.75} />
     </span>
   )
 }
 
 export function Row({
   icon,
-  iconColor,
   leading,
   title,
   subtitle,
@@ -77,7 +76,7 @@ export function Row({
       } ${center ? 'justify-center' : ''} ${className}`}
       {...rest}
     >
-      {icon && <RowIcon icon={icon} color={iconColor} />}
+      {icon && <RowIcon icon={icon} />}
       {leading}
       {children ?? (
         <span className={`min-w-0 ${center ? '' : 'flex-1'}`}>
