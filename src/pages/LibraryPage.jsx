@@ -73,6 +73,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
         subjects.length === 1 ? '' : 's'
       }`}
       trailing={account}
+      wide
     >
       {/* Search, iOS 26 style: a capsule field */}
       <div className="relative mb-3">
@@ -148,7 +149,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
           {query ? `No results for “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
         </p>
       ) : (
-        <div className="space-y-7">
+        <div className="grid lg:grid-cols-2 gap-x-8 gap-y-8 items-start">
           {subjects.map((subject) => {
             const list = groups.get(subject.id) || []
             if (list.length === 0) return null
@@ -165,14 +166,13 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
                 transition={{ duration: 0.35, ease: easeOut }}
               >
                 <div className="flex items-center gap-3 px-1 mb-2.5">
-                  <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: color }} />
                   <h2 className="text-title-3 font-medium truncate flex-1 min-w-0">{subject.name}</h2>
                   <span className="font-mono text-[12px] text-label-2 tabular shrink-0">{Math.round(progress * 100)}%</span>
                   <button
                     type="button"
                     onClick={() => deleteSubject(subject, all.length)}
                     aria-label={`Delete ${subject.name}`}
-                    className="h-8 w-8 -mr-1 rounded-full flex items-center justify-center text-label-2 active:bg-fill hover:text-red"
+                    className="h-8 w-8 -mr-1 rounded-full flex items-center justify-center text-label-2 active:bg-fill hover:text-accent"
                   >
                     <Trash2 size={16} />
                   </button>

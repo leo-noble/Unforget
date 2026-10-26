@@ -4,7 +4,7 @@ import { relativeDay } from '../../lib/format'
 // What a chapter's status looks like on screen — one place, so a row, a sheet
 // and a toast can't describe the same chapter three different ways.
 export const STATUS_TONE = {
-  overdue: 'var(--red)',
+  overdue: 'var(--accent)',
   due: 'var(--tint)',
   upcoming: 'var(--label-2)',
   mastered: 'var(--green)',

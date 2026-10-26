@@ -95,7 +95,7 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
             type="button"
             onClick={() => onSettle(true)}
             className={`h-11 rounded-full text-subhead font-medium ${
-              destructive ? 'bg-red text-white' : 'tint-fill text-white'
+              destructive ? 'bg-accent text-tint-fg' : 'tint-fill text-tint-fg'
             } active:opacity-80`}
           >
             {confirmLabel}

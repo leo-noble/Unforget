@@ -47,7 +47,7 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
         const today = iso === todayISO
         return (
           <button key={iso} onClick={() => onSelect(iso)} className="flex flex-col items-center gap-1 py-1">
-            <span className={`text-[11px] font-medium uppercase ${today ? 'text-red' : 'text-label-2'}`}>
+            <span className={`text-[11px] font-medium uppercase ${today ? 'text-accent' : 'text-label-2'}`}>
               {d.toLocaleDateString(undefined, { weekday: 'narrow' })}
             </span>
             <span className="relative h-9 w-9 flex items-center justify-center">
@@ -55,11 +55,11 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
                 <motion.span
                   layoutId="weekstrip-sel"
                   transition={snappy}
-                  className={`absolute inset-0 rounded-full ${today ? 'bg-red' : 'bg-label'}`}
+                  className={`absolute inset-0 rounded-full ${today ? 'bg-accent' : 'bg-label'}`}
                 />
               )}
               <span
-                className={`relative text-[17px] tabular ${sel ? (today ? 'text-white' : 'text-canvas') + ' font-medium' : today ? 'text-red font-medium' : ''}`}
+                className={`relative text-[17px] tabular ${sel ? (today ? 'text-tint-fg' : 'text-canvas') + ' font-medium' : today ? 'text-accent font-medium' : ''}`}
               >
                 {d.getDate()}
               </span>

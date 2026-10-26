@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Plus, ArrowUpRight } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
 import ChapterRow from '../components/chapter/ChapterRow'
 import { toISODate, addDays } from '../lib/srs'
-import { greeting, plural, todayISO } from '../lib/format'
-import { subjectColor } from '../lib/colors'
+import { greeting, todayISO } from '../lib/format'
 import { reviewLabel, shortWhen } from '../components/chapter/meta'
 import { spring, easeOut } from '../components/ui/motion'
-import { useMediaQuery } from '../components/ui/useMediaQuery'
 
 const stagger = (i) => ({
   initial: { opacity: 0, y: 12 },
@@ -18,12 +16,9 @@ const stagger = (i) => ({
   transition: { duration: 0.4, ease: easeOut, delay: 0.03 + i * 0.05 },
 })
 
-const pad = (n) => String(n).padStart(2, '0')
-
-// The hero, as a widget: the count left to review in big dot-matrix digits,
-// and one dot per review today — filled as you clear them. The whole daily
-// goal is "fill the row".
-function TodayHero({ name, done, remaining, streak, overdue }) {
+// The hero: how many reviews are left today, and one dot per review that
+// fills as you clear them. The whole daily goal is "fill the row".
+function TodayHero({ name, done, remaining, overdue }) {
   const total = done + remaining
   const allClear = remaining === 0
   const first = name ? name.split(' ')[0] : ''
@@ -32,50 +27,38 @@ function TodayHero({ name, done, remaining, streak, overdue }) {
 
   let line
   if (total === 0) line = 'Nothing scheduled today.'
-  else if (allClear) line = `All ${plural(done, 'review')} done.`
+  else if (allClear) line = 'All done for today.'
   else if (overdue > 0) line = `${overdue} overdue — start there.`
-  else line = `${plural(done, 'review')} done so far.`
+  else line = `${done} of ${total} done.`
 
   return (
-    <motion.div {...stagger(0)} className="relative overflow-hidden bg-card rounded-[28px] p-5">
-      <div aria-hidden="true" className="dot-grid dot-grid-fade absolute -right-10 -top-10 h-56 w-56 opacity-70" />
-      <div className="relative flex items-start justify-between">
-        <span className="eyebrow text-label-2">{allClear && total > 0 ? 'Done for today' : 'To review'}</span>
-        <span className="eyebrow text-label flex items-center gap-1.5">
-          <span className={`h-[6px] w-[6px] rounded-full ${streak > 0 ? 'bg-red' : 'bg-label-3'}`} />
-          {pad(streak)} day streak
-        </span>
-      </div>
-
-      <div className="relative mt-3 flex items-end gap-3">
+    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6">
+      <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
+      <div className="mt-2 flex items-baseline gap-3">
         <motion.span
           key={remaining}
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={spring}
-          className="font-display text-[96px] leading-[0.82] tabular"
+          className="font-display text-[76px] leading-[0.9]"
         >
-          {pad(remaining)}
+          {remaining}
         </motion.span>
-        <span className="pb-1.5 text-subhead text-label-2">
-          {first ? `${greeting()}, ${first}.` : `${greeting()}.`}
-          <br />
-          {line}
-        </span>
+        <span className="text-headline text-label-2">{remaining === 1 ? 'review left' : 'reviews left'}</span>
       </div>
-
+      <p className="text-subhead text-label-2 mt-2">{line}</p>
       {dots > 0 && (
-        <div className="relative mt-5 flex flex-wrap gap-[7px]" aria-label={`${done} of ${total} reviews done`} role="img">
+        <div className="mt-5 flex flex-wrap gap-[7px]" aria-label={`${done} of ${total} reviews done`} role="img">
           {Array.from({ length: dots }).map((_, i) => (
             <motion.span
               key={i}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ ...spring, delay: 0.15 + i * 0.03 }}
-              className="h-[11px] w-[11px] rounded-full"
+              transition={{ ...spring, delay: 0.12 + i * 0.03 }}
+              className="h-[10px] w-[10px] rounded-full"
               style={{
                 background: i < filled ? 'var(--label)' : 'transparent',
-                boxShadow: i < filled ? 'none' : `inset 0 0 0 1.5px ${i < filled + overdue && !allClear ? 'var(--red)' : 'var(--label-3)'}`,
+                boxShadow: i < filled ? 'none' : 'inset 0 0 0 1.5px var(--label-3)',
               }}
             />
           ))}
@@ -86,7 +69,7 @@ function TodayHero({ name, done, remaining, streak, overdue }) {
 }
 
 // Last seven days as columns of dots — a dot-matrix bar chart.
-function WeekDots({ events }) {
+function WeekDots({ events, streak = 0 }) {
   const ROWS = 6
   const days = useMemo(() => {
     const today = new Date()
@@ -105,8 +88,8 @@ function WeekDots({ events }) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <p className="font-display text-[56px] leading-[0.85] tabular">{pad(week)}</p>
-        <p className="eyebrow text-label-2 mt-2">Reviews · 7 days</p>
+        <p className="font-display text-[44px] leading-[0.9]">{week}</p>
+        <p className="text-footnote text-label-2 mt-1.5">{week === 1 ? 'review' : 'reviews'} · {streak}-day streak</p>
       </div>
       <div className="flex items-end gap-[9px]">
         {days.map((x, i) => (
@@ -120,11 +103,11 @@ function WeekDots({ events }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 + i * 0.04 + (ROWS - r) * 0.02 }}
                   className="h-[7px] w-[7px] rounded-full"
-                  style={{ background: on ? (i === 6 ? 'var(--red)' : 'var(--label)') : 'var(--fill-2)' }}
+                  style={{ background: on ? 'var(--label)' : 'var(--fill-2)' }}
                 />
               )
             })}
-            <span className={`font-mono text-[9px] mt-1 ${i === 6 ? 'text-label' : 'text-label-3'}`}>{letter(x.d)}</span>
+            <span className={`text-[10px] mt-1 ${i === 6 ? 'text-label font-medium' : 'text-label-3'}`}>{letter(x.d)}</span>
           </div>
         ))}
       </div>
@@ -134,7 +117,6 @@ function WeekDots({ events }) {
 
 export default function TodayPage({ cadence, actions, profile, onOpenChapter, onAdd, onOpenInsights, account }) {
   const { overdue, dueToday, chapters, events, streak, subjectMap } = cadence
-  const coarse = useMediaQuery('(pointer: coarse)')
 
   const doneToday = useMemo(() => {
     const t = todayISO()
@@ -162,55 +144,76 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
     onLocked: actions.locked,
   })
 
+  const hero = <TodayHero name={profile?.name} done={doneToday} remaining={remaining} overdue={overdue.length} />
+
+  const comingUp = upcoming.length > 0 && (
+    <Section prominent title="Coming up">
+      {upcoming.slice(0, 3).map((c) => {
+        const subject = subjectMap.get(c.subjectId)
+        return (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => onOpenChapter(c)}
+            style={{ '--inset': '16px' }}
+            className="w-full flex items-center gap-3 px-4 py-3 min-h-[58px] text-left active:bg-fill transition-colors duration-75"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-body truncate">{c.title}</span>
+              <span className="block text-footnote text-label-2 truncate">
+                {subject?.name} · {reviewLabel(c)}
+              </span>
+            </span>
+            <span className="shrink-0 text-footnote text-label-2">{shortWhen(c)}</span>
+          </button>
+        )
+      })}
+    </Section>
+  )
+
+  const insights = chapters.length > 0 && (
+    <Section prominent title="This week">
+      <button type="button" onClick={onOpenInsights} className="w-full text-left p-5 active:bg-fill transition-colors duration-75">
+        <WeekDots events={events} streak={streak.count} />
+      </button>
+    </Section>
+  )
+
   return (
-    <Page title="Today" eyebrow={eyebrow} trailing={account}>
-      <div className="space-y-8">
-        <TodayHero name={profile?.name} done={doneToday} remaining={remaining} streak={streak.count} overdue={overdue.length} />
+    <Page title="Today" eyebrow={eyebrow} trailing={account} wide>
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10 lg:items-start">
+        <div className="space-y-8 min-w-0">
+          <div className="lg:hidden">{hero}</div>
 
-        <AnimatePresence initial={false}>
-          {overdue.length > 0 && (
-            <motion.div key="overdue" {...stagger(1)} exit={{ opacity: 0, height: 0 }}>
-              <Section
-                prominent
-                title={
-                  <span className="flex items-center gap-2 text-red">
-                    <span className="h-[6px] w-[6px] rounded-full bg-red pulse-dot" />
-                    Overdue · {pad(overdue.length)}
-                  </span>
-                }
-              >
-                <AnimatePresence initial={false}>
-                  {overdue.map((c) => (
-                    <ChapterRow key={c.id} {...rowProps(c)} />
-                  ))}
-                </AnimatePresence>
-              </Section>
-            </motion.div>
-          )}
+          <AnimatePresence initial={false}>
+            {overdue.length > 0 && (
+              <motion.div key="overdue" {...stagger(1)} exit={{ opacity: 0, height: 0 }}>
+                <Section prominent title="Overdue">
+                  <AnimatePresence initial={false}>
+                    {overdue.map((c) => (
+                      <ChapterRow key={c.id} {...rowProps(c)} />
+                    ))}
+                  </AnimatePresence>
+                </Section>
+              </motion.div>
+            )}
 
-          {dueToday.length > 0 && (
-            <motion.div key="due" {...stagger(2)} exit={{ opacity: 0, height: 0 }}>
-              <Section
-                prominent
-                title={`Due today · ${pad(dueToday.length)}`}
-                action={coarse ? <span className="eyebrow text-label-3">Swipe → done</span> : null}
-              >
-                <AnimatePresence initial={false}>
-                  {dueToday.map((c) => (
-                    <ChapterRow key={c.id} {...rowProps(c)} />
-                  ))}
-                </AnimatePresence>
-              </Section>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            {dueToday.length > 0 && (
+              <motion.div key="due" {...stagger(2)} exit={{ opacity: 0, height: 0 }}>
+                <Section prominent title="Due today">
+                  <AnimatePresence initial={false}>
+                    {dueToday.map((c) => (
+                      <ChapterRow key={c.id} {...rowProps(c)} />
+                    ))}
+                  </AnimatePresence>
+                </Section>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {remaining === 0 && (
-          <motion.div {...stagger(1)} className="relative overflow-hidden bg-card rounded-[28px] px-6 py-9 text-center">
-            <div aria-hidden="true" className="dot-grid dot-grid-fade absolute inset-0 opacity-60" />
-            <div className="relative">
-              <p className="eyebrow text-label-2">{chapters.length === 0 ? 'Get started' : 'All clear'}</p>
-              <h2 className="text-title-2 font-medium mt-3">
+          {remaining === 0 && (
+            <motion.div {...stagger(1)} className="bg-card rounded-[28px] px-6 py-10 text-center">
+              <h2 className="text-title-2 font-medium">
                 {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
               </h2>
               <p className="text-subhead text-label-2 mt-2 max-w-[320px] mx-auto">
@@ -221,58 +224,20 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
               <Button size="md" className="mt-6" onClick={onAdd}>
                 <Plus size={17} strokeWidth={2.2} /> Add chapter
               </Button>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
 
-        {upcoming.length > 0 && (
-          <motion.div {...stagger(3)}>
-            <Section prominent title="Coming up">
-              {upcoming.map((c) => {
-                const subject = subjectMap.get(c.subjectId)
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => onOpenChapter(c)}
-                    style={{ '--inset': '16px' }}
-                    className="w-full flex items-center gap-3 px-4 py-3 min-h-[58px] text-left active:bg-fill transition-colors duration-75"
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-body truncate">{c.title}</span>
-                      <span className="block text-footnote text-label-2 truncate">
-                        <span
-                          className="inline-block h-[6px] w-[6px] rounded-full align-[1px] mr-1.5"
-                          style={{ background: subjectColor(subject?.colorTag) }}
-                        />
-                        {subject?.name} · {reviewLabel(c)}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-footnote text-label-2">{shortWhen(c)}</span>
-                  </button>
-                )
-              })}
-            </Section>
+          <motion.div {...stagger(3)} className="lg:hidden space-y-8">
+            {comingUp}
+            {insights}
           </motion.div>
-        )}
+        </div>
 
-        {chapters.length > 0 && (
-          <motion.div {...stagger(4)}>
-            <Section
-              prominent
-              title="Insights"
-              action={
-                <button type="button" onClick={onOpenInsights} className="eyebrow text-label-2 flex items-center gap-1 hover:text-label">
-                  All <ArrowUpRight size={13} />
-                </button>
-              }
-            >
-              <button type="button" onClick={onOpenInsights} className="w-full text-left p-5 active:bg-fill transition-colors duration-75">
-                <WeekDots events={events} />
-              </button>
-            </Section>
-          </motion.div>
-        )}
+        <motion.aside {...stagger(1)} className="hidden lg:block space-y-8 sticky top-[76px]">
+          {hero}
+          {insights}
+          {comingUp}
+        </motion.aside>
       </div>
     </Page>
   )

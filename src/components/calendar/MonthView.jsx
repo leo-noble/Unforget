@@ -117,7 +117,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
               >
                 <span
                   className={`h-[30px] w-[30px] rounded-full flex items-center justify-center text-[16px] tabular ${
-                    isSel ? (isToday ? 'bg-red text-white font-medium' : 'bg-label text-canvas font-medium') : isToday ? 'text-red font-medium' : cell.inMonth ? '' : 'text-label-3'
+                    isSel ? (isToday ? 'bg-accent text-tint-fg font-medium' : 'bg-label text-canvas font-medium') : isToday ? 'text-accent font-medium' : cell.inMonth ? '' : 'text-label-3'
                   }`}
                 >
                   {cell.date.getDate()}
@@ -204,7 +204,7 @@ export default function MonthView({ cursorDate, blocks, chapters, chapterMap, su
                 <button
                   onClick={() => onOpenDay(iso)}
                   className={`h-6 min-w-6 px-1.5 rounded-full inline-flex items-center gap-1 text-[12.5px] font-medium tabular hover:bg-fill ${
-                    isToday ? 'bg-red text-white hover:bg-red' : cell.inMonth ? '' : 'text-label-3'
+                    isToday ? 'bg-accent text-tint-fg hover:bg-accent' : cell.inMonth ? '' : 'text-label-3'
                   }`}
                 >
                   {cell.date.getDate() === 1 && <span>{cell.date.toLocaleDateString(undefined, { month: 'short' })}</span>}

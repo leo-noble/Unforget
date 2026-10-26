@@ -53,7 +53,7 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
             >
               <span
                 className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                  isToday ? 'bg-red text-white font-medium' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
+                  isToday ? 'bg-accent text-tint-fg font-medium' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
                 }`}
               >
                 {cell.date.getDate()}

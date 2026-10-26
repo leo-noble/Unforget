@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Plus, Check, CalendarDays } from 'lucide-react'
+import { Plus, CalendarDays } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section } from '../ui/List'
 import { toISODate, nextReviewDateForIndex, MAX_REVIEW_INDEX } from '../../lib/srs'
 import { formatShort } from '../../lib/format'
-import { subjectColor, nextSubjectColor, SUBJECT_PALETTE } from '../../lib/colors'
+import { nextSubjectColor } from '../../lib/colors'
 import { snappy } from '../ui/motion'
 
 const TITLE_MAX = 120
@@ -20,7 +20,7 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
   const [subjectId, setSubjectId] = useState(subjects[0]?.id || '')
   const [creatingSubject, setCreatingSubject] = useState(subjects.length === 0)
   const [newSubjectName, setNewSubjectName] = useState('')
-  const [newSubjectColor, setNewSubjectColor] = useState(() => nextSubjectColor(subjects))
+  const newSubjectColor = nextSubjectColor(subjects)
   const [studiedDate, setStudiedDate] = useState(todayISO)
   const [notes, setNotes] = useState('')
 
@@ -99,21 +99,6 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
                   placeholder="Subject name, e.g. Physics"
                   className="w-full bg-transparent px-4 h-[52px] text-body outline-none placeholder:text-label-3"
                 />
-                <div className="hairline-t flex items-center gap-2.5 px-4 py-3">
-                  {SUBJECT_PALETTE.map((hex) => (
-                    <button
-                      key={hex}
-                      type="button"
-                      onClick={() => setNewSubjectColor(hex)}
-                      aria-label={`Colour ${hex}`}
-                      aria-pressed={newSubjectColor === hex}
-                      className="h-7 w-7 rounded-full flex items-center justify-center"
-                      style={{ background: hex }}
-                    >
-                      {newSubjectColor === hex && <Check size={15} strokeWidth={3} className="text-white" />}
-                    </button>
-                  ))}
-                </div>
               </motion.div>
             ) : (
               <motion.div
@@ -126,7 +111,6 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
               >
                 {subjects.map((s) => {
                   const on = subjectId === s.id
-                  const color = subjectColor(s.colorTag)
                   return (
                     <motion.button
                       key={s.id}
@@ -135,12 +119,10 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
                       transition={snappy}
                       onClick={() => setSubjectId(s.id)}
                       aria-pressed={on}
-                      className={`inline-flex items-center gap-2 h-9 pl-3 pr-3.5 rounded-full text-subhead font-medium ${
-                        on ? 'text-white' : 'bg-fill text-label'
+                      className={`inline-flex items-center h-9 px-4 rounded-full text-subhead font-medium ${
+                        on ? 'bg-tint text-tint-fg' : 'bg-fill text-label'
                       }`}
-                      style={on ? { background: color } : undefined}
                     >
-                      <span className="h-2 w-2 rounded-full" style={{ background: on ? '#fff' : color }} />
                       {s.name}
                     </motion.button>
                   )

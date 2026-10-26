@@ -1,10 +1,11 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import { AuthProvider, useAuth, hasSignedInBefore } from './lib/useAuth'
 import { ToastProvider } from './components/ui/Toast'
 import { ConfirmProvider } from './components/ui/Alert'
 import Splash from './components/ui/Splash'
+import { applyAppearance } from './lib/appearance'
 import LoginPage from './pages/LoginPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import AppShell from './AppShell'
@@ -55,6 +56,14 @@ function RequireAuth({ children }) {
 }
 
 export default function App() {
+  // Every screen, signed in or not, tracks the device's light/dark switch.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const on = () => applyAppearance({ theme: document.documentElement.dataset.accent })
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+
   return (
     <MotionConfig reducedMotion="user">
       <AuthProvider>

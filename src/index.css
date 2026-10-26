@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens. Monochrome, with one colour: red, used sparingly for what
-   needs attention (overdue, the live timer, the primary action). The old
-   system-colour names still exist so every component resolves, but they
-   collapse onto the greyscale — colour is a signal here, not decoration.
-   <html data-mode> picks light or dark; see src/lib/appearance.js.
+   Design tokens. Black and white, with liquid glass for the chrome (tab bar,
+   sidebar, nav bar). The old system-colour names still exist so every
+   component resolves, but they all collapse onto the greyscale.
+   <html data-mode> follows the device's light/dark setting; see
+   src/lib/appearance.js.
    ========================================================================== */
 
 :root,
@@ -23,8 +23,8 @@
   --fill: rgba(10, 10, 10, 0.05);
   --fill-2: rgba(10, 10, 10, 0.1);
   --dot: rgba(10, 10, 10, 0.14);
+  --canvas-hi: #fbfbfb;
 
-  --red: #d71921;
   --tint: #0a0a0a;
   --tint-fg: #ffffff;
 
@@ -32,6 +32,13 @@
   --shadow-float: 0 12px 32px -14px rgba(0, 0, 0, 0.28);
   --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.1);
   --scrim: rgba(0, 0, 0, 0.3);
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --glass-edge-soft: rgba(255, 255, 255, 0.4);
+  --glass-rim: rgba(0, 0, 0, 0.07);
+  --lens-bg: rgba(10, 10, 10, 0.07);
 
   --sheet-canvas: #efefef;
   --sheet-card: #ffffff;
@@ -50,8 +57,8 @@
   --fill: rgba(245, 245, 245, 0.07);
   --fill-2: rgba(245, 245, 245, 0.14);
   --dot: rgba(245, 245, 245, 0.16);
+  --canvas-hi: #1c1c1c;
 
-  --red: #eb2a2f;
   --tint: #f5f5f5;
   --tint-fg: #000000;
 
@@ -60,9 +67,23 @@
   --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.7);
   --scrim: rgba(0, 0, 0, 0.6);
 
+  --glass-bg: rgba(40, 40, 40, 0.55);
+  --glass-bg-strong: rgba(30, 30, 30, 0.8);
+  --glass-edge: rgba(255, 255, 255, 0.26);
+  --glass-edge-soft: rgba(255, 255, 255, 0.07);
+  --glass-rim: rgba(255, 255, 255, 0.07);
+  --lens-bg: rgba(255, 255, 255, 0.12);
+
   --sheet-canvas: #0b0b0b;
   --sheet-card: #171717;
   --segment-pill: #2c2c2c;
+}
+
+/* Black and white only. "Accent" (what needs attention: overdue, the add
+   button, today) is full-strength ink, same as tint. */
+:root {
+  --accent: var(--label);
+  --red: var(--accent);
 }
 
 /* Legacy colour names, folded into the monochrome system. "Positive"
@@ -87,6 +108,7 @@
 :root { --sidebar-w: 0px; }
 @media (min-width: 768px) {
   :root { --sidebar-w: 284px; }
+  :root[data-sidebar='collapsed'] { --sidebar-w: 92px; }
 }
 
 /* Inside a sheet the stack steps up one level. */
@@ -99,12 +121,16 @@
 
 html {
   background: var(--canvas);
+  /* A soft pool of light at the top, so glass has something to sit on. */
+  background-image: radial-gradient(120% 70% at 50% -10%, var(--canvas-hi), var(--canvas) 70%);
+  background-attachment: fixed;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
 body {
-  @apply bg-canvas text-label font-sans antialiased;
+  @apply text-label font-sans antialiased;
+  background: transparent;
   font-size: 17px;
   line-height: 22px;
   -webkit-tap-highlight-color: transparent;
@@ -118,8 +144,8 @@ body {
 }
 
 ::selection {
-  background: var(--red);
-  color: #fff;
+  background: var(--label);
+  color: var(--canvas);
 }
 
 /* Only while appearance is actually changing — see applyAppearance(). */
@@ -160,7 +186,7 @@ input[type='search']::-webkit-search-cancel-button {
 }
 
 :focus-visible {
-  outline: 1.5px solid var(--red);
+  outline: 1.5px solid var(--label);
   outline-offset: 2px;
 }
 
@@ -187,20 +213,44 @@ input[type='search']::-webkit-search-cancel-button {
 }
 
 @layer components {
-  /* ---------- Surfaces ----------
-     Flat. A floating surface is the card colour, slightly see-through with a
-     soft blur so content passing beneath doesn't vanish abruptly, and a
-     hairline edge instead of a highlight. */
+  /* ---------- Liquid glass ----------
+     The chrome — tab bar, sidebar, floating buttons — is glass: a saturated
+     blur, a bright rim on the top-left edge and a soft one on the bottom-right.
+     The rim is a masked gradient border on ::before so it follows any radius.
+     Content surfaces (cards, lists) stay flat. */
   .glass,
   .glass-strong {
     position: relative;
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    backdrop-filter: blur(18px) saturate(140%);
-    background: color-mix(in srgb, var(--card) 86%, transparent);
-    box-shadow: var(--shadow-float), inset 0 0 0 1px var(--separator);
+    isolation: isolate;
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    background: var(--glass-bg);
+    box-shadow: var(--shadow-float), inset 0 0 0 0.5px var(--glass-rim);
   }
   .glass-strong {
-    background: color-mix(in srgb, var(--card) 96%, transparent);
+    background: var(--glass-bg-strong);
+  }
+  .glass::before,
+  .glass-strong::before,
+  .glass-lens::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(150deg, var(--glass-edge) 0%, var(--glass-edge-soft) 28%, transparent 52%, var(--glass-edge-soft) 78%, var(--glass-edge) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* The selected-tab lens inside a glass bar: a brighter bubble of glass. */
+  .glass-lens {
+    position: relative;
+    isolation: isolate;
+    background: var(--lens-bg);
+    box-shadow: inset 0 1px 1px var(--glass-edge-soft), 0 2px 8px -2px rgba(0, 0, 0, 0.18);
   }
   .glass-tint {
     position: relative;

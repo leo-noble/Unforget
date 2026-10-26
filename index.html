@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Fivedot — Five reviews. Nothing forgotten.</title>
-    <meta name="description" content="Fivedot schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
+    <title>Mnora — Remember what you study</title>
+    <meta name="description" content="Mnora schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
 
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
@@ -14,8 +14,8 @@
          and a status bar that takes the page's own background colour. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Fivedot" />
-    <meta name="application-name" content="Fivedot" />
+    <meta name="apple-mobile-web-app-title" content="Mnora" />
+    <meta name="application-name" content="Mnora" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="theme-color" content="#EFEFEF" media="(prefers-color-scheme: light)" />
@@ -38,14 +38,13 @@
         var accent = 'indigo'
         var mode = 'system'
         try {
-          var boot = JSON.parse(localStorage.getItem('fivedot.appearance') || 'null')
+          var boot = JSON.parse(localStorage.getItem('mnora.appearance') || 'null')
           var prefs = boot || JSON.parse(localStorage.getItem('cadence.prefs') || '{}')
           var a = boot ? boot.accent : prefs.theme
           accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'indigo'
-          mode = (boot ? boot.themeMode : prefs.themeMode) || 'system'
-          if (!boot && (prefs.theme === 'graphite' || prefs.theme === 'verdant')) mode = 'dark'
         } catch (e) {}
-        if (mode !== 'light' && mode !== 'dark') {
+        // Light/dark always follows the device.
+        {
           mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
         }
         root.dataset.accent = accent

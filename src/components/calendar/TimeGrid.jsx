@@ -369,7 +369,7 @@ export default function TimeGrid({
         {nowVisible && dates.includes(now.iso) && (
           <span
             style={{ top: minutesToY(now.minute, win) }}
-            className="absolute right-1 -translate-y-1/2 text-[10.5px] font-medium text-red tabular bg-card pl-1 whitespace-nowrap"
+            className="absolute right-1 -translate-y-1/2 text-[10.5px] font-medium text-accent tabular bg-card pl-1 whitespace-nowrap"
           >
             {minutesToLabel(now.minute)}
           </span>
@@ -441,8 +441,8 @@ export default function TimeGrid({
                 style={{ top: minutesToY(now.minute, win) }}
                 className="absolute inset-x-0 z-30 pointer-events-none"
               >
-                <span className="absolute -left-[4px] -top-[4px] h-[9px] w-[9px] rounded-full bg-red" />
-                <span className="absolute inset-x-0 -top-px h-[2px] bg-red" />
+                <span className="absolute -left-[4px] -top-[4px] h-[9px] w-[9px] rounded-full bg-accent" />
+                <span className="absolute inset-x-0 -top-px h-[2px] bg-accent" />
               </div>
             )}
 

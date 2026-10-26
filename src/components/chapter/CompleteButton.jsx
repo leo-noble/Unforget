@@ -62,7 +62,7 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
         animate={{ scale: checking ? 1 : 0, opacity: checking ? 1 : 0 }}
         transition={bouncy}
         className="absolute inset-0 rounded-full flex items-center justify-center"
-        style={{ background: color, color: status === 'overdue' ? '#fff' : 'var(--tint-fg)' }}
+        style={{ background: color, color: 'var(--tint-fg)' }}
       >
         <Check size={15} strokeWidth={3.2} />
       </motion.span>

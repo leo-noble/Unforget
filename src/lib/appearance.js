@@ -32,8 +32,9 @@ export function resolveAccent(theme) {
   return LEGACY_THEME[theme] || DEFAULT_ACCENT
 }
 
-export function resolveMode(themeMode) {
-  if (themeMode === 'light' || themeMode === 'dark') return themeMode
+// Light and dark always follow the device. A stored themeMode from an older
+// version is ignored rather than deleted, so it still syncs harmlessly.
+export function resolveMode() {
   if (typeof window === 'undefined' || !window.matchMedia) return 'light'
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
@@ -45,7 +46,7 @@ const CANVAS = { light: '#EFEFEF', dark: '#000000' }
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it
 // reads, so a returning user's first frame is already in their colours.
-const BOOT_KEY = 'fivedot.appearance'
+const BOOT_KEY = 'mnora.appearance'
 
 export function applyAppearance({ theme, themeMode } = {}) {
   if (typeof document === 'undefined') return

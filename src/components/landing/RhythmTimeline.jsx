@@ -14,7 +14,7 @@ const at = (day) => LEFT + dayToFraction(day) * SPAN
 function Marker({ i }) {
   const last = i === REVIEW_DAYS.length - 1
   if (i === 0) return <span className="block h-5 w-5 rounded-full bg-canvas" style={{ boxShadow: 'inset 0 0 0 2px var(--label)' }} />
-  return <span className={`block h-5 w-5 rounded-full ${last ? 'bg-red' : 'bg-label'}`} />
+  return <span className={`block h-5 w-5 rounded-full ${last ? 'bg-accent' : 'bg-label'}`} />
 }
 
 export default function RhythmTimeline() {

@@ -8,7 +8,7 @@ export default function AppIcon({ size = 56, className = '' }) {
   return (
     <span
       role="img"
-      aria-label="Fivedot"
+      aria-label="Mnora"
       className={`inline-block shrink-0 ${className}`}
       style={{ width: size, height: size }}
       dangerouslySetInnerHTML={{ __html: html }}

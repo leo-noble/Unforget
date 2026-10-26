@@ -25,8 +25,15 @@ const LEGACY = {
   '#726d70': '#34C759',
 }
 
-export function subjectColor(hex) {
-  if (!hex || typeof hex !== 'string') return 'var(--tint)'
+// The interface is black and white, so every subject renders in ink. The
+// stored colour is left alone (it syncs, and older clients still read it).
+export function subjectColor() {
+  return 'var(--label)'
+}
+
+// The colour a subject was saved with, for anything that still wants it.
+export function storedSubjectColor(hex) {
+  if (!hex || typeof hex !== 'string') return null
   return LEGACY[hex.toLowerCase()] || hex
 }
 

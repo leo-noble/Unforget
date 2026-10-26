@@ -235,9 +235,6 @@ export default function FocusPage({ cadence, account }) {
       }
       trailing={
         <>
-          <IconButton size={40} label="Fullscreen" onClick={fullscreen.enter} aria-keyshortcuts="F">
-            <Maximize2 size={17} />
-          </IconButton>
           <IconButton size={40} label="Timer settings" onClick={() => setShowSettings(true)}>
             <Settings2 size={18} />
           </IconButton>
@@ -284,20 +281,16 @@ export default function FocusPage({ cadence, account }) {
 
         <Controls timer={timer} />
 
-        <AnimatePresence>
+        <div className="mt-5 flex items-center gap-5 text-footnote font-medium text-label-2">
+          <button type="button" onClick={fullscreen.enter} aria-keyshortcuts="F" className="flex items-center gap-1.5 hover:text-label">
+            <Maximize2 size={13} /> Full screen
+          </button>
           {!timer.isPristine && (
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              onClick={timer.stop}
-              className="mt-4 flex items-center gap-1.5 text-footnote font-medium text-label-2 active:text-red overflow-hidden"
-            >
-              <Square size={12} fill="currentColor" /> End and reset the cycle
-            </motion.button>
+            <button type="button" onClick={timer.stop} className="flex items-center gap-1.5 hover:text-label">
+              <Square size={11} fill="currentColor" /> Reset cycle
+            </button>
           )}
-        </AnimatePresence>
+        </div>
       </div>
 
       <div className="mt-8 space-y-6 max-w-[560px] mx-auto">

@@ -11,7 +11,7 @@ const VARIANT = {
   gray: 'bg-fill text-label',
   glass: 'glass text-label',
   plain: 'text-tint',
-  destructive: 'bg-red/10 text-red',
+  destructive: 'bg-accent/10 text-accent',
 }
 
 const SIZE = {

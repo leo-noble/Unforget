@@ -23,6 +23,7 @@ import { toISODate } from './lib/srs'
 import { APP_NAME } from './brand'
 
 const TAB_PATH = Object.fromEntries(TABS.map((t) => [t.id, t.path]))
+const SIDEBAR_KEY = 'mnora.sidebarCollapsed'
 
 export default function AppShell() {
   const navigate = useNavigate()
@@ -33,21 +34,37 @@ export default function AppShell() {
   const tab = tabFromPath(location.pathname)
   const [sheet, setSheet] = useState(null) // 'add' | 'settings' | 'insights'
   const [openChapterId, setOpenChapterId] = useState(null)
+  // Laptop sidebar: full panel or icon rail, remembered on this device.
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(SIDEBAR_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+  const toggleSidebar = useCallback(() => setSidebarCollapsed((v) => !v), [])
+  useEffect(() => {
+    document.documentElement.dataset.sidebar = sidebarCollapsed ? 'collapsed' : 'open'
+    try {
+      localStorage.setItem(SIDEBAR_KEY, sidebarCollapsed ? '1' : '0')
+    } catch {
+      // best-effort
+    }
+  }, [sidebarCollapsed])
   const profile = useMemo(() => ({ name: displayName, email: user?.email, avatarUrl }), [displayName, user?.email, avatarUrl])
   const { prefs, updatePrefs } = cadence
 
   // ---- appearance ----
+  // Follows the device's light/dark setting live, without a reload.
   useEffect(() => {
     applyAppearance(prefs)
-    if (prefs.themeMode === 'light' || prefs.themeMode === 'dark') return
-    // Automatic follows the OS live, without a reload.
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const on = () => applyAppearance(prefs)
     mq.addEventListener('change', on)
     return () => mq.removeEventListener('change', on)
-    // Only these two fields matter; prefs itself changes identity on any edit.
+    // Only the accent matters here; prefs itself changes identity on any edit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prefs.theme, prefs.themeMode])
+  }, [prefs.theme])
 
   // ---- tabs ----
   // Each tab keeps its own scroll position, like a UITabBarController; tapping
@@ -114,17 +131,21 @@ export default function AppShell() {
     return () => clearTimeout(t)
   }, [justMastered, clearJustMastered])
 
-  // ---- keyboard: ⌘/Ctrl+N adds a chapter on desktop ----
+  // ---- keyboard: ⌘/Ctrl+N adds a chapter, ⌘/Ctrl+\ toggles the sidebar ----
   useEffect(() => {
     function onKey(e) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n' && !sheet) {
+      if (!(e.metaKey || e.ctrlKey)) return
+      if (e.key.toLowerCase() === 'n' && !sheet) {
         e.preventDefault()
         setSheet('add')
+      } else if (e.key === '\\') {
+        e.preventDefault()
+        toggleSidebar()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [sheet])
+  }, [sheet, toggleSidebar])
 
   const chapterMap = useMemo(() => new Map(cadence.chapters.map((c) => [c.id, c])), [cadence.chapters])
   const openChapter = openChapterId ? chapterMap.get(openChapterId) : null
@@ -151,7 +172,6 @@ export default function AppShell() {
   return (
     <TimerProvider prefs={prefs} updatePrefs={updatePrefs}>
       <div className="relative min-h-screen">
-        <div aria-hidden="true" className="ambient pointer-events-none absolute inset-x-0 top-0 h-[520px]" />
 
         <Sidebar
           active={tab}
@@ -162,9 +182,11 @@ export default function AppShell() {
           profile={profile}
           dueCount={dueCount}
           chapterMap={chapterMap}
+          collapsed={sidebarCollapsed}
+          onToggle={toggleSidebar}
         />
 
-        <main className="relative md:pl-[var(--sidebar-w)]">
+        <main className="relative md:pl-[var(--sidebar-w)] transition-[padding] duration-300 ease-ios">
           {/* Opacity only: a transform here would become the containing block
               for each page's fixed nav bar and drag it along mid-animation. */}
           <motion.div

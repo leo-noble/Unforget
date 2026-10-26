@@ -30,6 +30,7 @@ export default {
         'tint-2': token('tint-2'),
         // Text and icons placed on a tint-filled surface.
         'tint-fg': token('tint-fg'),
+        accent: token('accent'),
         ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {

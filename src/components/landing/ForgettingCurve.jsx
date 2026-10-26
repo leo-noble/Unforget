@@ -72,7 +72,7 @@ export default function ForgettingCurve() {
         <h3 className="text-headline font-medium">How much you still remember</h3>
         <div className="flex items-center gap-4 text-footnote font-medium">
           <span className="flex items-center gap-2">
-            <span className="h-[3px] w-5 rounded-full bg-red" /> With {APP_NAME}
+            <span className="h-[3px] w-5 rounded-full bg-accent" /> With {APP_NAME}
           </span>
           <span className="flex items-center gap-2 text-label-2">
             <span className="h-[3px] w-5 rounded-full bg-label-3" /> No reviews
@@ -87,8 +87,8 @@ export default function ForgettingCurve() {
       >
         <defs>
           <linearGradient id="fc-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--red)" stopOpacity="0.16" />
-            <stop offset="100%" stopColor="var(--red)" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[1, 0.5, 0].map((g) => (
@@ -105,7 +105,7 @@ export default function ForgettingCurve() {
         <motion.path
           d={SCHEDULED_PATH}
           fill="none"
-          stroke="var(--red)"
+          stroke="var(--accent)"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -119,7 +119,7 @@ export default function ForgettingCurve() {
             cx={x(day)}
             cy={y(1)}
             r="5"
-            fill="var(--red)"
+            fill="var(--accent)"
             stroke="var(--card)"
             strokeWidth="2.5"
             initial={{ opacity: 0, scale: 0 }}
@@ -127,7 +127,7 @@ export default function ForgettingCurve() {
             transition={{ type: 'spring', stiffness: 340, damping: 20, delay: 0.5 + i * 0.15 }}
           />
         ))}
-        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--red)" fontSize="14" fontWeight="700" fontFamily="Geist, sans-serif" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
+        <motion.text x={W - PAD.r + 9} y={y(END_SCHEDULED) + 4} fill="var(--accent)" fontSize="14" fontWeight="700" fontFamily="Geist, sans-serif" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
           {Math.round(END_SCHEDULED * 100)}%
         </motion.text>
         <motion.text x={W - PAD.r + 9} y={y(END_NO_REVIEW) + 4} fill="var(--label-2)" fontSize="13" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}>

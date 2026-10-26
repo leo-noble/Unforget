@@ -16,8 +16,8 @@ export default defineConfig({
         // Same identity the app had before it was renamed, so existing
         // installs update in place instead of becoming a second app.
         id: '/app',
-        name: 'Fivedot — Five reviews. Nothing forgotten.',
-        short_name: 'Fivedot',
+        name: 'Mnora — Remember what you study',
+        short_name: 'Mnora',
         description: 'Spaced-repetition study planner. Know exactly what to revise today.',
         // Opening the installed app goes straight to Today. Signed-out users
         // are bounced to sign-in from there, never to the marketing page.

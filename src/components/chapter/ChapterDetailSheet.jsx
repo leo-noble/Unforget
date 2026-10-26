@@ -79,7 +79,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 setRenaming(false)
               }
             }}
-            className="mt-1 w-full bg-card rounded-[14px] px-3 py-1.5 text-title-1 font-medium outline-none ring-1 ring-red"
+            className="mt-1 w-full bg-card rounded-[14px] px-3 py-1.5 text-title-1 font-medium outline-none ring-1 ring-accent"
           />
         ) : (
           <button
@@ -133,7 +133,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 className="h-[22px] w-[22px] rounded-full"
                 style={{
                   background: isDone ? 'var(--label)' : 'transparent',
-                  boxShadow: isDone ? 'none' : `inset 0 0 0 1.5px ${isNext ? 'var(--red)' : 'var(--label-3)'}`,
+                  boxShadow: isDone ? 'none' : `inset 0 0 0 1.5px ${isNext ? 'var(--accent)' : 'var(--label-3)'}`,
                 }}
               />
             )
@@ -249,9 +249,9 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
           onClick={async () => {
             if (await actions.remove(chapter)) onClose()
           }}
-          className="!text-red"
+          className="!text-accent"
         >
-          <span className="text-body text-red">Delete Chapter</span>
+          <span className="text-body text-accent">Delete Chapter</span>
         </Row>
       </Section>
     </Sheet>

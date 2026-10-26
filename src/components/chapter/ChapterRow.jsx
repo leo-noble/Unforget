@@ -1,9 +1,8 @@
 import { useRef } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { Check, Clock, ChevronRight, AlertCircle } from 'lucide-react'
+import { Check, Clock, AlertCircle } from 'lucide-react'
 import CompleteButton from './CompleteButton'
 import { reviewLabel, shortWhen, isActionable, STATUS_TONE } from './meta'
-import { subjectColor } from '../../lib/colors'
 import { easeOut } from '../ui/motion'
 
 const SWIPE_TRIGGER = 96
@@ -54,7 +53,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           <motion.div
             aria-hidden="true"
             style={{ opacity: snoozeOpacity }}
-            className="absolute inset-0 bg-red flex items-center justify-end pr-6 text-white"
+            className="absolute inset-0 bg-accent flex items-center justify-end pr-6 text-tint-fg"
           >
             <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 eyebrow">
               Tomorrow <Clock size={18} strokeWidth={2} />
@@ -92,7 +91,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
               onOpen?.(chapter)
             }
           }}
-          className="flex items-center gap-3 pl-4 pr-3 py-3 min-h-[64px] cursor-pointer active:bg-fill transition-colors duration-75 select-none"
+          className="flex items-center gap-3.5 pl-4 pr-4 py-3 min-h-[64px] cursor-pointer active:bg-fill transition-colors duration-75 select-none"
         >
           <CompleteButton
             key={`${chapter.id}-${chapter.currentReviewIndex}-${chapter.nextReviewDate}`}
@@ -106,10 +105,6 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
             <p className="text-subhead text-label-2 truncate mt-0.5">
               {showSubject && subject && (
                 <>
-                  <span
-                    className="inline-block h-[7px] w-[7px] rounded-full align-[1px] mr-1.5"
-                    style={{ background: subjectColor(subject.colorTag) }}
-                  />
                   {subject.name}
                   <span className="text-label-3"> · </span>
                 </>
@@ -126,9 +121,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
             </span>
           )}
           {chapter.struggleFlag && chapter.derivedStatus !== 'mastered' && (
-            <AlertCircle size={17} className="shrink-0 text-orange" aria-label="Needs extra attention" />
+            <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 text-label-2" aria-label="Needs extra attention" />
           )}
-          <ChevronRight size={17} strokeWidth={2.4} className="shrink-0 text-label-3" />
         </div>
       </motion.div>
     </motion.div>

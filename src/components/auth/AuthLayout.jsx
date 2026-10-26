@@ -67,7 +67,7 @@ export function ErrorNote({ children }) {
     <motion.p
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-3 px-4 py-3 rounded-[16px] bg-red/10 text-red text-footnote"
+      className="mt-3 px-4 py-3 rounded-[16px] bg-accent/10 text-accent text-footnote"
       role="alert"
     >
       {children}

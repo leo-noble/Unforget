@@ -15,7 +15,7 @@ function Tile({ icon: Icon, value, label, accent = false }) {
     <div className="relative overflow-hidden bg-card rounded-cell p-4 min-h-[124px] flex flex-col justify-between">
       <div className="flex items-start justify-between">
         <span className="eyebrow text-label-2">{label}</span>
-        <Icon size={16} strokeWidth={1.75} className={accent ? 'text-red' : 'text-label-3'} />
+        <Icon size={16} strokeWidth={1.75} className={accent ? 'text-accent' : 'text-label-3'} />
       </div>
       <p className="font-display text-[44px] leading-none tabular mt-4">{value}</p>
     </div>
@@ -114,7 +114,7 @@ export default function InsightsSheet({ cadence, onClose }) {
                     transition={{ duration: 0.5, delay: i * 0.012, ease: easeOut }}
                     style={{ originY: 1 }}
                     className={`block w-full h-full rounded-full ${
-                      d.count > 0 ? (picked === i || i === activity.bars.length - 1 ? 'bg-red' : 'bg-label') : 'bg-fill'
+                      d.count > 0 ? (picked === i || i === activity.bars.length - 1 ? 'bg-accent' : 'bg-label') : 'bg-fill'
                     } ${picked != null && picked !== i ? 'opacity-50' : ''}`}
                   />
                 </button>

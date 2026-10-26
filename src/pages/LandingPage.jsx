@@ -25,7 +25,7 @@ const LEDE = 'text-[clamp(1.0625rem,4.2vw,1.25rem)] leading-[1.5] text-label-2'
 function Label({ n, children }) {
   return (
     <p className="eyebrow text-label-2 flex items-center gap-2 mb-5">
-      <span className="h-[6px] w-[6px] rounded-full bg-red" />
+      <span className="h-[6px] w-[6px] rounded-full bg-accent" />
       {n && <span className="text-label">{n}</span>}
       {children}
     </p>
@@ -70,7 +70,7 @@ function FaqItem({ q, a, open, onToggle }) {
     <div className="hairline-b">
       <button type="button" onClick={onToggle} aria-expanded={open} className="w-full flex items-center justify-between gap-4 text-left py-5">
         <span className="text-[17px] font-medium">{q}</span>
-        <motion.span animate={{ rotate: open ? 45 : 0 }} transition={snappy} className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${open ? 'bg-red text-white' : 'bg-fill'}`}>
+        <motion.span animate={{ rotate: open ? 45 : 0 }} transition={snappy} className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${open ? 'bg-accent text-tint-fg' : 'bg-fill'}`}>
           <Plus size={16} strokeWidth={2} />
         </motion.span>
       </button>
@@ -161,7 +161,7 @@ export default function LandingPage() {
               <br />
               what you
               <br />
-              study<span className="text-red">.</span>
+              study<span className="text-accent">.</span>
             </h1>
             <p className={`${LEDE} mt-6 max-w-[520px]`}>
               {APP_NAME} tells you exactly which chapters to revise each day. Log a chapter when you study it, and it brings it back
@@ -193,7 +193,6 @@ export default function LandingPage() {
             transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.15 }}
             className="relative flex justify-center"
           >
-            <div aria-hidden="true" className="dot-grid dot-grid-fade absolute inset-[-10%] opacity-80" />
             <PhoneMockup />
           </motion.div>
         </div>
@@ -250,7 +249,7 @@ export default function LandingPage() {
               <motion.li key={title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }} className="bg-canvas rounded-[26px] p-6 sm:p-7">
                 <div className="flex items-center gap-1.5" aria-hidden="true">
                   {[0, 1, 2].map((d) => (
-                    <span key={d} className={`h-[9px] w-[9px] rounded-full ${d <= i ? (d === i ? 'bg-red' : 'bg-label') : 'bg-fill-2'}`} />
+                    <span key={d} className={`h-[9px] w-[9px] rounded-full ${d <= i ? (d === i ? 'bg-accent' : 'bg-label') : 'bg-fill-2'}`} />
                   ))}
                 </div>
                 <h3 className="text-title-3 font-medium mt-6">{title}</h3>
@@ -303,7 +302,7 @@ export default function LandingPage() {
               <div aria-hidden="true" className="absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.14) 1.1px, transparent 1.4px)', backgroundSize: '16px 16px' }} />
               <div className="relative">
                 <p className="eyebrow text-white/60 flex items-center gap-2 mb-5">
-                  <span className="h-[6px] w-[6px] rounded-full bg-red" /> On your phone
+                  <span className="h-[6px] w-[6px] rounded-full bg-accent" /> On your phone
                 </p>
                 <h2 className="text-[clamp(1.75rem,6.5vw,2.6rem)] leading-[1.08] font-medium tracking-[-0.03em]">Put it on your Home Screen.</h2>
                 <p className="text-[16px] text-white/65 mt-3 max-w-[440px]">Opens full-screen, straight to today’s list. No browser bar, no sign-in page every time.</p>
@@ -357,7 +356,7 @@ export default function LandingPage() {
             <div className="relative flex flex-col items-center">
               <AppIcon size={64} />
               <h2 className="font-display text-[clamp(2.1rem,9vw,3.6rem)] leading-[1] mt-7 max-w-[680px]">
-                Start with today’s chapter<span className="text-red">.</span>
+                Start with today’s chapter<span className="text-accent">.</span>
               </h2>
               <Link to={cta.to} className="mt-8 inline-flex h-[54px] px-8 items-center gap-2 rounded-full tint-fill text-tint-fg text-headline font-medium">
                 {session ? 'Open Today' : 'Create your account'} <ArrowRight size={18} strokeWidth={2} />

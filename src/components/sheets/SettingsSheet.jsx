@@ -5,7 +5,6 @@ import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Smartphone, Share, Squa
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
-import Segmented from '../ui/Segmented'
 import Avatar from '../shell/Avatar'
 import { useAuth } from '../../lib/useAuth'
 import { useConfirm } from '../ui/Alert'
@@ -28,7 +27,6 @@ export default function SettingsSheet({ cadence, onClose }) {
   const { user, displayName, avatarUrl, signOut } = useAuth()
   const [message, setMessage] = useState('')
 
-  const mode = prefs.themeMode === 'light' || prefs.themeMode === 'dark' ? prefs.themeMode : 'system'
   const completed = events.filter((e) => e.action === 'completed').length
 
   function flash(text, ms = 3600) {
@@ -103,24 +101,6 @@ export default function SettingsSheet({ cadence, onClose }) {
             ))}
           </div>
         </div>
-
-        {/* Appearance */}
-        <Section title="Appearance">
-          <div className="px-4 py-3.5">
-            <Segmented
-              layoutId="settings-mode"
-              ariaLabel="Appearance"
-              value={mode}
-              onChange={(m) => updatePrefs({ themeMode: m })}
-              options={[
-                { id: 'light', label: 'Light' },
-                { id: 'dark', label: 'Dark' },
-                { id: 'system', label: 'Auto' },
-              ]}
-              className="w-full"
-            />
-          </div>
-        </Section>
 
         {/* Reminders */}
         <Section
@@ -205,7 +185,7 @@ export default function SettingsSheet({ cadence, onClose }) {
 
         <Section>
           <Row onClick={handleSignOut} center>
-            <span className="flex items-center gap-2 text-body text-red">
+            <span className="flex items-center gap-2 text-body text-accent">
               <LogOut size={18} /> Sign Out
             </span>
           </Row>

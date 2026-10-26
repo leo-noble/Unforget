@@ -32,41 +32,31 @@ export default function PhoneMockup() {
           </div>
 
           <div className="relative z-10 px-4 pt-7">
-            <p className="font-mono text-[7.5px] tracking-[0.12em] uppercase text-label-2">Tuesday, Oct 28</p>
+            <p className="text-[7.5px] font-medium tracking-[0.08em] uppercase text-label-2">Tuesday, Oct 28</p>
             <p className="font-display text-[26px] leading-none mt-1.5">Today</p>
 
             <div className="mt-3.5 bg-card rounded-[18px] p-3.5">
-              <div className="flex justify-between font-mono text-[6.5px] tracking-[0.12em] uppercase">
-                <span className="text-label-2">To review</span>
-                <span className="flex items-center gap-1">
-                  <span className="h-[4px] w-[4px] rounded-full bg-red" /> 12 day streak
-                </span>
+              <p className="text-[8.5px] text-label-2">Good morning, Sam</p>
+              <div className="flex items-baseline gap-1.5 mt-1">
+                <span className="font-display text-[44px] leading-[0.9]">3</span>
+                <span className="text-[10px] text-label-2">reviews left</span>
               </div>
-              <div className="flex items-end gap-2 mt-2">
-                <span className="font-display text-[54px] leading-[0.82]">03</span>
-                <span className="text-[8.5px] leading-[1.35] text-label-2 pb-0.5">
-                  Good morning, Sam.
-                  <br />1 overdue — start there.
-                </span>
-              </div>
-              <div className="flex gap-[4px] mt-3">
+              <p className="text-[8px] text-label-2 mt-1">1 overdue — start there.</p>
+              <div className="flex gap-[4px] mt-2.5">
                 {[1, 1, 0, 0, 0].map((on, i) => (
                   <motion.span
                     key={i}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 22, delay: 0.5 + i * 0.06 }}
-                    className="h-[7px] w-[7px] rounded-full"
-                    style={{
-                      background: on ? 'var(--label)' : 'transparent',
-                      boxShadow: on ? 'none' : `inset 0 0 0 1px ${i === 2 ? 'var(--red)' : 'var(--label-3)'}`,
-                    }}
+                    className="h-[6px] w-[6px] rounded-full"
+                    style={{ background: on ? 'var(--label)' : 'transparent', boxShadow: on ? 'none' : 'inset 0 0 0 1px var(--label-3)' }}
                   />
                 ))}
               </div>
             </div>
 
-            <p className="font-mono text-[6.5px] tracking-[0.12em] uppercase mt-4 mb-1.5 px-0.5">Due today · 03</p>
+            <p className="text-[7px] font-medium tracking-[0.08em] uppercase mt-4 mb-1.5 px-0.5">Due today</p>
             <div className="bg-card rounded-[16px] overflow-hidden">
               {ROWS.map((r, i) => (
                 <motion.div
@@ -78,32 +68,30 @@ export default function PhoneMockup() {
                 >
                   <span
                     className="h-[13px] w-[13px] rounded-full shrink-0"
-                    style={{ boxShadow: `inset 0 0 0 1px ${r.late ? 'var(--red)' : 'var(--label)'}` }}
+                    style={{ boxShadow: 'inset 0 0 0 1px var(--label)' }}
                   />
                   <span className="min-w-0 flex-1">
                     <span className="block text-[10.5px] truncate">{r.title}</span>
                     <span className="block text-[8px] text-label-2 truncate">
-                      <span className="inline-block h-[4px] w-[4px] rounded-full mr-1 align-[1px]" style={{ background: r.color }} />
                       {r.meta}
                     </span>
                   </span>
-                  <span className={`text-[8px] font-medium shrink-0 ${r.late ? 'text-red' : 'text-label'}`}>{r.when}</span>
+                  <span className="text-[8px] font-medium shrink-0 text-label-2">{r.when}</span>
                 </motion.div>
               ))}
             </div>
           </div>
 
           <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[16px] flex items-center gap-2">
-            <div className="glass flex-1 h-[44px] rounded-full px-1 flex">
+            <div className="glass flex-1 h-[44px] rounded-full p-[3px] flex">
               {TABS.map(([Icon, label], i) => (
-                <span key={label} className={`relative flex-1 flex flex-col items-center justify-center gap-[3px] ${i === 0 ? 'text-label' : 'text-label-3'}`}>
-                  {i === 0 && <span className="absolute top-[5px] right-[calc(50%-11px)] h-[3px] w-[3px] rounded-full bg-red" />}
-                  <Icon size={14} strokeWidth={1.7} />
+                <span key={label} className={`relative flex-1 flex flex-col items-center justify-center gap-[2px] rounded-full ${i === 0 ? 'glass-lens text-label' : 'text-label-2'}`}>
+                  <Icon size={13} strokeWidth={1.8} />
                   <span className="text-[6.5px] font-medium">{label}</span>
                 </span>
               ))}
             </div>
-            <span className="h-[44px] w-[44px] rounded-full bg-red text-white flex items-center justify-center">
+            <span className="glass-tint h-[44px] w-[44px] rounded-full flex items-center justify-center">
               <Plus size={18} strokeWidth={2} />
             </span>
           </div>

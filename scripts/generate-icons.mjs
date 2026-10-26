@@ -1,4 +1,4 @@
-// Renders the Fivedot mark into every icon file the app ships:
+// Renders the Mnora mark into every icon file the app ships:
 //
 //   favicon.svg            rounded, for browser tabs
 //   icon-192/512.png       rounded with transparent corners ("any" purpose)

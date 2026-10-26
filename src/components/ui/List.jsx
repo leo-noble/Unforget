@@ -81,7 +81,7 @@ export function Row({
       {children ?? (
         <span className={`min-w-0 ${center ? '' : 'flex-1'}`}>
           <span
-            className={`block text-body truncate ${destructive ? 'text-red' : center ? 'text-tint' : 'text-label'}`}
+            className={`block text-body truncate ${destructive ? 'text-accent' : center ? 'text-tint' : 'text-label'}`}
           >
             {title}
           </span>

@@ -27,7 +27,7 @@ export function NavBar({ title, leading, trailing }) {
   const scrolled = useScrolledPast(38)
   return (
     <header
-      className="fixed top-0 right-0 left-0 md:left-[var(--sidebar-w)] z-40 pointer-events-none"
+      className="fixed top-0 right-0 left-0 md:left-[var(--sidebar-w)] z-40 pointer-events-none transition-[left] duration-300 ease-ios"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div

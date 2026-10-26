@@ -7,9 +7,9 @@ import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 520, damping: 34, mass: 0.9 }
 
-// The floating tab bar: a flat capsule lifted off the bottom edge, a red dot
-// marking where you are, and the primary action as its own red circle
-// rather than a fifth tab. The live timer pill sits above it while a session is running.
+// The floating tab bar: a liquid-glass capsule lifted off the bottom edge, a
+// glass lens that slides to the selected tab, and the primary action as its
+// own ink circle rather than a fifth tab. The live timer pill sits above it while a session is running.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
   const { status } = useTimerStatus()
   const showTimer = status !== 'idle' && active !== 'focus'
@@ -41,7 +41,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
         </AnimatePresence>
 
         <div className="flex items-center gap-3">
-          <nav aria-label="Tabs" className="glass pointer-events-auto flex-1 h-[64px] rounded-full px-2 flex">
+          <nav aria-label="Tabs" className="glass pointer-events-auto flex-1 h-[64px] rounded-full p-[5px] flex">
             {TABS.map((t) => {
               const selected = t.id === active
               const Icon = t.icon
@@ -50,22 +50,18 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
                   key={t.id}
                   type="button"
                   onClick={() => onSelect(t.id)}
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.92 }}
                   transition={pillSpring}
                   aria-current={selected ? 'page' : undefined}
-                  className={`relative flex-1 flex flex-col items-center justify-center gap-[5px] ${
-                    selected ? 'text-label' : 'text-label-3'
+                  className={`relative flex-1 flex flex-col items-center justify-center gap-[4px] rounded-full ${
+                    selected ? 'text-label' : 'text-label-2'
                   }`}
                 >
-                  <Icon size={22} strokeWidth={selected ? 2 : 1.6} className="relative" />
-                  <span className="relative text-[10px] leading-none font-medium">{t.label}</span>
                   {selected && (
-                    <motion.span
-                      layoutId="tabbar-dot"
-                      transition={pillSpring}
-                      className="absolute top-[7px] right-[calc(50%-17px)] h-[5px] w-[5px] rounded-full bg-red"
-                    />
+                    <motion.span layoutId="tabbar-lens" transition={pillSpring} className="glass-lens absolute inset-0 rounded-full" />
                   )}
+                  <Icon size={22} strokeWidth={selected ? 2.1 : 1.7} className="relative" />
+                  <span className={`relative text-[10px] leading-none ${selected ? 'font-semibold' : 'font-medium'}`}>{t.label}</span>
                 </motion.button>
               )
             })}
@@ -77,7 +73,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
             whileTap={{ scale: 0.88 }}
             transition={pillSpring}
             aria-label="Add chapter"
-            className="pointer-events-auto h-[64px] w-[64px] shrink-0 rounded-full bg-red text-white flex items-center justify-center shadow-float"
+            className="glass-tint pointer-events-auto h-[64px] w-[64px] shrink-0 rounded-full flex items-center justify-center shadow-float"
           >
             <Plus size={26} strokeWidth={2} />
           </motion.button>

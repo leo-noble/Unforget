@@ -1,8 +1,8 @@
-# Fivedot — Five reviews. Nothing forgotten.
+# Mnora — Remember what you study
 
 (Formerly Cadence.) A spaced-repetition study planner, built as an installable
-PWA that has a minimal, monochrome, dot-matrix look. Log a chapter the day you
-study it; Fivedot schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
+PWA that has a minimal, black-and-white look. Log a chapter the day you
+study it; Mnora schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
 tells you each morning exactly what to revise.
 
 The name lives in `src/brand.js`. Storage keys and the Supabase table keep

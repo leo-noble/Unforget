@@ -52,8 +52,8 @@ export function ToastProvider({ children }) {
               >
                 {toast.icon && (
                   <span
-                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${toast.tone === 'red' ? 'text-white' : 'text-tint-fg'}`}
-                    style={{ background: `var(--${toast.tone || 'tint'})` }}
+                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-tint-fg`}
+                    style={{ background: 'var(--tint)' }}
                   >
                     <toast.icon size={18} strokeWidth={2.6} />
                   </span>

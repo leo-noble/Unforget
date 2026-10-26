@@ -4,7 +4,7 @@ import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Segmented from '../ui/Segmented'
 import Switch from '../ui/Switch'
-import { SUBJECT_PALETTE, subjectColor } from '../../lib/colors'
+import { subjectColor } from '../../lib/colors'
 import { toISODate, addDays, daysBetween, startOfDay } from '../../lib/srs'
 import { distributeChapters } from '../../lib/reviewSchedule'
 import { minutesToInputValue, inputValueToMinutes, minutesToLabel, MIN_BLOCK_MINUTES, DEFAULT_BLOCK_MINUTES } from '../../lib/timeGrid'
@@ -57,7 +57,9 @@ export default function StudyPlanSheet({
   const [endMinute, setEndMinute] = useState(Number.isFinite(initialEnd) ? initialEnd : 9 * 60 + DEFAULT_BLOCK_MINUTES)
   // Overrides: empty means "use the chapter's title / the subject's colour".
   const [title, setTitle] = useState(block?.title || '')
-  const [color, setColor] = useState(block?.color || null)
+  // Colour overrides predate the black-and-white design; an existing one is
+  // kept as-is when the block is saved.
+  const color = block?.color || null
   const [scope, setScope] = useState('single') // single | series
   const [query, setQuery] = useState('')
 
@@ -76,7 +78,6 @@ export default function StudyPlanSheet({
 
   const chapterMap = useMemo(() => new Map(chapters.map((c) => [c.id, c])), [chapters])
   const activeChapter = useMemo(() => chapterMap.get(selected[0]) || null, [chapterMap, selected])
-  const activeSubjectColor = activeChapter ? subjectColor(subjectMap.get(activeChapter.subjectId)?.colorTag) : null
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -339,7 +340,7 @@ export default function StudyPlanSheet({
 
         {/* Label + colour — overrides, only once a block exists */}
         {editing && (
-          <Section title="Appearance" footer={color ? 'Custom colour for this session.' : 'Following the subject’s colour.'}>
+          <Section title="Label" footer="Leave empty to use the chapter’s title.">
             <input
               type="text"
               value={title}
@@ -349,34 +350,6 @@ export default function StudyPlanSheet({
               onChange={(e) => setTitle(e.target.value)}
               className="w-full bg-transparent px-4 h-[52px] text-body outline-none placeholder:text-label-3"
             />
-            <div className="flex flex-wrap items-center gap-2.5 px-4 py-3">
-              <button
-                type="button"
-                onClick={() => setColor(null)}
-                aria-pressed={!color}
-                aria-label="Match the subject’s colour"
-                className="h-8 w-8 rounded-full flex items-center justify-center"
-                style={{
-                  background: activeSubjectColor || 'var(--fill)',
-                  boxShadow: !color ? `0 0 0 2px var(--card), 0 0 0 4px ${activeSubjectColor || 'var(--label-3)'}` : 'none',
-                }}
-              >
-                <span className="text-[9px] font-medium text-white">AUTO</span>
-              </button>
-              {SUBJECT_PALETTE.map((hex) => (
-                <button
-                  key={hex}
-                  type="button"
-                  onClick={() => setColor(hex)}
-                  aria-pressed={color === hex}
-                  aria-label={`Use colour ${hex}`}
-                  className="h-8 w-8 rounded-full flex items-center justify-center"
-                  style={{ background: hex, boxShadow: color === hex ? `0 0 0 2px var(--card), 0 0 0 4px ${hex}` : 'none' }}
-                >
-                  {color === hex && <Check size={15} strokeWidth={3} className="text-white" />}
-                </button>
-              ))}
-            </div>
           </Section>
         )}
 
@@ -410,7 +383,7 @@ export default function StudyPlanSheet({
                 onClose()
               }}
             >
-              <span className="flex items-center gap-2 text-body text-red">
+              <span className="flex items-center gap-2 text-body text-accent">
                 <Trash2 size={17} /> Delete Session
               </span>
             </Row>
@@ -422,7 +395,7 @@ export default function StudyPlanSheet({
                   onClose()
                 }}
               >
-                <span className="flex items-center gap-2 text-body text-red">
+                <span className="flex items-center gap-2 text-body text-accent">
                   <Trash2 size={17} /> Delete All {seriesCount} Days
                 </span>
               </Row>
