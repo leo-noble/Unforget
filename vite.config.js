@@ -16,8 +16,8 @@ export default defineConfig({
         // Same identity the app had before it was renamed, so existing
         // installs update in place instead of becoming a second app.
         id: '/app',
-        name: 'Orbit — Study that comes back around',
-        short_name: 'Orbit',
+        name: 'Retavo — Keep what you learn',
+        short_name: 'Retavo',
         description: 'Spaced-repetition study planner. Know exactly what to revise today.',
         // Opening the installed app goes straight to Today. Signed-out users
         // are bounced to sign-in from there, never to the marketing page.

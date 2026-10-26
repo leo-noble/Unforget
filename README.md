@@ -1,8 +1,8 @@
-# Orbit — Study that comes back around
+# Retavo — Keep what you learn
 
 (Formerly Cadence.) A spaced-repetition study planner, built as an installable
 PWA that looks and feels like a native iOS app. Log a chapter the day you
-study it; Orbit schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
+study it; Retavo schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
 tells you each morning exactly what to revise.
 
 The name lives in `src/brand.js`. Storage keys and the Supabase table keep

@@ -45,7 +45,7 @@ const CANVAS = { light: '#F2F2F7', dark: '#000000' }
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it
 // reads, so a returning user's first frame is already in their colours.
-const BOOT_KEY = 'orbit.appearance'
+const BOOT_KEY = 'retavo.appearance'
 
 export function applyAppearance({ theme, themeMode } = {}) {
   if (typeof document === 'undefined') return

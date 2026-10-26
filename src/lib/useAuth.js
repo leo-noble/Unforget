@@ -10,7 +10,7 @@ const AuthContext = createContext(null)
 
 // Set the first time a session is seen on this device. A signed-out visitor
 // who has used the app before goes straight to sign-in, not the marketing page.
-const RETURNING_KEY = 'orbit.returning'
+const RETURNING_KEY = 'retavo.returning'
 
 export function hasSignedInBefore() {
   try {

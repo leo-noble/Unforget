@@ -1,12 +1,12 @@
-// The Orbit mark: a planet with one ring and a small moon on it — the chapter
-// and the review that keeps coming back around. Kept as a plain string builder
+// The Retavo mark: a planet with one ring and a small moon on it — the
+// chapter, and the review that keeps coming back around to it. Kept as a plain string builder
 // (no JSX) so the same art renders the in-app icon and, via
 // scripts/generate-icons.mjs, every PNG the Home Screen and browsers use.
 //
 // `id` namespaces the gradient ids: two inline SVGs sharing an id would both
 // resolve to whichever came first, which breaks if that one is display:none.
 
-export function orbitIconSVG({ id = 'orbit', shape = 'squircle', glyphScale = 1 } = {}) {
+export function appIconSVG({ id = 'appicon', shape = 'squircle', glyphScale = 1 } = {}) {
   const g = (name) => `${id}-${name}`
   const bg =
     shape === 'squircle'

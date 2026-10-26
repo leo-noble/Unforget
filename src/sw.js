@@ -11,7 +11,7 @@ precacheAndRoute(self.__WB_MANIFEST)
 // Real push notifications: shown even when the app isn't open in any tab.
 // The payload comes from the send-due-reminders Edge Function.
 self.addEventListener('push', (event) => {
-  let payload = { title: 'Orbit', body: 'You have chapters to review.' }
+  let payload = { title: 'Retavo', body: 'You have chapters to review.' }
   try {
     if (event.data) payload = event.data.json()
   } catch {

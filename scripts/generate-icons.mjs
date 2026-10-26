@@ -1,4 +1,4 @@
-// Renders the Orbit mark into every icon file the app ships:
+// Renders the Retavo mark into every icon file the app ships:
 //
 //   favicon.svg            rounded, for browser tabs
 //   icon-192/512.png       rounded with transparent corners ("any" purpose)
@@ -11,14 +11,14 @@
 import { writeFile, mkdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
-import { orbitIconSVG } from '../src/components/ui/iconArt.js'
+import { appIconSVG } from '../src/components/ui/iconArt.js'
 
 const out = fileURLToPath(new URL('../public/icons/', import.meta.url))
 await mkdir(out, { recursive: true })
 
-const squircle = orbitIconSVG({ id: 'fav', shape: 'squircle' })
-const square = orbitIconSVG({ id: 'sq', shape: 'square' })
-const maskable = orbitIconSVG({ id: 'mask', shape: 'square', glyphScale: 0.86 })
+const squircle = appIconSVG({ id: 'fav', shape: 'squircle' })
+const square = appIconSVG({ id: 'sq', shape: 'square' })
+const maskable = appIconSVG({ id: 'mask', shape: 'square', glyphScale: 0.86 })
 
 const render = (svg, size) =>
   sharp(Buffer.from(svg.replace('width="100%" height="100%"', `width="${size}" height="${size}"`)))

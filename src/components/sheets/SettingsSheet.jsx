@@ -13,7 +13,7 @@ import { enablePushNotifications, disablePushNotifications } from '../../lib/pus
 import { flushCloudData } from '../../lib/cloudSync'
 import { ACCENTS, resolveAccent, resolveMode } from '../../lib/appearance'
 import { isIOS, isStandalone } from '../ui/useMediaQuery'
-import { APP_NAME } from '../../brand'
+import { APP_NAME, TAGLINE } from '../../brand'
 import { snappy } from '../ui/motion'
 
 const SYNC_LABEL = {
@@ -244,7 +244,7 @@ export default function SettingsSheet({ cadence, onClose }) {
           </Row>
         </Section>
 
-        <p className="text-center text-footnote text-label-3 pb-2">{APP_NAME} · Study that comes back around</p>
+        <p className="text-center text-footnote text-label-3 pb-2">{APP_NAME} · {TAGLINE.replace(/\.$/, '')}</p>
       </div>
     </Sheet>
   )

@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Orbit — Study that comes back around</title>
-    <meta name="description" content="Orbit schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
+    <title>Retavo — Keep what you learn</title>
+    <meta name="description" content="Retavo schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
 
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
@@ -14,8 +14,8 @@
          and a status bar that takes the page's own background colour. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Orbit" />
-    <meta name="application-name" content="Orbit" />
+    <meta name="apple-mobile-web-app-title" content="Retavo" />
+    <meta name="application-name" content="Retavo" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)" />
@@ -31,7 +31,7 @@
         var accent = 'indigo'
         var mode = 'system'
         try {
-          var boot = JSON.parse(localStorage.getItem('orbit.appearance') || 'null')
+          var boot = JSON.parse(localStorage.getItem('retavo.appearance') || 'null')
           var prefs = boot || JSON.parse(localStorage.getItem('cadence.prefs') || '{}')
           var a = boot ? boot.accent : prefs.theme
           accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'indigo'

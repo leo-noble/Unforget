@@ -1,16 +1,16 @@
 import { useId, useMemo } from 'react'
-import { orbitIconSVG } from './iconArt'
+import { appIconSVG } from './iconArt'
 
 // The app icon, drawn inline. Same art as the Home Screen icon, so the app's
 // own chrome and what's on the user's phone are visibly the same thing.
 export default function AppIcon({ size = 56, className = '', shadow = true }) {
   const raw = useId()
   const id = `ai${raw.replace(/[^a-zA-Z0-9]/g, '')}`
-  const html = useMemo(() => orbitIconSVG({ id }), [id])
+  const html = useMemo(() => appIconSVG({ id }), [id])
   return (
     <span
       role="img"
-      aria-label="Orbit"
+      aria-label="Retavo"
       className={`inline-block shrink-0 ${className}`}
       style={{
         width: size,
