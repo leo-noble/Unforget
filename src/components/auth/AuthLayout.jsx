@@ -12,7 +12,7 @@ export default function AuthLayout({ title, subtitle, children, footer, back = t
     <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
       {back && (
         <div className="relative px-4 sm:px-6" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)' }}>
-          <Link to="/welcome" className="inline-flex items-center gap-1.5 h-9 pl-2.5 pr-4 rounded-full bg-card eyebrow text-label">
+          <Link to="/welcome" className="inline-flex items-center gap-1.5 h-9 pl-2.5 pr-4 rounded-[9px] bg-card eyebrow text-label">
             <ArrowLeft size={14} strokeWidth={2} /> About
           </Link>
         </div>
@@ -66,7 +66,7 @@ export function ErrorNote({ children }) {
     <motion.p
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-3 px-4 py-3 rounded-[16px] bg-accent/10 text-accent text-footnote"
+      className="mt-3 px-4 py-3 rounded-[10px] bg-accent/10 text-accent text-footnote"
       role="alert"
     >
       {children}

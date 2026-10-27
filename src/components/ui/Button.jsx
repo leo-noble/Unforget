@@ -15,9 +15,9 @@ const VARIANT = {
 }
 
 const SIZE = {
-  lg: 'h-[52px] px-6 text-headline font-medium gap-2',
-  md: 'h-11 px-5 text-subhead font-medium gap-1.5',
-  sm: 'h-[34px] px-3.5 text-footnote font-medium gap-1.5',
+  lg: 'h-11 px-5 text-headline font-medium gap-2',
+  md: 'h-9 px-4 text-headline font-medium gap-1.5',
+  sm: 'h-8 px-3 text-subhead font-medium gap-1.5',
 }
 
 export const Button = forwardRef(function Button(
@@ -31,7 +31,7 @@ export const Button = forwardRef(function Button(
       disabled={disabled}
       whileTap={disabled ? undefined : press}
       transition={snappy}
-      className={`inline-flex items-center justify-center rounded-capsule select-none whitespace-nowrap transition-opacity disabled:opacity-40 ${
+      className={`inline-flex items-center justify-center rounded-[8px] select-none whitespace-nowrap transition-opacity disabled:opacity-40 ${
         VARIANT[variant]
       } ${SIZE[size]} ${block ? 'w-full' : ''} ${className}`}
       {...rest}
@@ -62,7 +62,7 @@ export const IconButton = forwardRef(function IconButton(
       whileTap={{ scale: 0.9 }}
       transition={snappy}
       style={{ width: size, height: size, ...style }}
-      className={`inline-flex items-center justify-center rounded-full shrink-0 select-none disabled:opacity-40 ${ICON_VARIANT[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-[10px] shrink-0 select-none disabled:opacity-40 ${ICON_VARIANT[variant]} ${className}`}
       {...rest}
     >
       {children}

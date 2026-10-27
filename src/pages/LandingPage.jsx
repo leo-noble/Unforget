@@ -139,10 +139,10 @@ export default function LandingPage() {
     <div className="min-h-[100dvh] overflow-x-clip">
       {/* Floating glass header */}
       <header className="fixed inset-x-0 top-0 z-40 px-3 sm:px-6" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 10px)' }}>
-        <div className="glass mx-auto max-w-[1080px] h-[52px] rounded-full pl-2.5 pr-2 flex items-center justify-between">
+        <div className="glass mx-auto max-w-[1080px] h-[52px] rounded-[14px] pl-3 pr-2 flex items-center justify-between">
           <a href="#top" className="flex items-center gap-2.5">
-            <AppIcon size={32} />
-            <span className="text-[17px] font-semibold tracking-[-0.02em]">{APP_NAME}</span>
+            <AppIcon size={26} />
+            <span className="text-[16px] font-semibold tracking-[-0.01em]">{APP_NAME}</span>
           </a>
           <nav className="hidden md:flex items-center gap-7 text-subhead text-label-2">
             <a href="#how" className="hover:text-label">How it works</a>
@@ -151,7 +151,7 @@ export default function LandingPage() {
           </nav>
           <Link
             to={session ? '/app' : '/login'}
-            className="h-9 px-4 rounded-full bg-tint text-tint-fg text-subhead font-medium flex items-center"
+            className="h-9 px-4 rounded-[9px] bg-tint text-tint-fg text-subhead font-medium flex items-center"
           >
             {session ? 'Open app' : 'Sign in'}
           </Link>
@@ -167,13 +167,13 @@ export default function LandingPage() {
             transition={{ duration: 0.6, ease: easeOut }}
             className="text-center lg:text-left"
           >
-            <span className="glass inline-flex items-center gap-2 h-8 px-3.5 rounded-full text-footnote font-medium">
+            <span className="glass inline-flex items-center gap-2 h-8 px-3.5 rounded-[9px] text-footnote font-medium">
               <span className="h-1.5 w-1.5 rounded-full bg-label" /> Spaced repetition, done for you
             </span>
             <h1 className="mt-6 text-[44px] xs:text-[48px] sm:text-[64px] lg:text-[72px] leading-[1] font-semibold tracking-[-0.045em] text-balance">
-              Study once.
+              Remember what
               <br />
-              <span className="text-label-2">Never forget it.</span>
+              <span className="text-label-2">you study.</span>
             </h1>
             <p className={`${LEDE} mt-5 max-w-[480px] mx-auto lg:mx-0`}>
               {APP_NAME} tells you which chapters to revise each day — 1, 3, 7, 15 and 30 days after you study them. Right before you’d
@@ -183,12 +183,12 @@ export default function LandingPage() {
               <motion.div whileTap={{ scale: 0.97 }}>
                 <Link
                   to={cta.to}
-                  className="flex h-[54px] px-7 items-center justify-center gap-2 rounded-full bg-tint text-tint-fg text-[17px] font-semibold shadow-float"
+                  className="flex h-[54px] px-7 items-center justify-center gap-2 rounded-[9px] bg-tint text-tint-fg text-[17px] font-semibold shadow-float"
                 >
                   {cta.label} <ArrowRight size={18} strokeWidth={2.2} />
                 </Link>
               </motion.div>
-              <a href="#how" className="flex h-[54px] px-6 items-center justify-center rounded-full glass text-[17px] font-medium">
+              <a href="#how" className="flex h-[54px] px-6 items-center justify-center rounded-[9px] glass text-[17px] font-medium">
                 How it works
               </a>
             </div>
@@ -221,9 +221,9 @@ export default function LandingPage() {
                 key={title}
                 {...reveal}
                 transition={{ ...reveal.transition, delay: i * 0.06 }}
-                className="bg-card rounded-[24px] p-5 sm:p-6 flex md:flex-col gap-4"
+                className="bg-card rounded-[12px] p-5 sm:p-6 flex md:flex-col gap-4"
               >
-                <span className="h-11 w-11 shrink-0 rounded-full glass-lens flex items-center justify-center">
+                <span className="h-10 w-10 shrink-0 rounded-[10px] bg-fill flex items-center justify-center">
                   <Icon size={20} strokeWidth={1.8} />
                 </span>
                 <div>
@@ -234,7 +234,7 @@ export default function LandingPage() {
               </motion.li>
             ))}
           </ol>
-          <motion.div {...reveal} className="mt-3 bg-card rounded-[24px] p-5 sm:p-10">
+          <motion.div {...reveal} className="mt-3 bg-card rounded-[12px] p-5 sm:p-10">
             <p className="eyebrow text-label-2 mb-6 md:mb-12">One chapter’s schedule</p>
             <RhythmTimeline />
           </motion.div>
@@ -253,7 +253,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
           <div className="mt-8 grid sm:grid-cols-2 gap-3">
-            <motion.div {...reveal} className="bg-card rounded-[24px] p-5 sm:p-6">
+            <motion.div {...reveal} className="bg-card rounded-[12px] p-5 sm:p-6">
               <div className="flex items-center gap-2 text-label-2">
                 <X size={16} strokeWidth={2.2} />
                 <span className="text-subhead font-medium">Cramming</span>
@@ -261,7 +261,7 @@ export default function LandingPage() {
               <p className="text-[20px] font-semibold tracking-[-0.02em] mt-3">Gone by next month.</p>
               <p className="text-[15px] text-label-2 mt-1.5">Feels productive the night before, then you relearn it all for finals.</p>
             </motion.div>
-            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.06 }} className="glass rounded-[24px] p-5 sm:p-6">
+            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.06 }} className="glass rounded-[12px] p-5 sm:p-6">
               <div className="flex items-center gap-2">
                 <Check size={16} strokeWidth={2.4} />
                 <span className="text-subhead font-medium">Five spaced reviews</span>
@@ -286,7 +286,7 @@ export default function LandingPage() {
                 key={title}
                 {...reveal}
                 transition={{ ...reveal.transition, delay: (i % 2) * 0.05 }}
-                className="bg-card rounded-[22px] p-4 sm:p-5"
+                className="bg-card rounded-[12px] p-4 sm:p-5"
               >
                 <Icon size={22} strokeWidth={1.7} />
                 <h3 className="text-[17px] font-semibold mt-4">{title}</h3>
@@ -306,8 +306,8 @@ export default function LandingPage() {
           </motion.div>
           <div className="mt-8 grid md:grid-cols-2 gap-3">
             {TABS.map(([Icon, title, body]) => (
-              <motion.div key={title} {...reveal} className="bg-card rounded-[22px] p-4 sm:p-5 flex items-center gap-4">
-                <span className="h-11 w-11 shrink-0 rounded-full glass-lens flex items-center justify-center">
+              <motion.div key={title} {...reveal} className="bg-card rounded-[12px] p-4 sm:p-5 flex items-center gap-4">
+                <span className="h-10 w-10 shrink-0 rounded-[10px] bg-fill flex items-center justify-center">
                   <Icon size={20} strokeWidth={1.8} />
                 </span>
                 <div className="min-w-0">
@@ -326,7 +326,7 @@ export default function LandingPage() {
           <div className={WRAP}>
             <motion.div
               {...reveal}
-              className="relative overflow-hidden rounded-[28px] text-white p-6 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10"
+              className="relative overflow-hidden rounded-[12px] text-white p-6 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10"
               style={{
                 background:
                   'radial-gradient(80% 90% at 50% -10%, rgba(255,255,255,0.14), transparent 70%), linear-gradient(180deg, #2a2a2e, #121214)',
@@ -338,15 +338,15 @@ export default function LandingPage() {
                 <p className="text-[16px] text-white/75 mt-2">Opens full-screen, straight to today’s list.</p>
                 {isIOS() ? (
                   <div className="mt-5 flex flex-wrap gap-2 text-[15px]">
-                    <span className="h-10 px-4 rounded-full bg-white/15 flex items-center gap-2">
+                    <span className="h-10 px-4 rounded-[9px] bg-white/15 flex items-center gap-2">
                       <Share size={15} /> Tap Share
                     </span>
-                    <span className="h-10 px-4 rounded-full bg-white/15 flex items-center gap-2">
+                    <span className="h-10 px-4 rounded-[9px] bg-white/15 flex items-center gap-2">
                       <SquarePlus size={15} /> Add to Home Screen
                     </span>
                   </div>
                 ) : installPrompt ? (
-                  <button onClick={install} className="mt-5 inline-flex h-12 px-6 items-center gap-2 rounded-full bg-white text-[#121214] text-[16px] font-semibold">
+                  <button onClick={install} className="mt-5 inline-flex h-12 px-6 items-center gap-2 rounded-[9px] bg-white text-[#121214] text-[16px] font-semibold">
                     <Download size={17} /> Install {APP_NAME}
                   </button>
                 ) : (
@@ -365,7 +365,7 @@ export default function LandingPage() {
             <Eyebrow>Questions</Eyebrow>
             <h2 className={H2}>Fair questions.</h2>
           </motion.div>
-          <motion.div {...reveal} className="mt-6 bg-card rounded-[24px] px-5 sm:px-6">
+          <motion.div {...reveal} className="mt-6 bg-card rounded-[12px] px-5 sm:px-6">
             {FAQ.map(([q, a], i) => (
               <FaqItem key={q} q={q} a={a} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />
             ))}
@@ -376,14 +376,14 @@ export default function LandingPage() {
       {/* Closing */}
       <section className="pb-16 sm:pb-24">
         <div className={WRAP}>
-          <motion.div {...reveal} className="glass rounded-[28px] px-6 py-12 sm:py-16 text-center flex flex-col items-center">
+          <motion.div {...reveal} className="glass rounded-[12px] px-6 py-12 sm:py-16 text-center flex flex-col items-center">
             <AppIcon size={60} />
             <h2 className="text-[30px] sm:text-[44px] leading-[1.05] font-semibold tracking-[-0.04em] mt-6 max-w-[560px] text-balance">
               Start with the chapter you studied today.
             </h2>
             <Link
               to={cta.to}
-              className="mt-8 w-full max-w-[320px] flex h-[54px] px-7 items-center justify-center gap-2 rounded-full bg-tint text-tint-fg text-[17px] font-semibold"
+              className="mt-8 w-full max-w-[320px] flex h-[54px] px-7 items-center justify-center gap-2 rounded-[9px] bg-tint text-tint-fg text-[17px] font-semibold"
             >
               {session ? 'Open Today' : 'Create your account'} <ArrowRight size={18} strokeWidth={2.2} />
             </Link>

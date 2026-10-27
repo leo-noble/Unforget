@@ -173,7 +173,7 @@ export default function LoginPage() {
             whileTap={{ scale: 0.97 }}
             onClick={google}
             disabled={googleLoading || submitting}
-            className="w-full h-[52px] rounded-full bg-card flex items-center justify-center gap-2.5 text-headline font-medium disabled:opacity-50"
+            className="w-full h-11 rounded-[8px] bg-card flex items-center justify-center gap-2.5 text-headline font-medium disabled:opacity-50"
             style={{ boxShadow: 'inset 0 0 0 1px var(--separator)' }}
           >
             <GoogleGlyph />

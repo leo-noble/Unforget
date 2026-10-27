@@ -119,7 +119,7 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
                       transition={snappy}
                       onClick={() => setSubjectId(s.id)}
                       aria-pressed={on}
-                      className={`inline-flex items-center h-9 px-4 rounded-full text-subhead font-medium ${
+                      className={`inline-flex items-center h-9 px-4 rounded-[9px] text-subhead font-medium ${
                         on ? 'bg-tint text-tint-fg' : 'bg-fill text-label'
                       }`}
                     >
@@ -130,7 +130,7 @@ export default function AddChapterSheet({ subjects, onClose, onCreateSubject, on
                 <button
                   type="button"
                   onClick={() => setCreatingSubject(true)}
-                  className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-subhead font-medium text-label bg-transparent ring-1 ring-inset ring-separator"
+                  className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[9px] text-subhead font-medium text-label bg-transparent ring-1 ring-inset ring-separator"
                 >
                   <Plus size={15} strokeWidth={2.6} /> New
                 </button>

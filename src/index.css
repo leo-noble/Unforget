@@ -3,77 +3,71 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens. Greyscale only. A soft, colourless wash of light sits
-   behind everything (see .aurora); on top of it the interface is clean
-   black-and-white: frosted translucent
-   cards, and liquid glass for the chrome (tab bar, sidebar, nav bar, sheets).
-   <html data-mode> follows the device's light/dark setting; see
-   src/lib/appearance.js.
+   Design tokens. Linear-style minimalism: a flat neutral canvas, opaque
+   panels separated by 1px borders rather than shadows or glow, one ink
+   colour for emphasis. <html data-mode> follows the device's light/dark
+   setting; see src/lib/appearance.js.
    ========================================================================== */
 
 :root,
 :root[data-mode='light'] {
   color-scheme: light;
-  --canvas: #f2f2f4;
-  --card: rgba(255, 255, 255, 0.56);
-  --card-2: rgba(255, 255, 255, 0.8);
-  --label: #111113;
-  --label-2: rgba(17, 17, 19, 0.58);
-  --label-3: rgba(17, 17, 19, 0.3);
-  --separator: rgba(17, 17, 19, 0.08);
-  --fill: rgba(17, 17, 19, 0.05);
-  --fill-2: rgba(17, 17, 19, 0.09);
-  --dot: rgba(17, 17, 19, 0.12);
+  --canvas: #fbfbfb;
+  --card: #ffffff;
+  --card-2: #f6f6f7;
+  --label: #18191b;
+  --label-2: #6b6f76;
+  --label-3: #a3a6ac;
+  --separator: rgba(0, 0, 0, 0.07);
+  --border: rgba(0, 0, 0, 0.08);
+  --fill: rgba(0, 0, 0, 0.04);
+  --fill-2: rgba(0, 0, 0, 0.07);
+  --dot: rgba(0, 0, 0, 0.1);
 
-  --tint: #111113;
+  --tint: #18191b;
   --tint-fg: #ffffff;
 
-  --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 12px 32px -20px rgba(0, 0, 0, 0.18);
-  --shadow-float: 0 16px 40px -18px rgba(0, 0, 0, 0.28), 0 2px 6px -2px rgba(0, 0, 0, 0.08);
-  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.1);
-  --scrim: rgba(0, 0, 0, 0.22);
+  --shadow-card: inset 0 0 0 1px var(--border);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.14);
+  --scrim: rgba(0, 0, 0, 0.2);
 
-  --glass-bg: rgba(255, 255, 255, 0.5);
-  --glass-bg-strong: rgba(255, 255, 255, 0.76);
-  --glass-border: rgba(255, 255, 255, 0.85);
-  --glass-hi: rgba(255, 255, 255, 0.95);
-  --lens-bg: rgba(255, 255, 255, 0.9);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --lens-bg: rgba(0, 0, 0, 0.05);
 
-  --sheet-bg: rgba(248, 248, 250, 0.86);
-  --sheet-card: rgba(255, 255, 255, 0.82);
+  --sheet-bg: #ffffff;
+  --sheet-card: #f7f7f8;
   --segment-pill: #ffffff;
 }
 
 :root[data-mode='dark'] {
   color-scheme: dark;
-  --canvas: #0f0f11;
-  --card: rgba(255, 255, 255, 0.06);
-  --card-2: rgba(255, 255, 255, 0.1);
-  --label: #ffffff;
-  --label-2: rgba(255, 255, 255, 0.62);
-  --label-3: rgba(255, 255, 255, 0.32);
-  --separator: rgba(255, 255, 255, 0.09);
-  --fill: rgba(255, 255, 255, 0.08);
-  --fill-2: rgba(255, 255, 255, 0.14);
-  --dot: rgba(255, 255, 255, 0.14);
+  --canvas: #08090a;
+  --card: #0f1011;
+  --card-2: #151617;
+  --label: #f7f8f8;
+  --label-2: #8a8f98;
+  --label-3: #5b5f66;
+  --separator: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.08);
+  --fill: rgba(255, 255, 255, 0.05);
+  --fill-2: rgba(255, 255, 255, 0.09);
+  --dot: rgba(255, 255, 255, 0.1);
 
-  --tint: #ffffff;
-  --tint-fg: #0f0f11;
+  --tint: #f7f8f8;
+  --tint-fg: #08090a;
 
-  --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-  --shadow-float: 0 18px 44px -18px rgba(0, 0, 0, 0.8), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
-  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.6);
-  --scrim: rgba(0, 0, 0, 0.55);
+  --shadow-card: inset 0 0 0 1px var(--border);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(0, 0, 0, 0.6);
 
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-bg-strong: rgba(30, 30, 33, 0.76);
-  --glass-border: rgba(255, 255, 255, 0.13);
-  --glass-hi: rgba(255, 255, 255, 0.22);
-  --lens-bg: rgba(255, 255, 255, 0.16);
+  --glass-bg: rgba(15, 16, 17, 0.92);
+  --lens-bg: rgba(255, 255, 255, 0.07);
 
-  --sheet-bg: rgba(24, 24, 27, 0.86);
-  --sheet-card: rgba(255, 255, 255, 0.07);
-  --segment-pill: rgba(255, 255, 255, 0.2);
+  --sheet-bg: #0f1011;
+  --sheet-card: #151617;
+  --segment-pill: #232426;
 }
 
 /* Black and white only. "Accent" (what needs attention: overdue, the add
@@ -103,9 +97,9 @@
 
 /* The floating sidebar's footprint on wide screens; fixed bars offset by it. */
 :root { --sidebar-w: 0px; }
-@media (min-width: 768px) {
-  :root { --sidebar-w: 284px; }
-  :root[data-sidebar='collapsed'] { --sidebar-w: 92px; }
+@media (min-width: 1024px) {
+  :root { --sidebar-w: 248px; }
+  :root[data-sidebar='collapsed'] { --sidebar-w: 60px; }
 }
 
 /* Inside a sheet, cells sit on the sheet's own glass. */
@@ -124,8 +118,8 @@ html {
 body {
   @apply text-label font-sans antialiased;
   background: transparent;
-  font-size: 17px;
-  line-height: 22px;
+  font-size: 15px;
+  line-height: 21px;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -195,33 +189,20 @@ input[type='search']::-webkit-search-cancel-button {
     display: none;
   }
 
-  /* Small uppercase label — section headers, metadata. */
+  /* Section headers and metadata: small, medium-weight, muted. */
   .eyebrow {
-    font-size: 11px;
-    line-height: 14px;
+    font-size: 12px;
+    line-height: 16px;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: 0;
   }
 }
 
 @layer components {
   /* ---------- Backdrop ----------
-     A colourless wash of light: a soft glow from the top and a faint one in
-     the far corner, on a neutral base. Enough for glass to read as glass,
-     without adding any colour. Static and cheap to scroll over. Rendered
-     once, fixed, behind every screen. (The class keeps its old name.) */
+     Flat. The class keeps its old name; it's simply the canvas now. */
   .aurora {
-    background:
-      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.95), transparent 70%),
-      radial-gradient(50% 40% at 100% 100%, rgba(0, 0, 0, 0.04), transparent 70%),
-      var(--canvas);
-  }
-  :root[data-mode='dark'] .aurora {
-    background:
-      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.09), transparent 70%),
-      radial-gradient(50% 40% at 100% 100%, rgba(255, 255, 255, 0.03), transparent 70%),
-      var(--canvas);
+    background: var(--canvas);
   }
 
   /* With the status bar translucent, iOS draws white status text over the
@@ -232,7 +213,7 @@ input[type='search']::-webkit-search-cancel-button {
     position: fixed;
     inset: 0 0 auto 0;
     height: calc(env(safe-area-inset-top) + 10px);
-    background: linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
+    background: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0));
     pointer-events: none;
     z-index: 200;
   }
@@ -242,58 +223,49 @@ input[type='search']::-webkit-search-cancel-button {
     }
   }
 
-  /* ---------- Cards ----------
-     Frosted panes: a translucent fill with a fine bright edge. No blur — the
-     backdrop is smooth gradients, so blur would cost frames and add nothing. */
+  /* ---------- Surfaces ----------
+     Panels are opaque and outlined with a 1px border — no blur, no glow.
+     Floating chrome (tab bar, toasts) adds a soft shadow and a light blur so
+     content passing underneath doesn't cut off abruptly. The class names
+     are kept from the glass era so every component resolves. */
   .bg-card {
     box-shadow: var(--shadow-card);
   }
 
-  /* ---------- Liquid glass ----------
-     The chrome — tab bar, sidebar, floating buttons — is real glass: a heavy
-     saturated blur, a fine edge, and a highlight along the top. */
   .glass,
   .glass-strong {
     position: relative;
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
     background: var(--glass-bg);
-    box-shadow: inset 0 0 0 1px var(--glass-border), inset 0 1px 0 var(--glass-hi), var(--shadow-float);
+    box-shadow: inset 0 0 0 1px var(--border), var(--shadow-float);
   }
-  .glass-strong {
-    background: var(--glass-bg-strong);
-  }
-  /* The selected item inside a glass bar: a brighter bubble of glass. */
+  /* The selected item in a bar or list. */
   .glass-lens {
     position: relative;
     background: var(--lens-bg);
-    box-shadow: inset 0 0 0 1px var(--glass-border), inset 0 1px 0 var(--glass-hi), 0 6px 16px -8px rgba(0, 0, 0, 0.3);
   }
   .glass-tint {
     position: relative;
     background: var(--tint);
     color: var(--tint-fg);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), var(--shadow-float);
   }
 
   .bar-glass {
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    backdrop-filter: blur(30px) saturate(180%);
-    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+    background: color-mix(in srgb, var(--canvas) 85%, transparent);
   }
 
   .sheet-surface {
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    backdrop-filter: blur(40px) saturate(180%);
     background: var(--sheet-bg);
-    box-shadow: inset 0 1px 0 var(--glass-hi), var(--shadow-sheet);
+    box-shadow: inset 0 0 0 1px var(--border), var(--shadow-sheet);
   }
 
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .glass,
-    .bar-glass,
-    .sheet-surface {
-      background: var(--glass-bg-strong);
+    .bar-glass {
+      background: var(--card);
     }
   }
 
@@ -343,7 +315,7 @@ input[type='search']::-webkit-search-cancel-button {
      figures so counts don't jitter as they change. */
   .font-display {
     font-weight: 600;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.035em;
     font-variant-numeric: tabular-nums;
   }
 }

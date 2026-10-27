@@ -20,13 +20,13 @@ function Item({ icon: Icon, label, selected, onClick, badge, collapsed }) {
       title={collapsed ? label : undefined}
       aria-label={collapsed ? label : undefined}
       aria-current={selected ? 'page' : undefined}
-      className={`relative h-11 flex items-center rounded-full text-body ${collapsed ? 'w-11 justify-center' : 'w-full gap-3 px-3.5'} ${
+      className={`relative h-9 flex items-center rounded-[8px] text-body ${collapsed ? 'w-9 justify-center' : 'w-full gap-2.5 px-2.5'} ${
         selected ? 'text-label font-medium' : 'text-label-2 hover:text-label hover:bg-fill'
       }`}
     >
-      {selected && <motion.span layoutId="sidebar-lens" transition={snappy} className="glass-lens absolute inset-0 rounded-full" />}
+      {selected && <motion.span layoutId="sidebar-lens" transition={snappy} className="glass-lens absolute inset-0 rounded-[8px]" />}
       <span className="relative">
-        <Icon size={20} strokeWidth={selected ? 2.1 : 1.7} />
+        <Icon size={17} strokeWidth={selected ? 2 : 1.7} />
         {collapsed && badge > 0 && (
           <span className="absolute -top-1 -right-1.5 h-[15px] min-w-[15px] px-1 rounded-full bg-accent text-tint-fg text-[9px] font-semibold flex items-center justify-center tabular">
             {badge}
@@ -43,7 +43,7 @@ function Item({ icon: Icon, label, selected, onClick, badge, collapsed }) {
   )
 }
 
-// The laptop sidebar: a floating glass panel inset from the window edges.
+// The laptop sidebar: docked to the window edge, flat, with a hairline border.
 // It collapses to an icon rail — the button in its header, or ⌘\ / Ctrl+\.
 export default function Sidebar({
   active,
@@ -64,10 +64,10 @@ export default function Sidebar({
   return (
     <motion.aside
       initial={false}
-      animate={{ width: collapsed ? 68 : 260 }}
+      animate={{ width: collapsed ? 60 : 248 }}
       transition={widthSpring}
-      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 glass rounded-[30px] flex-col py-3 overflow-hidden ${
-        collapsed ? 'items-center px-0' : 'px-3'
+      className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-40 bg-canvas border-r border-separator flex-col py-3 overflow-hidden ${
+        collapsed ? 'items-center px-0' : 'px-2.5'
       }`}
     >
       <div className={`flex items-center ${collapsed ? 'flex-col gap-3 pb-4' : 'gap-2.5 pl-2 pr-0.5 pt-1 pb-4'}`}>
@@ -77,20 +77,20 @@ export default function Sidebar({
             onClick={onToggle}
             title="Show sidebar (⌘\)"
             aria-label="Show sidebar"
-            className="h-11 w-11 rounded-full flex items-center justify-center text-label-2 hover:text-label hover:bg-fill"
+            className="h-9 w-9 rounded-[8px] flex items-center justify-center text-label-2 hover:text-label hover:bg-fill"
           >
             <ToggleIcon size={19} strokeWidth={1.7} />
           </button>
         ) : (
           <>
-            <AppIcon size={30} />
-            <span className="font-display text-[21px] leading-none tracking-[-0.04em] flex-1">{APP_NAME}</span>
+            <AppIcon size={22} />
+            <span className="text-[15px] font-semibold tracking-[-0.01em] flex-1">{APP_NAME}</span>
             <button
               type="button"
               onClick={onToggle}
               title="Hide sidebar (⌘\)"
               aria-label="Hide sidebar"
-              className="h-9 w-9 rounded-full flex items-center justify-center text-label-2 hover:text-label hover:bg-fill"
+              className="h-8 w-8 rounded-[8px] flex items-center justify-center text-label-2 hover:text-label hover:bg-fill"
             >
               <ToggleIcon size={18} strokeWidth={1.7} />
             </button>
@@ -105,11 +105,11 @@ export default function Sidebar({
         transition={snappy}
         title={collapsed ? 'New chapter (⌘N)' : undefined}
         aria-label="New chapter"
-        className={`glass-tint h-11 rounded-full flex items-center justify-center gap-2 text-subhead font-medium mb-4 shrink-0 ${
-          collapsed ? 'w-11' : 'w-full'
+        className={`glass-tint h-9 rounded-[8px] flex items-center justify-center gap-2 text-subhead font-medium mb-4 shrink-0 ${
+          collapsed ? 'w-9' : 'w-full'
         }`}
       >
-        <Plus size={18} strokeWidth={2.2} />
+        <Plus size={16} strokeWidth={2.2} />
         {!collapsed && <span className="whitespace-nowrap">New chapter</span>}
       </motion.button>
 
@@ -142,9 +142,9 @@ export default function Sidebar({
           onClick={onOpenSettings}
           title={collapsed ? 'Account and settings' : undefined}
           aria-label="Account and settings"
-          className={`flex items-center gap-3 rounded-full hover:bg-fill text-left ${collapsed ? 'p-1' : 'w-full p-1.5 pr-3'}`}
+          className={`flex items-center gap-2.5 rounded-[10px] hover:bg-fill text-left ${collapsed ? 'p-1' : 'w-full p-1.5 pr-3'}`}
         >
-          <Avatar name={profile?.name} src={profile?.avatarUrl} size={38} />
+          <Avatar name={profile?.name} src={profile?.avatarUrl} size={30} />
           {!collapsed && (
             <span className="min-w-0 flex-1">
               <span className="block text-subhead font-medium truncate">{profile?.name || 'Account'}</span>

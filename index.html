@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Unforget — Remember what you study</title>
+    <title>Unforget</title>
     <meta name="description" content="Unforget schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
 
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
@@ -20,8 +20,8 @@
     <meta name="application-name" content="Unforget" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#F2F2F4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FBFBFB" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08090A" media="(prefers-color-scheme: dark)" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,7 +54,7 @@
         root.style.colorScheme = mode
         var metas = document.querySelectorAll('meta[name="theme-color"]')
         for (var i = 0; i < metas.length; i++) {
-          metas[i].setAttribute('content', mode === 'dark' ? '#0F0F11' : '#F2F2F4')
+          metas[i].setAttribute('content', mode === 'dark' ? '#08090A' : '#FBFBFB')
           metas[i].removeAttribute('media')
         }
       })()

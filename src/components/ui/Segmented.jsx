@@ -15,12 +15,12 @@ export default function Segmented({ options, value, onChange, layoutId, classNam
     return () => cancelAnimationFrame(f)
   }, [])
 
-  const h = size === 'sm' ? 'h-8' : 'h-9'
+  const h = size === 'sm' ? 'h-8' : 'h-8'
   return (
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={`relative inline-flex items-stretch p-[2px] rounded-full bg-fill ${h} ${className}`}
+      className={`relative inline-flex items-stretch p-[2px] rounded-[9px] bg-fill ${h} ${className}`}
     >
       {options.map((opt) => {
         const active = value === opt.id
@@ -31,13 +31,13 @@ export default function Segmented({ options, value, onChange, layoutId, classNam
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.id)}
-            className="relative flex-1 min-w-0 px-3.5 rounded-full text-footnote font-medium whitespace-nowrap"
+            className="relative flex-1 min-w-0 px-3.5 rounded-[7px] text-subhead font-medium whitespace-nowrap"
           >
             {active && (
               <motion.span
                 layoutId={settled ? layoutId : undefined}
                 transition={snappy}
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-[7px]"
                 style={{
                   background: 'var(--segment-pill)',
                   boxShadow: '0 3px 8px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.04)',

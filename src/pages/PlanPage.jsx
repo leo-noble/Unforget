@@ -216,7 +216,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={snappy}
-                className="glass-strong absolute left-0 top-full mt-2 z-30 w-[300px] origin-top-left rounded-[24px] p-3"
+                className="glass-strong absolute left-0 top-full mt-2 z-30 w-[300px] origin-top-left rounded-[12px] p-3"
               >
                 <MiniMonth
                   cursorDate={cursor}
@@ -240,7 +240,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
 
         <div className="ml-auto flex items-center gap-1.5">
           {cursor !== todayISO && (
-            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-full bg-tint/15 text-tint text-footnote font-medium">
+            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-[9px] bg-tint/15 text-tint text-footnote font-medium">
               Today
             </button>
           )}
@@ -278,7 +278,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: easeOut }}
-        className="bg-card rounded-[24px] shadow-card overflow-hidden"
+        className="bg-card rounded-[12px] shadow-card overflow-hidden"
         style={{ height: gridHeight }}
       >
         {view === 'week' && <WeekView {...viewProps} />}

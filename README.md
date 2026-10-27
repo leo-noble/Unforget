@@ -1,7 +1,7 @@
 # Unforget — Remember what you study
 
 (Formerly Cadence.) Live at https://unforget-study.vercel.app. A spaced-repetition study planner, built as an installable
-PWA that has a minimal look: black and white over a soft aurora, with liquid-glass chrome. Log a chapter the day you
+browser app with a quiet, minimal interface. Log a chapter the day you
 study it; Unforget schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
 tells you each morning exactly what to revise.
 

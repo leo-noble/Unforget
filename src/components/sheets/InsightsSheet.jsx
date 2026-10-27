@@ -17,7 +17,7 @@ function Tile({ icon: Icon, value, label, accent = false }) {
         <span className="eyebrow text-label-2">{label}</span>
         <Icon size={16} strokeWidth={1.75} className={accent ? 'text-accent' : 'text-label-3'} />
       </div>
-      <p className="font-display text-[44px] leading-none tabular mt-4">{value}</p>
+      <p className="font-display text-[30px] leading-none tabular mt-4">{value}</p>
     </div>
   )
 }

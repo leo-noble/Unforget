@@ -27,7 +27,7 @@ export function NavBar({ title, leading, trailing }) {
   const scrolled = useScrolledPast(38)
   return (
     <header
-      className="fixed top-0 right-0 left-0 md:left-[var(--sidebar-w)] z-40 pointer-events-none transition-[left] duration-300 ease-ios"
+      className="fixed top-0 right-0 left-0 md:left-[var(--sidebar-w)] z-30 pointer-events-none transition-[left] duration-300 ease-ios"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div
@@ -65,7 +65,7 @@ export default function Page({ title, eyebrow, subtitle, trailing, leading, wide
         <div className="pt-1 pb-5 flex items-end justify-between gap-4">
           <div className="min-w-0">
             {eyebrow && <p className="eyebrow text-label-2 mb-2">{eyebrow}</p>}
-            <h1 className="font-display text-[38px] leading-[42px] truncate">{title}</h1>
+            <h1 className="font-display text-[26px] leading-[32px] truncate">{title}</h1>
             {subtitle && <p className="text-subhead text-label-2 mt-1">{subtitle}</p>}
           </div>
           {titleAccessory}

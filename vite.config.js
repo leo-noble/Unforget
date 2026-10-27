@@ -16,7 +16,7 @@ export default defineConfig({
         // Same identity the app had before it was renamed, so existing
         // installs update in place instead of becoming a second app.
         id: '/app',
-        name: 'Unforget — Remember what you study',
+        name: 'Unforget',
         short_name: 'Unforget',
         description: 'Spaced-repetition study planner. Know exactly what to revise today.',
         // Opening the installed app goes straight to Today. Signed-out users
@@ -25,8 +25,8 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         display_override: ['standalone'],
-        theme_color: '#0F0F11',
-        background_color: '#0F0F11',
+        theme_color: '#08090A',
+        background_color: '#08090A',
         categories: ['education', 'productivity'],
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

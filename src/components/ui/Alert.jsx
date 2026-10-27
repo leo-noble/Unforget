@@ -76,7 +76,7 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.15 } }}
         transition={snappy}
-        className="glass-strong relative w-full max-w-[300px] rounded-[30px] p-5 pt-6 text-center"
+        className="glass-strong relative w-full max-w-[300px] rounded-[12px] p-5 pt-6 text-center"
       >
         <h2 id="alert-title" className="text-headline font-medium">
           {title}

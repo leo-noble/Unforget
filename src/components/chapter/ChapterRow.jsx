@@ -41,7 +41,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
       exit={{ opacity: 0, height: 0, transition: { duration: 0.28, ease: easeOut } }}
       transition={{ duration: 0.3, ease: easeOut }}
       className="relative overflow-hidden"
-      style={{ '--inset': '54px' }}
+      style={{ '--inset': '48px' }}
     >
       {actionable && (
         <>
@@ -95,7 +95,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
               onOpen?.(chapter)
             }
           }}
-          className="flex items-center gap-3.5 pl-4 pr-4 py-3 min-h-[64px] cursor-pointer active:bg-fill transition-colors duration-75 select-none"
+          className="flex items-center gap-3 pl-4 pr-4 py-2.5 min-h-[54px] cursor-pointer active:bg-fill transition-colors duration-75 select-none"
         >
           <CompleteButton
             key={`${chapter.id}-${chapter.currentReviewIndex}-${chapter.nextReviewDate}`}

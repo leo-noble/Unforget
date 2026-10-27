@@ -129,7 +129,7 @@ export default function Sheet({
           }}
           className={`elevated pointer-events-auto relative flex flex-col sheet-surface outline-none ${
             desktop
-              ? `w-full ${size === 'lg' ? 'max-w-[620px]' : 'max-w-[540px]'} max-h-[min(880px,calc(100vh-48px))] rounded-[30px]`
+              ? `w-full ${size === 'lg' ? 'max-w-[620px]' : 'max-w-[540px]'} max-h-[min(880px,calc(100vh-48px))] rounded-[12px]`
               : `w-full rounded-t-sheet ${
                   size === 'lg'
                     ? 'h-[calc(100dvh-env(safe-area-inset-top)-12px)]'
