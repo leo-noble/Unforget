@@ -181,7 +181,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
 
   const gridHeight = desktop
     ? `max(480px, calc(100vh - ${gridTop}px - 28px))`
-    : `max(380px, calc(100dvh - ${gridTop}px - env(safe-area-inset-bottom) - var(--dock-space, 88px) + 26px))`
+    : `max(380px, calc(100dvh - ${gridTop}px - env(safe-area-inset-bottom) - var(--dock-space, 112px) + 26px))`
 
   return (
     <Page

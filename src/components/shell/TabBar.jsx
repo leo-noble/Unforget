@@ -7,15 +7,15 @@ import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 520, damping: 34, mass: 0.9 }
 
-// A compact, content-width floating dock: four destinations and a centered
-// create action in one glass surface. The live timer pill sits above it.
+// Four destinations stay together in the floating glass dock. The add action
+// gets its own button beside the dock, with the live timer pill above both.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
   const { status } = useTimerStatus()
   const showTimer = status !== 'idle' && active !== 'focus'
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
-    document.documentElement.style.setProperty('--dock-space', showTimer ? '152px' : '88px')
+    document.documentElement.style.setProperty('--dock-space', showTimer ? '178px' : '112px')
   }, [showTimer])
 
   return (
@@ -39,13 +39,15 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <nav
-          aria-label="Main navigation"
-          className="liquid-dock relative pointer-events-auto mx-auto flex h-[58px] w-fit max-w-full items-center rounded-full px-1.5 py-1"
-        >
-          {TABS.slice(0, 2).map((tab) => (
-            <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
-          ))}
+        <div className="flex items-center gap-3">
+          <nav
+            aria-label="Main navigation"
+            className="liquid-dock relative flex h-[62px] min-w-0 flex-1 items-center rounded-full p-1 pointer-events-auto"
+          >
+            {TABS.map((tab) => (
+              <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
+            ))}
+          </nav>
 
           <motion.button
             type="button"
@@ -54,15 +56,11 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
             transition={pillSpring}
             aria-label="Add chapter"
             title="Add chapter"
-            className="dock-action relative z-[1] mx-1 flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full text-label"
+            className="liquid-add relative z-[1] pointer-events-auto flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-full"
           >
-            <Plus size={21} strokeWidth={1.8} />
+            <Plus size={25} strokeWidth={1.9} />
           </motion.button>
-
-          {TABS.slice(2).map((tab) => (
-            <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
-          ))}
-        </nav>
+        </div>
       </div>
     </div>
   )
@@ -81,16 +79,17 @@ function DockTab({ tab, active, onSelect }) {
       aria-current={selected ? 'page' : undefined}
       aria-label={tab.label}
       title={tab.label}
-      className={`relative flex h-[48px] w-[54px] shrink-0 items-center justify-center rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
+      className={`relative flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-[3px] rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
     >
       {selected && (
         <motion.span
           layoutId="tabbar-lens"
           transition={pillSpring}
-          className="glass-lens dock-lens absolute inset-[4px] rounded-full"
+          className="dock-lens absolute inset-[3px] rounded-full"
         />
       )}
-      <Icon size={20} strokeWidth={selected ? 1.9 : 1.7} className="relative z-[1]" />
+      <Icon size={21} strokeWidth={selected ? 2.1 : 1.8} className="relative z-[1]" />
+      <span className="relative z-[1] text-[10px] leading-none font-medium">{tab.label}</span>
     </motion.button>
   )
 }
