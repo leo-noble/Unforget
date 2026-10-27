@@ -1,11 +1,11 @@
 # Unforget — Remember what you study
 
-(Formerly Cadence.) Live at https://unforget-study.vercel.app. A spaced-repetition study planner, built as an installable
+(Formerly Cadence.) Live at https://unforgett.vercel.app/dashboard. A spaced-repetition study planner, built as an installable
 browser app with a quiet, minimal interface. Log a chapter the day you
 study it; Unforget schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
 tells you each morning exactly what to revise.
 
-The name lives in `src/brand.js`. Storage keys and the Supabase table keep
+The app dashboard is at `https://unforgett.vercel.app/dashboard`. The name lives in `src/brand.js`. Storage keys and the Supabase table keep
 their original `cadence` prefix on purpose, so existing data carries over.
 
 ## Stack
@@ -29,20 +29,21 @@ npm run icons     # re-render public/icons from src/components/ui/iconArt.js
   first visit → landing page
 - `/welcome` — the landing page, always
 - `/login`, `/reset-password`
-- `/app` (Today), `/app/library`, `/app/plan`, `/app/focus`
+- `/dashboard` (Today), `/dashboard/library`, `/dashboard/plan`, `/dashboard/focus`
+- `/app/*` redirects old links to the matching `/dashboard/*` page
 
 ## Auth redirect setup (Supabase)
 
-Sign-in emails and Google OAuth return to `<origin>/app` or
+Sign-in emails and Google OAuth return to `<origin>/dashboard` or
 `<origin>/reset-password`. In production, OAuth now always returns to the
-stable app domain (`https://unforget-study.vercel.app`), never a unique,
+stable app domain (`https://unforgett.vercel.app`), never a unique,
 password-protected Vercel preview URL. Local development returns to localhost.
 
 In **Supabase → Authentication → URL Configuration**, set **Site URL** to
-`https://unforget-study.vercel.app` and add these **Redirect URLs**:
+`https://unforgett.vercel.app` and add these **Redirect URLs**:
 
-- `https://unforget-study.vercel.app/app`
-- `https://unforget-study.vercel.app/reset-password`
+- `https://unforgett.vercel.app/dashboard`
+- `https://unforgett.vercel.app/reset-password` (required for password-reset emails)
 - `http://localhost:5173/**`
 
 Supabase falls back to Site URL when a requested return URL is not allowed.
@@ -53,7 +54,7 @@ URLs.
 ## Deploying
 
 This is a client-routed SPA, so whatever host you use needs to serve
-`index.html` for unknown paths (like `/app`) instead of 404ing. Both are
+`index.html` for unknown paths (like `/dashboard`) instead of 404ing. Both are
 already included:
 
 - **Netlify** — `public/_redirects` (copied into `dist/` on build)
@@ -343,7 +344,7 @@ src/
     CalendarPage.jsx
     FocusPage.jsx
     SettingsPage.jsx
-  App.jsx            # router: "/" -> Landing, "/login" -> Login, "/app" -> AppShell
+  App.jsx            # router: "/" -> Landing, "/login" -> Login, "/dashboard" -> AppShell
   AppShell.jsx        # the app itself (nav + pages + modals)
   main.jsx
   index.css          # Tailwind + design tokens

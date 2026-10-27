@@ -39,7 +39,7 @@ function markReturning() {
  * a protocol-relative `//host` — falls back to the app, so a crafted
  * `?redirect=` link can't bounce someone off to another site.
  */
-export function safeRedirectPath(path, fallback = '/app') {
+export function safeRedirectPath(path, fallback = '/dashboard') {
   if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.startsWith('/\\')) {
     return fallback
   }
@@ -50,7 +50,7 @@ export function safeRedirectPath(path, fallback = '/app') {
 // Using window.location.origin here sends preview builds to unique, protected
 // Vercel URLs; Supabase then rejects those URLs or falls back to its Site URL.
 // Local development stays on localhost so local auth remains testable.
-const PRODUCTION_SITE_URL = import.meta.env.VITE_SITE_URL || 'https://unforget-study.vercel.app'
+const PRODUCTION_SITE_URL = import.meta.env.VITE_SITE_URL || 'https://unforgett.vercel.app'
 const returnURL = (path) => {
   const origin = import.meta.env.DEV ? window.location.origin : new URL(PRODUCTION_SITE_URL).origin
   return new URL(safeRedirectPath(path), origin).toString()
@@ -92,13 +92,13 @@ export function AuthProvider({ children }) {
     return supabase.auth.signUp({
       email,
       password,
-      options: { data: { name }, emailRedirectTo: returnURL('/app') },
+      options: { data: { name }, emailRedirectTo: returnURL('/dashboard') },
     })
   }, [])
 
   // Google redirects straight back into the app. The session is picked up
   // from the URL on load, and RequireAuth waits for it before rendering.
-  const signInWithGoogle = useCallback(async (redirectPath = '/app') => {
+  const signInWithGoogle = useCallback(async (redirectPath = '/dashboard') => {
     if (!isSupabaseConfigured) return { error: { message: 'Supabase is not configured yet.' } }
     return supabase.auth.signInWithOAuth({
       provider: 'google',

@@ -33,9 +33,9 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      const existing = clients.find((c) => c.url.includes('/app'))
+      const existing = clients.find((c) => c.url.includes('/dashboard') || c.url.includes('/app'))
       if (existing) return existing.focus()
-      return self.clients.openWindow('/app')
+      return self.clients.openWindow('/dashboard')
     })
   )
 })

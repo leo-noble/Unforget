@@ -133,7 +133,7 @@ export default function LandingPage() {
     setInstallPrompt(null)
   }
 
-  const cta = session ? { to: '/app', label: 'Open Today' } : { to: '/login', label: 'Get started — free' }
+  const cta = session ? { to: '/dashboard', label: 'Open Today' } : { to: '/login', label: 'Get started — free' }
 
   return (
     <div className="min-h-[100dvh] overflow-x-clip">
@@ -150,7 +150,7 @@ export default function LandingPage() {
             <a href="#faq" className="hover:text-label">FAQ</a>
           </nav>
           <Link
-            to={session ? '/app' : '/login'}
+            to={session ? '/dashboard' : '/login'}
             className="h-9 px-4 rounded-[9px] bg-tint text-tint-fg text-subhead font-medium flex items-center"
           >
             {session ? 'Open app' : 'Sign in'}
@@ -399,7 +399,7 @@ export default function LandingPage() {
           <span className="flex gap-6">
             <a href="#how" className="hover:text-label">How it works</a>
             <a href="#faq" className="hover:text-label">FAQ</a>
-            <Link to={session ? '/app' : '/login'} className="hover:text-label">
+            <Link to={session ? '/dashboard' : '/login'} className="hover:text-label">
               {session ? 'Open app' : 'Sign in'}
             </Link>
           </span>

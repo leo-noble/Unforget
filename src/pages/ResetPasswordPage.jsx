@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
           <span className="h-14 w-14 rounded-full bg-green/15 text-green flex items-center justify-center">
             <CheckCheck size={28} />
           </span>
-          <Button size="lg" block className="mt-6" onClick={() => navigate('/app', { replace: true })}>
+          <Button size="lg" block className="mt-6" onClick={() => navigate('/dashboard', { replace: true })}>
             Open Today
           </Button>
         </div>

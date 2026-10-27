@@ -15,13 +15,15 @@ export default defineConfig({
       manifest: {
         // Same identity the app had before it was renamed, so existing
         // installs update in place instead of becoming a second app.
+        // Keep the existing install identity so current home-screen installs
+        // update in place; /app continues redirecting to the new dashboard path.
         id: '/app',
         name: 'Unforget',
         short_name: 'Unforget',
         description: 'Spaced-repetition study planner. Know exactly what to revise today.',
         // Opening the installed app goes straight to Today. Signed-out users
         // are bounced to sign-in from there, never to the marketing page.
-        start_url: '/app',
+        start_url: '/dashboard',
         scope: '/',
         display: 'standalone',
         display_override: ['standalone'],
@@ -34,8 +36,8 @@ export default defineConfig({
           { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
         shortcuts: [
-          { name: 'Today', url: '/app', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
-          { name: 'Focus', url: '/app/focus', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Today', url: '/dashboard', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Focus', url: '/dashboard/focus', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
         ],
       },
       injectManifest: {

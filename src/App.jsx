@@ -25,7 +25,7 @@ const LandingPage = lazy(() => import('./pages/LandingPage'))
 function Entry() {
   const { session, loading } = useAuth()
   if (loading) return <Splash />
-  if (session) return <Navigate to="/app" replace />
+  if (session) return <Navigate to="/dashboard" replace />
   if (hasSignedInBefore()) return <Navigate to="/login" replace />
   return (
     <Suspense fallback={<Splash />}>
@@ -34,7 +34,7 @@ function Entry() {
   )
 }
 
-// Gates /app behind a real session. While the stored session (or one coming
+// Gates /dashboard behind a real session. While the stored session (or one coming
 // back from Google in the URL) is being read, show the splash rather than
 // bouncing to sign-in and back.
 function RequireAuth({ children }) {
@@ -53,6 +53,14 @@ function RequireAuth({ children }) {
     return <Navigate to={`/login?${to.toString()}`} replace />
   }
   return children
+}
+
+// Keep old bookmarks and OAuth links working while moving the app to its new
+// canonical route. Preserve nested tabs, query parameters, and fragments.
+function LegacyAppRedirect() {
+  const location = useLocation()
+  const path = location.pathname.replace(/^\/app(?=\/|$)/, '/dashboard')
+  return <Navigate to={`${path}${location.search}${location.hash}`} replace />
 }
 
 export default function App() {
@@ -89,13 +97,14 @@ export default function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route
-                  path="/app/*"
+                  path="/dashboard/*"
                   element={
                     <RequireAuth>
                       <AppShell />
                     </RequireAuth>
                   }
                 />
+                <Route path="/app/*" element={<LegacyAppRedirect />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </BrowserRouter>
