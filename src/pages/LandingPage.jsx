@@ -329,7 +329,7 @@ export default function LandingPage() {
               className="relative overflow-hidden rounded-[28px] text-white p-6 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10"
               style={{
                 background:
-                  'radial-gradient(80% 100% at 0% 0%, rgba(120,96,255,0.95), transparent 70%), radial-gradient(70% 90% at 100% 100%, rgba(226,62,158,0.85), transparent 70%), #15102e',
+                  'radial-gradient(80% 90% at 50% -10%, rgba(255,255,255,0.14), transparent 70%), linear-gradient(180deg, #2a2a2e, #121214)',
               }}
             >
               <AppIcon size={72} />
@@ -346,7 +346,7 @@ export default function LandingPage() {
                     </span>
                   </div>
                 ) : installPrompt ? (
-                  <button onClick={install} className="mt-5 inline-flex h-12 px-6 items-center gap-2 rounded-full bg-white text-[#15102e] text-[16px] font-semibold">
+                  <button onClick={install} className="mt-5 inline-flex h-12 px-6 items-center gap-2 rounded-full bg-white text-[#121214] text-[16px] font-semibold">
                     <Download size={17} /> Install {APP_NAME}
                   </button>
                 ) : (

@@ -10,7 +10,7 @@ export default function AppIcon({ size = 56, className = '' }) {
       role="img"
       aria-label="Unforget"
       className={`inline-block shrink-0 ${className}`}
-      style={{ width: size, height: size, filter: `drop-shadow(0 ${size * 0.06}px ${size * 0.14}px rgba(60, 30, 160, 0.3))` }}
+      style={{ width: size, height: size, filter: `drop-shadow(0 ${size * 0.06}px ${size * 0.14}px rgba(0, 0, 0, 0.22))` }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

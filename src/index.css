@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens. A colourful aurora sits behind everything (see .aurora);
-   on top of it the interface is clean black-and-white: frosted translucent
+   Design tokens. Greyscale only. A soft, colourless wash of light sits
+   behind everything (see .aurora); on top of it the interface is clean
+   black-and-white: frosted translucent
    cards, and liquid glass for the chrome (tab bar, sidebar, nav bar, sheets).
    <html data-mode> follows the device's light/dark setting; see
    src/lib/appearance.js.
@@ -13,24 +14,24 @@
 :root,
 :root[data-mode='light'] {
   color-scheme: light;
-  --canvas: #f3f1f8;
+  --canvas: #f2f2f4;
   --card: rgba(255, 255, 255, 0.56);
   --card-2: rgba(255, 255, 255, 0.8);
-  --label: #0d0b16;
-  --label-2: rgba(13, 11, 22, 0.58);
-  --label-3: rgba(13, 11, 22, 0.3);
-  --separator: rgba(13, 11, 22, 0.08);
-  --fill: rgba(13, 11, 22, 0.05);
-  --fill-2: rgba(13, 11, 22, 0.09);
-  --dot: rgba(13, 11, 22, 0.12);
+  --label: #111113;
+  --label-2: rgba(17, 17, 19, 0.58);
+  --label-3: rgba(17, 17, 19, 0.3);
+  --separator: rgba(17, 17, 19, 0.08);
+  --fill: rgba(17, 17, 19, 0.05);
+  --fill-2: rgba(17, 17, 19, 0.09);
+  --dot: rgba(17, 17, 19, 0.12);
 
-  --tint: #0d0b16;
+  --tint: #111113;
   --tint-fg: #ffffff;
 
-  --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 12px 32px -20px rgba(60, 30, 140, 0.28);
-  --shadow-float: 0 16px 40px -18px rgba(50, 20, 120, 0.35), 0 2px 6px -2px rgba(50, 20, 120, 0.12);
-  --shadow-sheet: 0 -10px 40px rgba(40, 20, 100, 0.12);
-  --scrim: rgba(20, 10, 40, 0.25);
+  --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 12px 32px -20px rgba(0, 0, 0, 0.18);
+  --shadow-float: 0 16px 40px -18px rgba(0, 0, 0, 0.28), 0 2px 6px -2px rgba(0, 0, 0, 0.08);
+  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.1);
+  --scrim: rgba(0, 0, 0, 0.22);
 
   --glass-bg: rgba(255, 255, 255, 0.5);
   --glass-bg-strong: rgba(255, 255, 255, 0.76);
@@ -38,14 +39,14 @@
   --glass-hi: rgba(255, 255, 255, 0.95);
   --lens-bg: rgba(255, 255, 255, 0.9);
 
-  --sheet-bg: rgba(248, 246, 252, 0.86);
+  --sheet-bg: rgba(248, 248, 250, 0.86);
   --sheet-card: rgba(255, 255, 255, 0.82);
   --segment-pill: #ffffff;
 }
 
 :root[data-mode='dark'] {
   color-scheme: dark;
-  --canvas: #0b0a14;
+  --canvas: #0f0f11;
   --card: rgba(255, 255, 255, 0.06);
   --card-2: rgba(255, 255, 255, 0.1);
   --label: #ffffff;
@@ -57,20 +58,20 @@
   --dot: rgba(255, 255, 255, 0.14);
 
   --tint: #ffffff;
-  --tint-fg: #0b0a14;
+  --tint-fg: #0f0f11;
 
   --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
   --shadow-float: 0 18px 44px -18px rgba(0, 0, 0, 0.8), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
   --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.6);
-  --scrim: rgba(4, 2, 12, 0.55);
+  --scrim: rgba(0, 0, 0, 0.55);
 
   --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-bg-strong: rgba(28, 24, 44, 0.74);
+  --glass-bg-strong: rgba(30, 30, 33, 0.76);
   --glass-border: rgba(255, 255, 255, 0.13);
   --glass-hi: rgba(255, 255, 255, 0.22);
   --lens-bg: rgba(255, 255, 255, 0.16);
 
-  --sheet-bg: rgba(22, 19, 36, 0.84);
+  --sheet-bg: rgba(24, 24, 27, 0.86);
   --sheet-card: rgba(255, 255, 255, 0.07);
   --segment-pill: rgba(255, 255, 255, 0.2);
 }
@@ -205,24 +206,21 @@ input[type='search']::-webkit-search-cancel-button {
 }
 
 @layer components {
-  /* ---------- Aurora ----------
-     The backdrop: soft pools of colour on a deep (or pale) base. Pure
-     gradients, static — cheap to scroll over, and it gives the glass
-     something to refract. Rendered once, fixed, behind every screen. */
+  /* ---------- Backdrop ----------
+     A colourless wash of light: a soft glow from the top and a faint one in
+     the far corner, on a neutral base. Enough for glass to read as glass,
+     without adding any colour. Static and cheap to scroll over. Rendered
+     once, fixed, behind every screen. (The class keeps its old name.) */
   .aurora {
     background:
-      radial-gradient(55% 42% at 10% 0%, rgba(140, 118, 255, 0.4), transparent 72%),
-      radial-gradient(48% 40% at 95% 6%, rgba(255, 118, 186, 0.32), transparent 72%),
-      radial-gradient(60% 46% at 88% 72%, rgba(86, 196, 255, 0.28), transparent 72%),
-      radial-gradient(55% 44% at 4% 88%, rgba(255, 184, 120, 0.26), transparent 72%),
+      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.95), transparent 70%),
+      radial-gradient(50% 40% at 100% 100%, rgba(0, 0, 0, 0.04), transparent 70%),
       var(--canvas);
   }
   :root[data-mode='dark'] .aurora {
     background:
-      radial-gradient(55% 42% at 10% 0%, rgba(108, 84, 255, 0.5), transparent 72%),
-      radial-gradient(48% 40% at 95% 6%, rgba(226, 62, 158, 0.34), transparent 72%),
-      radial-gradient(60% 46% at 88% 72%, rgba(36, 160, 220, 0.22), transparent 72%),
-      radial-gradient(55% 44% at 4% 88%, rgba(255, 128, 64, 0.13), transparent 72%),
+      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.09), transparent 70%),
+      radial-gradient(50% 40% at 100% 100%, rgba(255, 255, 255, 0.03), transparent 70%),
       var(--canvas);
   }
 
@@ -234,7 +232,7 @@ input[type='search']::-webkit-search-cancel-button {
     position: fixed;
     inset: 0 0 auto 0;
     height: calc(env(safe-area-inset-top) + 10px);
-    background: linear-gradient(rgba(20, 12, 48, 0.42), rgba(20, 12, 48, 0));
+    background: linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
     pointer-events: none;
     z-index: 200;
   }
@@ -269,7 +267,7 @@ input[type='search']::-webkit-search-cancel-button {
   .glass-lens {
     position: relative;
     background: var(--lens-bg);
-    box-shadow: inset 0 0 0 1px var(--glass-border), inset 0 1px 0 var(--glass-hi), 0 6px 16px -8px rgba(20, 10, 60, 0.35);
+    box-shadow: inset 0 0 0 1px var(--glass-border), inset 0 1px 0 var(--glass-hi), 0 6px 16px -8px rgba(0, 0, 0, 0.3);
   }
   .glass-tint {
     position: relative;

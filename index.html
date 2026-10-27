@@ -20,8 +20,8 @@
     <meta name="application-name" content="Unforget" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#F3F1F8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0B0A14" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F2F2F4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,7 +54,7 @@
         root.style.colorScheme = mode
         var metas = document.querySelectorAll('meta[name="theme-color"]')
         for (var i = 0; i < metas.length; i++) {
-          metas[i].setAttribute('content', mode === 'dark' ? '#0B0A14' : '#F3F1F8')
+          metas[i].setAttribute('content', mode === 'dark' ? '#0F0F11' : '#F2F2F4')
           metas[i].removeAttribute('media')
         }
       })()

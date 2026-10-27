@@ -29,6 +29,6 @@ await writeFile(new URL('favicon.svg', `file://${out}`), squircle)
 await render(squircle, 192).toFile(`${out}icon-192.png`)
 await render(squircle, 512).toFile(`${out}icon-512.png`)
 await render(maskable, 512).toFile(`${out}icon-maskable-512.png`)
-await render(square, 180).flatten({ background: '#1A0F3D' }).toFile(`${out}apple-touch-icon.png`)
+await render(square, 180).flatten({ background: '#121214' }).toFile(`${out}apple-touch-icon.png`)
 
 console.log('Icons written to public/icons/')

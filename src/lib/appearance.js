@@ -41,7 +41,7 @@ export function resolveMode() {
 
 // Mirrors the canvas colour so the status bar and the browser chrome blend
 // into the page instead of sitting on it as a separate stripe.
-const CANVAS = { light: '#F3F1F8', dark: '#0B0A14' }
+const CANVAS = { light: '#F2F2F4', dark: '#0F0F11' }
 
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it
