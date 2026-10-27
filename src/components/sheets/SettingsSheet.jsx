@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff } from 'lucide-react'
+import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -19,6 +19,12 @@ const SYNC_LABEL = {
   offline: 'Offline — saved on this device',
   idle: 'Not signed in',
 }
+
+const APPEARANCE_MODES = [
+  { id: 'dark', label: 'Dark', icon: Moon },
+  { id: 'light', label: 'Light', icon: Sun },
+  { id: 'system', label: 'System', icon: Monitor },
+]
 
 export default function SettingsSheet({ cadence, onClose }) {
   const { prefs, updatePrefs, subjects, chapters, events, syncState, syncNow } = cadence
@@ -101,6 +107,29 @@ export default function SettingsSheet({ cadence, onClose }) {
             ))}
           </div>
         </div>
+
+        {/* Appearance */}
+        <Section title="Appearance" footer="Dark is the default. System follows your iPhone or browser setting.">
+          <div className="p-1.5 bg-card rounded-cell grid grid-cols-3 gap-1" role="group" aria-label="Appearance">
+            {APPEARANCE_MODES.map(({ id, label, icon: Icon }) => {
+              const selected = (prefs.themeMode || 'dark') === id
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => updatePrefs({ themeMode: id })}
+                  aria-pressed={selected}
+                  className={`h-10 rounded-[11px] flex items-center justify-center gap-1.5 text-subhead transition-colors ${
+                    selected ? 'text-label shadow-card' : 'text-label-2 hover:text-label'
+                  }`}
+                  style={{ background: selected ? 'var(--glass-selected)' : undefined }}
+                >
+                  <Icon size={15} strokeWidth={1.8} /> {label}
+                </button>
+              )
+            })}
+          </div>
+        </Section>
 
         {/* Reminders */}
         <Section

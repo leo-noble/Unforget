@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-mode="light" data-accent="indigo">
+<html lang="en" data-mode="dark" data-theme-mode="dark" data-accent="indigo">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -20,8 +20,7 @@
     <meta name="application-name" content="Unforget" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#FBFBFB" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#08090A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#090B0E" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,23 +37,28 @@
         var ACCENTS = ['indigo', 'blue', 'teal', 'green', 'orange', 'pink', 'purple']
         var LEGACY = { slate: 'indigo', aurora: 'purple', forest: 'green', linen: 'green', fog: 'indigo', graphite: 'indigo', verdant: 'green' }
         var accent = 'indigo'
-        var mode = 'system'
+        var themeMode = 'dark'
         try {
           var boot = JSON.parse(localStorage.getItem('unforget.appearance') || 'null')
           var prefs = boot || JSON.parse(localStorage.getItem('cadence.prefs') || '{}')
           var a = boot ? boot.accent : prefs.theme
+          themeMode = boot ? boot.themeMode : prefs.themeMode
+          if ((boot ? boot.appearanceVersion : prefs.appearanceVersion) !== 1 && (!themeMode || themeMode === 'system')) {
+            themeMode = 'dark'
+          }
           accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'indigo'
         } catch (e) {}
-        // Light/dark always follows the device.
-        {
-          mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
+        if (['light', 'dark', 'system'].indexOf(themeMode) < 0) themeMode = 'dark'
+        var mode = themeMode === 'system'
+          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : themeMode
         root.dataset.accent = accent
+        root.dataset.themeMode = themeMode
         root.dataset.mode = mode
         root.style.colorScheme = mode
         var metas = document.querySelectorAll('meta[name="theme-color"]')
         for (var i = 0; i < metas.length; i++) {
-          metas[i].setAttribute('content', mode === 'dark' ? '#08090A' : '#FBFBFB')
+          metas[i].setAttribute('content', mode === 'dark' ? '#090B0E' : '#FBFBFB')
           metas[i].removeAttribute('media')
         }
       })()

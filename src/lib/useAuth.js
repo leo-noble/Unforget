@@ -46,12 +46,15 @@ export function safeRedirectPath(path, fallback = '/app') {
   return path
 }
 
-// Where Supabase sends the browser back to after Google or an email link. A
-// plain path on this same origin, with no query string: Supabase matches it
-// against the project's Redirect URL allowlist, and anything that doesn't
-// match falls back to the Site URL instead — which is how sign-in used to end
-// up on a different (password-protected) Vercel deployment.
-const returnURL = (path) => `${window.location.origin}${safeRedirectPath(path)}`
+// OAuth should always return to the stable public app domain in production.
+// Using window.location.origin here sends preview builds to unique, protected
+// Vercel URLs; Supabase then rejects those URLs or falls back to its Site URL.
+// Local development stays on localhost so local auth remains testable.
+const PRODUCTION_SITE_URL = import.meta.env.VITE_SITE_URL || 'https://unforget-study.vercel.app'
+const returnURL = (path) => {
+  const origin = import.meta.env.DEV ? window.location.origin : new URL(PRODUCTION_SITE_URL).origin
+  return new URL(safeRedirectPath(path), origin).toString()
+}
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)

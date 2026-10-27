@@ -66,7 +66,8 @@ function uid() {
 
 export const DEFAULT_PREFS = {
   theme: 'indigo', // accent colour — see ACCENTS in appearance.js
-  themeMode: 'system', // light | dark | system
+  themeMode: 'dark', // dark | light | system
+  appearanceVersion: 1,
   notificationsEnabled: false,
   notificationTime: '09:00',
   onboarded: false,
@@ -273,6 +274,13 @@ export function getPrefs() {
   const migrated = OLD_THEME_MIGRATION[stored.theme]
   const merged = { ...DEFAULT_PREFS, ...stored }
   if (migrated) Object.assign(merged, migrated)
+  // Older builds only supported device appearance, so their `system` value
+  // was a default rather than a user choice. Start the new glass design dark;
+  // new explicit System choices are preserved by the version marker.
+  if (stored.appearanceVersion !== 1) {
+    if (!stored.themeMode || stored.themeMode === 'system') merged.themeMode = 'dark'
+    merged.appearanceVersion = 1
+  }
   return merged
 }
 export function savePrefs(prefs) {

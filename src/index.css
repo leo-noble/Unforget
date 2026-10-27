@@ -3,10 +3,8 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens. Linear-style minimalism: a flat neutral canvas, opaque
-   panels separated by 1px borders rather than shadows or glow, one ink
-   colour for emphasis. <html data-mode> follows the device's light/dark
-   setting; see src/lib/appearance.js.
+   Dark, quiet surfaces for study content; Liquid Glass reserved for controls
+   and navigation. <html data-mode> follows the selected appearance mode.
    ========================================================================== */
 
 :root,
@@ -34,6 +32,7 @@
 
   --glass-bg: rgba(255, 255, 255, 0.92);
   --lens-bg: rgba(0, 0, 0, 0.05);
+  --glass-selected: rgba(255, 255, 255, 0.84);
 
   --sheet-bg: #ffffff;
   --sheet-card: #f7f7f8;
@@ -42,39 +41,47 @@
 
 :root[data-mode='dark'] {
   color-scheme: dark;
-  --canvas: #08090a;
-  --card: #0f1011;
-  --card-2: #151617;
-  --label: #f7f8f8;
-  --label-2: #8a8f98;
-  --label-3: #5b5f66;
-  --separator: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.08);
-  --fill: rgba(255, 255, 255, 0.05);
-  --fill-2: rgba(255, 255, 255, 0.09);
-  --dot: rgba(255, 255, 255, 0.1);
+  --canvas: #090b0e;
+  --card: #111419;
+  --card-2: #191d24;
+  --label: #f0f1f4;
+  --label-2: #969ba7;
+  --label-3: #666d7a;
+  --separator: rgba(236, 240, 255, 0.08);
+  --border: rgba(236, 240, 255, 0.1);
+  --fill: rgba(236, 240, 255, 0.055);
+  --fill-2: rgba(236, 240, 255, 0.09);
+  --dot: rgba(236, 240, 255, 0.15);
 
-  --tint: #f7f8f8;
-  --tint-fg: #08090a;
+  --tint: #ded9fa;
+  --tint-fg: #201d2a;
+  --accent: #b8afff;
+  --red: #ff9eae;
 
   --shadow-card: inset 0 0 0 1px var(--border);
-  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.6);
-  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.42), 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-sheet: 0 18px 56px rgba(0, 0, 0, 0.64);
+  --scrim: rgba(2, 3, 5, 0.72);
 
-  --glass-bg: rgba(15, 16, 17, 0.92);
-  --lens-bg: rgba(255, 255, 255, 0.07);
+  --glass-bg: rgba(27, 30, 37, 0.66);
+  --lens-bg: linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.045));
 
-  --sheet-bg: #0f1011;
-  --sheet-card: #151617;
-  --segment-pill: #232426;
+  --sheet-bg: rgba(18, 21, 26, 0.96);
+  --sheet-card: #191d24;
+  --segment-pill: rgba(255, 255, 255, 0.13);
+  --glass-selected: rgba(255, 255, 255, 0.1);
 }
 
 /* Black and white only. "Accent" (what needs attention: overdue, the add
    button, today) is full-strength ink, same as tint. */
 :root {
   --accent: var(--label);
-  --red: var(--accent);
+  --red: #df5d70;
+}
+
+:root[data-mode='dark'] {
+  --accent: #b8afff;
+  --red: #ff9eae;
 }
 
 /* Legacy colour names, folded into the monochrome system. "Positive"
@@ -204,6 +211,12 @@ input[type='search']::-webkit-search-cancel-button {
   .aurora {
     background: var(--canvas);
   }
+  :root[data-mode='dark'] .aurora {
+    background:
+      radial-gradient(80% 48% at 52% -8%, rgba(120, 111, 180, 0.12), transparent 72%),
+      radial-gradient(40% 34% at 100% 34%, rgba(86, 110, 136, 0.055), transparent 80%),
+      var(--canvas);
+  }
 
   /* With the status bar translucent, iOS draws white status text over the
      app. In light mode that needs a soft shade behind it to stay legible —
@@ -235,15 +248,66 @@ input[type='search']::-webkit-search-cancel-button {
   .glass,
   .glass-strong {
     position: relative;
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    backdrop-filter: blur(16px) saturate(140%);
-    background: var(--glass-bg);
-    box-shadow: inset 0 0 0 1px var(--border), var(--shadow-float);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--glass-bg) 90%, white 10%), var(--glass-bg));
+    border: 1px solid color-mix(in srgb, var(--border) 80%, white 20%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.025), var(--shadow-float);
   }
   /* The selected item in a bar or list. */
   .glass-lens {
     position: relative;
     background: var(--lens-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13), inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  }
+  .liquid-dock {
+    position: relative;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    backdrop-filter: blur(30px) saturate(190%);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.035) 42%, rgba(17, 20, 25, 0.72));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.025), 0 16px 40px rgba(0, 0, 0, 0.42);
+  }
+  .liquid-add {
+    color: var(--label);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.19), rgba(255, 255, 255, 0.065) 58%, rgba(255, 255, 255, 0.035));
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.19);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.045), 0 12px 28px rgba(0, 0, 0, 0.4);
+  }
+  .dock-track {
+    position: absolute;
+    bottom: 9px;
+    left: 12.5%;
+    right: 12.5%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(226, 226, 255, 0.2) 12%, rgba(226, 226, 255, 0.2) 88%, transparent);
+    pointer-events: none;
+  }
+  .dock-node {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: rgba(235, 237, 255, 0.34);
+    box-shadow: 0 0 8px rgba(198, 190, 255, 0.18);
+  }
+  .dock-bead {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: linear-gradient(145deg, #fff, #c9c1ff 70%, #a9a0eb);
+    box-shadow: 0 0 12px rgba(202, 194, 255, 0.82), 0 0 24px rgba(157, 146, 255, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    z-index: 2;
   }
   .glass-tint {
     position: relative;
@@ -252,19 +316,24 @@ input[type='search']::-webkit-search-cancel-button {
   }
 
   .bar-glass {
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    backdrop-filter: blur(12px) saturate(140%);
-    background: color-mix(in srgb, var(--canvas) 85%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(175%);
+    backdrop-filter: blur(24px) saturate(175%);
+    background: color-mix(in srgb, var(--canvas) 68%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .sheet-surface {
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
     background: var(--sheet-bg);
     box-shadow: inset 0 0 0 1px var(--border), var(--shadow-sheet);
   }
 
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .glass,
-    .bar-glass {
+    .bar-glass,
+    .liquid-dock,
+    .liquid-add {
       background: var(--card);
     }
   }

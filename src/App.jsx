@@ -59,7 +59,11 @@ export default function App() {
   // Every screen, signed in or not, tracks the device's light/dark switch.
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const on = () => applyAppearance({ theme: document.documentElement.dataset.accent })
+    const on = () =>
+      applyAppearance({
+        theme: document.documentElement.dataset.accent,
+        themeMode: document.documentElement.dataset.themeMode || 'dark',
+      })
     mq.addEventListener('change', on)
     return () => mq.removeEventListener('change', on)
   }, [])

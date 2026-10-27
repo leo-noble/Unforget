@@ -261,7 +261,7 @@ export default function LandingPage() {
               <p className="text-[20px] font-semibold tracking-[-0.02em] mt-3">Gone by next month.</p>
               <p className="text-[15px] text-label-2 mt-1.5">Feels productive the night before, then you relearn it all for finals.</p>
             </motion.div>
-            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.06 }} className="glass rounded-[12px] p-5 sm:p-6">
+            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.06 }} className="bg-card rounded-[12px] p-5 sm:p-6">
               <div className="flex items-center gap-2">
                 <Check size={16} strokeWidth={2.4} />
                 <span className="text-subhead font-medium">Five spaced reviews</span>
@@ -376,7 +376,7 @@ export default function LandingPage() {
       {/* Closing */}
       <section className="pb-16 sm:pb-24">
         <div className={WRAP}>
-          <motion.div {...reveal} className="glass rounded-[12px] px-6 py-12 sm:py-16 text-center flex flex-col items-center">
+          <motion.div {...reveal} className="bg-card rounded-[12px] px-6 py-12 sm:py-16 text-center flex flex-col items-center shadow-card">
             <AppIcon size={60} />
             <h2 className="text-[30px] sm:text-[44px] leading-[1.05] font-semibold tracking-[-0.04em] mt-6 max-w-[560px] text-balance">
               Start with the chapter you studied today.

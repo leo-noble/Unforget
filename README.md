@@ -11,7 +11,7 @@ their original `cadence` prefix on purpose, so existing data carries over.
 ## Stack
 
 - **React 19 + Vite**, **Tailwind CSS** (iOS semantic colour tokens, Dynamic
-  Type scale, liquid-glass utilities in `src/index.css`), **framer-motion**
+  Type scale, Liquid Glass navigation in `src/index.css`), **framer-motion**
   springs, **lucide-react** icons, system font (SF Pro on Apple devices)
 - **Supabase** auth + one JSON row per user for multi-device sync
 - **vite-plugin-pwa** — manifest, offline app shell, push notifications
@@ -34,13 +34,21 @@ npm run icons     # re-render public/icons from src/components/ui/iconArt.js
 ## Auth redirect setup (Supabase)
 
 Sign-in emails and Google OAuth return to `<origin>/app` or
-`<origin>/reset-password`. In **Supabase → Authentication → URL
-Configuration**, set **Site URL** to the production domain
-(`https://unforget-study.vercel.app`) and add
-`https://unforget-study.vercel.app/**`, `https://cdnce.vercel.app/**` and
-`http://localhost:5173/**` to **Redirect URLs**. Any return URL not on that
-list falls back to the Site URL — which is how sign-in previously landed on
-a password-protected Vercel deployment URL.
+`<origin>/reset-password`. In production, OAuth now always returns to the
+stable app domain (`https://unforget-study.vercel.app`), never a unique,
+password-protected Vercel preview URL. Local development returns to localhost.
+
+In **Supabase → Authentication → URL Configuration**, set **Site URL** to
+`https://unforget-study.vercel.app` and add these **Redirect URLs**:
+
+- `https://unforget-study.vercel.app/app`
+- `https://unforget-study.vercel.app/reset-password`
+- `http://localhost:5173/**`
+
+Supabase falls back to Site URL when a requested return URL is not allowed.
+Keep the Google provider's authorized callback set to the Supabase callback
+URL shown on its provider settings page; it is separate from these app return
+URLs.
 
 ## Deploying
 

@@ -55,16 +55,17 @@ export default function AppShell() {
   const { prefs, updatePrefs } = cadence
 
   // ---- appearance ----
-  // Follows the device's light/dark setting live, without a reload.
+  // Apply the chosen appearance live; system mode tracks the device.
   useEffect(() => {
-    applyAppearance(prefs)
+    const appearance = { theme: prefs.theme, themeMode: prefs.themeMode }
+    applyAppearance(appearance)
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const on = () => applyAppearance(prefs)
+    const on = () => {
+      if (prefs.themeMode === 'system') applyAppearance(appearance)
+    }
     mq.addEventListener('change', on)
     return () => mq.removeEventListener('change', on)
-    // Only the accent matters here; prefs itself changes identity on any edit.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prefs.theme])
+  }, [prefs.theme, prefs.themeMode])
 
   // ---- tabs ----
   // Each tab keeps its own scroll position, like a UITabBarController; tapping
@@ -171,7 +172,7 @@ export default function AppShell() {
 
   return (
     <TimerProvider prefs={prefs} updatePrefs={updatePrefs}>
-      <div className="relative min-h-screen">
+      <div className="relative min-h-[100dvh]">
 
         <Sidebar
           active={tab}

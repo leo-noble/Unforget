@@ -32,16 +32,16 @@ export function resolveAccent(theme) {
   return LEGACY_THEME[theme] || DEFAULT_ACCENT
 }
 
-// Light and dark always follow the device. A stored themeMode from an older
-// version is ignored rather than deleted, so it still syncs harmlessly.
-export function resolveMode() {
-  if (typeof window === 'undefined' || !window.matchMedia) return 'light'
+// Dark is the default. People can still pick light mode or follow their device.
+export function resolveMode(themeMode = 'dark') {
+  if (themeMode === 'light' || themeMode === 'dark') return themeMode
+  if (typeof window === 'undefined' || !window.matchMedia) return 'dark'
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 // Mirrors the canvas colour so the status bar and the browser chrome blend
 // into the page instead of sitting on it as a separate stripe.
-const CANVAS = { light: '#FBFBFB', dark: '#08090A' }
+const CANVAS = { light: '#FBFBFB', dark: '#090B0E' }
 
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it
@@ -63,6 +63,7 @@ export function applyAppearance({ theme, themeMode } = {}) {
     applyAppearance._t = setTimeout(() => root.classList.remove('appearance-switching'), 320)
   }
   root.dataset.accent = accent
+  root.dataset.themeMode = themeMode || 'dark'
   root.dataset.mode = mode
   root.style.colorScheme = mode
   document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
@@ -70,7 +71,7 @@ export function applyAppearance({ theme, themeMode } = {}) {
     m.removeAttribute('media')
   })
   try {
-    localStorage.setItem(BOOT_KEY, JSON.stringify({ accent, themeMode: themeMode || 'system' }))
+    localStorage.setItem(BOOT_KEY, JSON.stringify({ accent, themeMode: themeMode || 'dark', appearanceVersion: 1 }))
   } catch {
     // storage can be unavailable (private mode); the defaults still apply
   }
