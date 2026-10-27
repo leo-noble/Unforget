@@ -7,8 +7,8 @@ import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 520, damping: 34, mass: 0.9 }
 
-// Glass dock with a connected four-stop indicator; add stays a separate,
-// tactile control. The live timer pill sits above it during a session.
+// Compact, Instagram-inspired floating dock: four destinations and a centered
+// create action in one glass surface. The live timer pill sits above it.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
   const { status } = useTimerStatus()
   const showTimer = status !== 'idle' && active !== 'focus'
@@ -39,49 +39,58 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <div className="flex items-center gap-3">
-          <nav aria-label="Main navigation" className="liquid-dock relative pointer-events-auto flex-1 h-[68px] rounded-[22px] p-1.5 flex">
-            <span aria-hidden="true" className="dock-track" />
-            {TABS.map((t) => {
-              const selected = t.id === active
-              const Icon = t.icon
-              return (
-                <motion.button
-                  key={t.id}
-                  type="button"
-                  onClick={() => onSelect(t.id)}
-                  whileTap={{ scale: 0.92 }}
-                  transition={pillSpring}
-                  aria-current={selected ? 'page' : undefined}
-                  title={t.label}
-                  className={`relative flex-1 flex flex-col items-center justify-center gap-[3px] pb-2 rounded-[16px] ${
-                    selected ? 'text-label' : 'text-label-2'
-                  }`}
-                >
-                  {selected && (
-                    <motion.span layoutId="tabbar-lens" transition={pillSpring} className="glass-lens absolute inset-0 rounded-[16px]" />
-                  )}
-                  <Icon size={19} strokeWidth={selected ? 2 : 1.65} className="relative z-[1]" />
-                  <span className={`relative z-[1] text-[10px] leading-none ${selected ? 'font-semibold' : 'font-medium'}`}>{t.label}</span>
-                  <span aria-hidden="true" className="dock-node" />
-                  {selected && <motion.span layoutId="dock-bead" transition={pillSpring} className="dock-bead" />}
-                </motion.button>
-              )
-            })}
-          </nav>
+        <nav
+          aria-label="Main navigation"
+          className="liquid-dock relative pointer-events-auto mx-auto flex h-[62px] max-w-[410px] items-center rounded-full p-1"
+        >
+          {TABS.slice(0, 2).map((tab) => (
+            <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
+          ))}
 
           <motion.button
             type="button"
             onClick={onAdd}
-            whileTap={{ scale: 0.88 }}
+            whileTap={{ scale: 0.9 }}
             transition={pillSpring}
             aria-label="Add chapter"
-            className="glass liquid-add pointer-events-auto h-[54px] w-[54px] shrink-0 rounded-full flex items-center justify-center"
+            title="Add chapter"
+            className="dock-action relative z-[1] mx-1 flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full text-label"
           >
-            <Plus size={22} strokeWidth={1.9} />
+            <Plus size={21} strokeWidth={1.8} />
           </motion.button>
-        </div>
+
+          {TABS.slice(2).map((tab) => (
+            <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
+          ))}
+        </nav>
       </div>
     </div>
+  )
+}
+
+function DockTab({ tab, active, onSelect }) {
+  const selected = tab.id === active
+  const Icon = tab.icon
+
+  return (
+    <motion.button
+      type="button"
+      onClick={() => onSelect(tab.id)}
+      whileTap={{ scale: 0.9 }}
+      transition={pillSpring}
+      aria-current={selected ? 'page' : undefined}
+      aria-label={tab.label}
+      title={tab.label}
+      className={`relative flex h-full min-w-0 flex-1 items-center justify-center rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
+    >
+      {selected && (
+        <motion.span
+          layoutId="tabbar-lens"
+          transition={pillSpring}
+          className="glass-lens dock-lens absolute inset-[5px] rounded-full"
+        />
+      )}
+      <Icon size={21} strokeWidth={selected ? 2 : 1.7} className="relative z-[1]" />
+    </motion.button>
   )
 }

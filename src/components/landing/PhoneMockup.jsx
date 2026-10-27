@@ -81,18 +81,23 @@ export default function PhoneMockup() {
             </div>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[16px] flex items-center gap-2">
-            <div className="glass flex-1 h-[44px] rounded-full p-[3px] flex">
-              {TABS.map(([Icon, label], i) => (
-                <span key={label} className={`relative flex-1 flex flex-col items-center justify-center gap-[2px] rounded-full ${i === 0 ? 'glass-lens text-label' : 'text-label-2'}`}>
+          <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[16px]">
+            <div className="liquid-dock mx-auto flex h-[40px] items-center rounded-full p-[2px]">
+              {TABS.slice(0, 2).map(([Icon, label], i) => (
+                <span key={label} className={`relative flex flex-1 items-center justify-center rounded-full ${i === 0 ? 'text-label' : 'text-label-2'}`}>
+                  {i === 0 && <span className="dock-lens absolute inset-[2px] rounded-full" />}
+                  <Icon size={13} strokeWidth={1.8} className="relative z-[1]" />
+                </span>
+              ))}
+              <span className="dock-action relative z-[1] mx-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-label">
+                <Plus size={15} strokeWidth={1.9} />
+              </span>
+              {TABS.slice(2).map(([Icon, label]) => (
+                <span key={label} className="flex flex-1 items-center justify-center rounded-full text-label-2">
                   <Icon size={13} strokeWidth={1.8} />
-                  <span className="text-[6.5px] font-medium">{label}</span>
                 </span>
               ))}
             </div>
-            <span className="glass-tint h-[44px] w-[44px] rounded-full flex items-center justify-center">
-              <Plus size={18} strokeWidth={2} />
-            </span>
           </div>
           <div className="absolute bottom-[5px] left-1/2 -translate-x-1/2 h-[4px] w-[90px] rounded-full bg-label/80 z-20" />
         </div>
