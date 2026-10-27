@@ -7,7 +7,7 @@ import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 520, damping: 34, mass: 0.9 }
 
-// Compact, Instagram-inspired floating dock: four destinations and a centered
+// A compact, content-width floating dock: four destinations and a centered
 // create action in one glass surface. The live timer pill sits above it.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
   const { status } = useTimerStatus()
@@ -15,7 +15,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
-    document.documentElement.style.setProperty('--dock-space', showTimer ? '184px' : '120px')
+    document.documentElement.style.setProperty('--dock-space', showTimer ? '152px' : '88px')
   }, [showTimer])
 
   return (
@@ -41,7 +41,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
 
         <nav
           aria-label="Main navigation"
-          className="liquid-dock relative pointer-events-auto mx-auto flex h-[62px] max-w-[410px] items-center rounded-full p-1"
+          className="liquid-dock relative pointer-events-auto mx-auto flex h-[58px] w-fit max-w-full items-center rounded-full px-1.5 py-1"
         >
           {TABS.slice(0, 2).map((tab) => (
             <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
@@ -81,16 +81,16 @@ function DockTab({ tab, active, onSelect }) {
       aria-current={selected ? 'page' : undefined}
       aria-label={tab.label}
       title={tab.label}
-      className={`relative flex h-full min-w-0 flex-1 items-center justify-center rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
+      className={`relative flex h-[48px] w-[54px] shrink-0 items-center justify-center rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
     >
       {selected && (
         <motion.span
           layoutId="tabbar-lens"
           transition={pillSpring}
-          className="glass-lens dock-lens absolute inset-[5px] rounded-full"
+          className="glass-lens dock-lens absolute inset-[4px] rounded-full"
         />
       )}
-      <Icon size={21} strokeWidth={selected ? 2 : 1.7} className="relative z-[1]" />
+      <Icon size={20} strokeWidth={selected ? 1.9 : 1.7} className="relative z-[1]" />
     </motion.button>
   )
 }

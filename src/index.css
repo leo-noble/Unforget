@@ -33,6 +33,10 @@
   --glass-bg: rgba(255, 255, 255, 0.92);
   --lens-bg: rgba(0, 0, 0, 0.05);
   --glass-selected: rgba(255, 255, 255, 0.84);
+  --dock-surface: rgba(238, 240, 244, 0.72);
+  --dock-edge: rgba(255, 255, 255, 0.82);
+  --dock-active: rgba(255, 255, 255, 0.74);
+  --dock-button: rgba(255, 255, 255, 0.48);
 
   --sheet-bg: #ffffff;
   --sheet-card: #f7f7f8;
@@ -70,6 +74,10 @@
   --sheet-card: #191d24;
   --segment-pill: rgba(255, 255, 255, 0.13);
   --glass-selected: rgba(255, 255, 255, 0.1);
+  --dock-surface: rgba(25, 27, 32, 0.72);
+  --dock-edge: rgba(255, 255, 255, 0.24);
+  --dock-active: rgba(255, 255, 255, 0.14);
+  --dock-button: rgba(255, 255, 255, 0.09);
 }
 
 /* Black and white only. "Accent" (what needs attention: overdue, the add
@@ -263,31 +271,46 @@ input[type='search']::-webkit-search-cancel-button {
   .liquid-dock {
     position: relative;
     isolation: isolate;
-    -webkit-backdrop-filter: blur(34px) saturate(180%);
-    backdrop-filter: blur(34px) saturate(180%);
-    background: color-mix(in srgb, var(--canvas) 42%, rgba(255, 255, 255, 0.14));
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(0, 0, 0, 0.28);
+    -webkit-backdrop-filter: blur(24px) saturate(165%);
+    backdrop-filter: blur(24px) saturate(165%);
+    background:
+      linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.025) 54%, rgba(0, 0, 0, 0.08)),
+      color-mix(in srgb, var(--canvas) 38%, var(--dock-surface));
+    border: 1px solid var(--dock-edge);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 28px rgba(0, 0, 0, 0.2),
+      0 2px 6px rgba(0, 0, 0, 0.12);
   }
   .liquid-dock::before {
     position: absolute;
-    inset: 1px 12% auto;
+    inset: 1px 18% auto;
     height: 1px;
     content: '';
     border-radius: 999px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.58), transparent);
+    pointer-events: none;
+  }
+  .liquid-dock::after {
+    position: absolute;
+    z-index: 0;
+    inset: 1px;
+    content: '';
+    border-radius: inherit;
+    background: linear-gradient(125deg, rgba(255, 255, 255, 0.075), transparent 30%, transparent 72%, rgba(255, 255, 255, 0.035));
     pointer-events: none;
   }
   .dock-lens {
     position: absolute;
-    background: color-mix(in srgb, var(--glass-selected) 80%, transparent);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 8px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.2), var(--dock-active) 58%, rgba(255, 255, 255, 0.045));
+    border: 1px solid var(--dock-edge);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.045), 0 2px 8px rgba(0, 0, 0, 0.12);
   }
   .dock-action {
-    background: rgba(255, 255, 255, 0.13);
-    border: 1px solid rgba(255, 255, 255, 0.17);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.23), 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.14), transparent 72%), var(--dock-button);
+    border: 1px solid var(--dock-edge);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 2px 8px rgba(0, 0, 0, 0.12);
   }
   .liquid-add {
     color: var(--label);

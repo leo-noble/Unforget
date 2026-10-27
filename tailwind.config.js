@@ -34,11 +34,11 @@ export default {
         ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {
-        // One typeface for everything: Geist — neutral, precise, modern.
-        sans: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-        // Kept as aliases so older call sites resolve to the same face.
-        mono: ['Geist', 'system-ui', 'sans-serif'],
-        rounded: ['Geist', 'system-ui', 'sans-serif'],
+        // Native system typography gives iOS its familiar SF rendering and
+        // avoids loading a separate web font on every device.
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'system-ui', '"Segoe UI"', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        rounded: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       // Type scale, named by role.
       fontSize: {

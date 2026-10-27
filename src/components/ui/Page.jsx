@@ -59,7 +59,7 @@ export default function Page({ title, eyebrow, subtitle, trailing, leading, wide
     <div style={{ '--page-max': wide ? '1180px' : '760px' }}>
       <NavBar title={title} leading={leading} trailing={trailing} />
       <div
-        className="mx-auto w-full max-w-[var(--page-max)] px-4 sm:px-6 pb-[calc(env(safe-area-inset-bottom)+var(--dock-space,112px))] md:pb-14"
+        className="mx-auto w-full max-w-[var(--page-max)] px-4 sm:px-6 pb-[calc(env(safe-area-inset-bottom)+var(--dock-space,88px))] md:pb-14"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 52px)' }}
       >
         <div className="pt-1 pb-5 flex items-end justify-between gap-4">
