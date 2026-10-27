@@ -1,4 +1,4 @@
-// Renders the Mnora mark into every icon file the app ships:
+// Renders the Unforget mark into every icon file the app ships:
 //
 //   favicon.svg            rounded, for browser tabs
 //   icon-192/512.png       rounded with transparent corners ("any" purpose)
@@ -29,6 +29,6 @@ await writeFile(new URL('favicon.svg', `file://${out}`), squircle)
 await render(squircle, 192).toFile(`${out}icon-192.png`)
 await render(squircle, 512).toFile(`${out}icon-512.png`)
 await render(maskable, 512).toFile(`${out}icon-maskable-512.png`)
-await render(square, 180).flatten({ background: '#000000' }).toFile(`${out}apple-touch-icon.png`)
+await render(square, 180).flatten({ background: '#1A0F3D' }).toFile(`${out}apple-touch-icon.png`)
 
 console.log('Icons written to public/icons/')

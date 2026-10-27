@@ -3,23 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Mnora — Remember what you study</title>
-    <meta name="description" content="Mnora schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
+    <title>Unforget — Remember what you study</title>
+    <meta name="description" content="Unforget schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
 
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
 
-    <!-- Installed to the Home Screen: full-screen, its own name under the icon,
-         and a status bar that takes the page's own background colour. -->
+    <!-- Installed to the Home Screen: full-screen edge to edge. black-translucent
+         lets the app draw under the status bar and Dynamic Island instead of
+         iOS painting a solid bar there; every top edge pads by
+         env(safe-area-inset-top) to clear it. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Mnora" />
-    <meta name="application-name" content="Mnora" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Unforget" />
+    <meta name="application-name" content="Unforget" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#EFEFEF" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F3F1F8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0B0A14" media="(prefers-color-scheme: dark)" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,7 +40,7 @@
         var accent = 'indigo'
         var mode = 'system'
         try {
-          var boot = JSON.parse(localStorage.getItem('mnora.appearance') || 'null')
+          var boot = JSON.parse(localStorage.getItem('unforget.appearance') || 'null')
           var prefs = boot || JSON.parse(localStorage.getItem('cadence.prefs') || '{}')
           var a = boot ? boot.accent : prefs.theme
           accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'indigo'
@@ -52,7 +54,7 @@
         root.style.colorScheme = mode
         var metas = document.querySelectorAll('meta[name="theme-color"]')
         for (var i = 0; i < metas.length; i++) {
-          metas[i].setAttribute('content', mode === 'dark' ? '#000000' : '#EFEFEF')
+          metas[i].setAttribute('content', mode === 'dark' ? '#0B0A14' : '#F3F1F8')
           metas[i].removeAttribute('media')
         }
       })()

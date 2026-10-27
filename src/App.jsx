@@ -66,6 +66,8 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      <div aria-hidden="true" className="aurora fixed inset-0 -z-10 pointer-events-none" />
+      <div aria-hidden="true" className="status-scrim" />
       <AuthProvider>
         <ToastProvider>
           <ConfirmProvider>

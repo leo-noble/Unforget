@@ -5,7 +5,7 @@ import AppIcon from './AppIcon'
 // so on the usual instant check the user never sees it at all.
 export default function Splash() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-canvas">
+    <div className="fixed inset-0 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

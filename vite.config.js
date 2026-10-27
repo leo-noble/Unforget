@@ -16,8 +16,8 @@ export default defineConfig({
         // Same identity the app had before it was renamed, so existing
         // installs update in place instead of becoming a second app.
         id: '/app',
-        name: 'Mnora — Remember what you study',
-        short_name: 'Mnora',
+        name: 'Unforget — Remember what you study',
+        short_name: 'Unforget',
         description: 'Spaced-repetition study planner. Know exactly what to revise today.',
         // Opening the installed app goes straight to Today. Signed-out users
         // are bounced to sign-in from there, never to the marketing page.
@@ -25,8 +25,8 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         display_override: ['standalone'],
-        theme_color: '#000000',
-        background_color: '#000000',
+        theme_color: '#0B0A14',
+        background_color: '#0B0A14',
         categories: ['education', 'productivity'],
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

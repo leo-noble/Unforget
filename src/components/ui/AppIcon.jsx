@@ -1,16 +1,16 @@
-import { useMemo } from 'react'
+import { useId, useMemo } from 'react'
 import { appIconSVG } from './iconArt'
 
-// The app icon, drawn inline — same art as the Home Screen icon. A hairline
-// edge keeps the black tile visible on a black canvas.
+// The app icon, drawn inline — same art as the Home Screen icon.
 export default function AppIcon({ size = 56, className = '' }) {
-  const html = useMemo(() => appIconSVG({ outline: true }), [])
+  const id = `ai${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+  const html = useMemo(() => appIconSVG({ id }), [id])
   return (
     <span
       role="img"
-      aria-label="Mnora"
+      aria-label="Unforget"
       className={`inline-block shrink-0 ${className}`}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, filter: `drop-shadow(0 ${size * 0.06}px ${size * 0.14}px rgba(60, 30, 160, 0.3))` }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

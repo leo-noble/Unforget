@@ -21,8 +21,7 @@ export default function PhoneMockup() {
   return (
     <div className="relative w-[min(76vw,300px)] select-none" aria-hidden="true">
       <div className="relative rounded-[48px] bg-[#0a0a0a] p-[8px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
-        <div className="relative overflow-hidden rounded-[40px] bg-canvas aspect-[9/19.5]">
-          <div className="ambient absolute inset-x-0 top-0 h-[45%]" />
+        <div className="aurora relative overflow-hidden rounded-[40px] aspect-[9/19.5]">
           <div className="absolute top-[9px] left-1/2 -translate-x-1/2 h-[24px] w-[84px] rounded-full bg-black z-20" />
           <div className="relative z-10 flex items-center justify-between px-7 pt-[12px] font-mono text-[10px]">
             <span>9:41</span>

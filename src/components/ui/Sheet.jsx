@@ -127,7 +127,7 @@ export default function Sheet({
           onDragEnd={(_, info) => {
             if (info.offset.y > 110 || info.velocity.y > 600) onClose?.()
           }}
-          className={`elevated pointer-events-auto relative flex flex-col bg-canvas shadow-sheet outline-none ${
+          className={`elevated pointer-events-auto relative flex flex-col sheet-surface outline-none ${
             desktop
               ? `w-full ${size === 'lg' ? 'max-w-[620px]' : 'max-w-[540px]'} max-h-[min(880px,calc(100vh-48px))] rounded-[30px]`
               : `w-full rounded-t-sheet ${

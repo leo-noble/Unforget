@@ -21,7 +21,7 @@ export default function Switch({ checked, onChange, label, disabled = false }) {
         layout
         transition={snappy}
         variants={{ pressed: { width: 33 } }}
-        className="block h-[27px] w-[27px] rounded-full bg-white"
+        className={`block h-[27px] w-[27px] rounded-full ${checked ? 'bg-tint-fg' : 'bg-white'}`}
         style={{
           marginLeft: checked ? 'auto' : 0,
           boxShadow: '0 3px 8px rgba(0,0,0,0.15), 0 3px 1px rgba(0,0,0,0.06)',

@@ -1,8 +1,8 @@
-# Mnora — Remember what you study
+# Unforget — Remember what you study
 
-(Formerly Cadence.) A spaced-repetition study planner, built as an installable
-PWA that has a minimal, black-and-white look. Log a chapter the day you
-study it; Mnora schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
+(Formerly Cadence.) Live at https://unforget-study.vercel.app. A spaced-repetition study planner, built as an installable
+PWA that has a minimal look: black and white over a soft aurora, with liquid-glass chrome. Log a chapter the day you
+study it; Unforget schedules five reviews — 1, 3, 7, 15 and 30 days apart — and
 tells you each morning exactly what to revise.
 
 The name lives in `src/brand.js`. Storage keys and the Supabase table keep
@@ -36,7 +36,8 @@ npm run icons     # re-render public/icons from src/components/ui/iconArt.js
 Sign-in emails and Google OAuth return to `<origin>/app` or
 `<origin>/reset-password`. In **Supabase → Authentication → URL
 Configuration**, set **Site URL** to the production domain
-(`https://cdnce.vercel.app`) and add `https://cdnce.vercel.app/**` and
+(`https://unforget-study.vercel.app`) and add
+`https://unforget-study.vercel.app/**`, `https://cdnce.vercel.app/**` and
 `http://localhost:5173/**` to **Redirect URLs**. Any return URL not on that
 list falls back to the Site URL — which is how sign-in previously landed on
 a password-protected Vercel deployment URL.

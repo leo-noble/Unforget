@@ -13,7 +13,7 @@ const at = (day) => LEFT + dayToFraction(day) * SPAN
 
 function Marker({ i }) {
   const last = i === REVIEW_DAYS.length - 1
-  if (i === 0) return <span className="block h-5 w-5 rounded-full bg-canvas" style={{ boxShadow: 'inset 0 0 0 2px var(--label)' }} />
+  if (i === 0) return <span className="block h-5 w-5 rounded-full" style={{ boxShadow: 'inset 0 0 0 2px var(--label)' }} />
   return <span className={`block h-5 w-5 rounded-full ${last ? 'bg-accent' : 'bg-label'}`} />
 }
 
@@ -78,8 +78,8 @@ export default function RhythmTimeline() {
               <div className="w-8 flex justify-center shrink-0">
                 <Marker i={i} />
               </div>
-              <p className="font-display text-[22px] leading-none tabular">Day {String(day).padStart(2, '0')}</p>
-              <p className="eyebrow text-label-2 ml-auto">{LABELS[i]}</p>
+              <p className="text-[17px] font-semibold tabular">Day {day}</p>
+              <p className="text-[15px] text-label-2 ml-auto">{LABELS[i]}</p>
             </motion.div>
             {i < REVIEW_GAPS.length && (
               <div className="flex items-center gap-4" style={{ height: 34 + i * 16 }}>
@@ -91,7 +91,7 @@ export default function RhythmTimeline() {
                     transition={{ duration: 0.3, delay: 0.2 + i * 0.16 }}
                   />
                 </div>
-                <span className="eyebrow text-label-3">+{formatGap(REVIEW_GAPS[i])}</span>
+                <span className="text-[14px] text-label-3">+{formatGap(REVIEW_GAPS[i])}</span>
               </div>
             )}
           </div>

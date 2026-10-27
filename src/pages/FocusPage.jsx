@@ -157,7 +157,7 @@ function FullscreenTimer({ timer, chapterTitle, onExit }) {
       role="dialog"
       aria-modal="true"
       aria-label="Fullscreen focus"
-      className="fixed inset-0 z-[90] bg-canvas flex flex-col items-center justify-center px-6"
+      className="aurora fixed inset-0 z-[90] flex flex-col items-center justify-center px-6"
     >
       <div
         aria-hidden="true"

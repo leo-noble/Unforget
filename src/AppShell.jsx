@@ -23,7 +23,7 @@ import { toISODate } from './lib/srs'
 import { APP_NAME } from './brand'
 
 const TAB_PATH = Object.fromEntries(TABS.map((t) => [t.id, t.path]))
-const SIDEBAR_KEY = 'mnora.sidebarCollapsed'
+const SIDEBAR_KEY = 'unforget.sidebarCollapsed'
 
 export default function AppShell() {
   const navigate = useNavigate()

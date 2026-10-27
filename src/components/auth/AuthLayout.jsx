@@ -9,8 +9,7 @@ import { easeOut } from '../ui/motion'
 // on a phone, a card in the middle of the window on a desktop.
 export default function AuthLayout({ title, subtitle, children, footer, back = true }) {
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-canvas overflow-hidden">
-      <div aria-hidden="true" className="ambient pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
+    <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
       {back && (
         <div className="relative px-4 sm:px-6" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)' }}>
           <Link to="/welcome" className="inline-flex items-center gap-1.5 h-9 pl-2.5 pr-4 rounded-full bg-card eyebrow text-label">

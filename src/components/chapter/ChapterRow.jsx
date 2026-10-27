@@ -16,6 +16,10 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
   const dragged = useRef(false)
   const reviseOpacity = useTransform(x, [8, 56], [0, 1])
   const snoozeOpacity = useTransform(x, [-56, -8], [1, 0])
+  // Rows are translucent, so each action fills only the strip the row has
+  // uncovered rather than sitting underneath the whole row.
+  const reviseWidth = useTransform(x, (v) => Math.max(0, v))
+  const snoozeWidth = useTransform(x, (v) => Math.max(0, -v))
   const reviseScale = useTransform(x, [20, SWIPE_TRIGGER * 0.6], [0.6, 1])
   const snoozeScale = useTransform(x, [-SWIPE_TRIGGER * 0.6, -20], [1, 0.6])
 
@@ -43,8 +47,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
         <>
           <motion.div
             aria-hidden="true"
-            style={{ opacity: reviseOpacity }}
-            className="absolute inset-0 bg-green flex items-center pl-6 text-tint-fg"
+            style={{ opacity: reviseOpacity, width: reviseWidth }}
+            className="absolute inset-y-0 left-0 overflow-hidden bg-tint flex items-center pl-6 text-tint-fg whitespace-nowrap"
           >
             <motion.span style={{ scale: reviseScale }} className="flex items-center gap-2 eyebrow">
               <Check size={18} strokeWidth={2.4} /> Revised
@@ -52,8 +56,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           </motion.div>
           <motion.div
             aria-hidden="true"
-            style={{ opacity: snoozeOpacity }}
-            className="absolute inset-0 bg-accent flex items-center justify-end pr-6 text-tint-fg"
+            style={{ opacity: snoozeOpacity, width: snoozeWidth }}
+            className="absolute inset-y-0 right-0 overflow-hidden bg-fill-2 flex items-center justify-end pr-6 text-label whitespace-nowrap"
           >
             <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 eyebrow">
               Tomorrow <Clock size={18} strokeWidth={2} />
@@ -79,7 +83,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           if (info.offset.x > SWIPE_TRIGGER) onRevise?.(chapter)
           else if (info.offset.x < -SWIPE_TRIGGER) onSnooze?.(chapter)
         }}
-        className="relative bg-card"
+        className="relative"
       >
         <div
           role="button"
