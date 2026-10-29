@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Flame, Target, CheckCheck, Award } from 'lucide-react'
 import Sheet from '../ui/Sheet'
+import Page from '../ui/Page'
 import { Section } from '../ui/List'
 import { toISODate, addDays, MAX_REVIEW_INDEX } from '../../lib/srs'
 import { formatDay, plural } from '../../lib/format'
@@ -17,14 +18,14 @@ function Tile({ icon: Icon, value, label, accent = false }) {
         <span className="eyebrow text-label-2">{label}</span>
         <Icon size={16} strokeWidth={1.75} className={accent ? 'text-accent' : 'text-label-3'} />
       </div>
-      <p className="font-display text-[30px] leading-none tabular mt-4">{value}</p>
+      <p className="font-display text-[44px] leading-none tabular mt-4">{value}</p>
     </div>
   )
 }
 
 // Everything the old Stats tab showed, as a sheet off Today: the numbers
 // that say the work is adding up, without a whole tab to itself.
-export default function InsightsSheet({ cadence, onClose }) {
+export default function InsightsSheet({ cadence, onClose, asPage = false, account }) {
   const { subjects, chapters, events, streak } = cadence
   const [picked, setPicked] = useState(null)
 
@@ -71,9 +72,8 @@ export default function InsightsSheet({ cadence, onClose }) {
 
   const sel = picked != null ? activity.bars[picked] : null
 
-  return (
-    <Sheet title="Insights" onClose={onClose} size="lg" trailing={null}>
-      <div className="space-y-7">
+  const content = (
+      <div className="space-y-7 insights-content">
         <div className="grid grid-cols-2 gap-3">
           <Tile icon={Flame} accent value={streak.count} label="Day streak" />
           <Tile
@@ -153,6 +153,8 @@ export default function InsightsSheet({ cadence, onClose }) {
           ))}
         </Section>
       </div>
-    </Sheet>
   )
+
+  if (asPage) return <Page title="Insights" trailing={account} wide>{content}</Page>
+  return <Sheet title="Insights" onClose={onClose} size="lg" trailing={null}>{content}</Sheet>
 }

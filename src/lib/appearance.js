@@ -6,6 +6,7 @@
 // preference synced down from an older device still lands somewhere sensible.
 
 export const ACCENTS = [
+  { id: 'graphite', label: 'Graphite', light: '#191a19', dark: '#f1f1ed' },
   { id: 'indigo', label: 'Indigo', light: '#5856D6', dark: '#5E5CE6' },
   { id: 'blue', label: 'Blue', light: '#007AFF', dark: '#0A84FF' },
   { id: 'teal', label: 'Teal', light: '#30B0C7', dark: '#40C8E0' },
@@ -15,15 +16,16 @@ export const ACCENTS = [
   { id: 'purple', label: 'Purple', light: '#AF52DE', dark: '#BF5AF2' },
 ]
 
-export const DEFAULT_ACCENT = 'indigo'
+export const DEFAULT_ACCENT = 'graphite'
 
 const LEGACY_THEME = {
-  slate: 'indigo', // the old default maps to the new default
+  slate: 'graphite', // the old default maps to the new default
   aurora: 'purple',
   forest: 'green',
   linen: 'green',
   fog: 'indigo',
-  graphite: 'indigo',
+  graphite: 'graphite',
+  red: 'graphite',
   verdant: 'green',
 }
 
@@ -41,7 +43,7 @@ export function resolveMode(themeMode = 'dark') {
 
 // Mirrors the canvas colour so the status bar and the browser chrome blend
 // into the page instead of sitting on it as a separate stripe.
-const CANVAS = { light: '#FBFBFB', dark: '#090B0E' }
+const CANVAS = { light: '#F3F3F1', dark: '#101110' }
 
 // Signed-in prefs live under a per-user key, which the inline boot script in
 // index.html can't know before auth resolves. This is the one global copy it

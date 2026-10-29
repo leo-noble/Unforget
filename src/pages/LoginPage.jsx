@@ -8,19 +8,6 @@ import { useAuth, safeRedirectPath } from '../lib/useAuth'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 import { APP_NAME } from '../brand'
 
-// Google's brand guidelines ask that the "G" not be recoloured, so this is
-// the full four-colour glyph rather than a currentColor icon.
-function GoogleGlyph() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 18 18" aria-hidden="true">
-      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" />
-      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.98v2.33A9 9 0 0 0 9 18z" />
-      <path fill="#FBBC05" d="M3.97 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.98a9 9 0 0 0 0 8.08l2.99-2.33z" />
-      <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.96l2.99 2.33C4.68 5.16 6.66 3.58 9 3.58z" />
-    </svg>
-  )
-}
-
 const EMAIL_MAX = 200
 const NAME_MAX = 80
 
@@ -42,7 +29,7 @@ function Sent({ title, body, onBack }) {
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { session, signInWithPassword, signUp, signInWithGoogle, resetPasswordForEmail } = useAuth()
+  const { session, signInWithPassword, signUp, resetPasswordForEmail } = useAuth()
 
   const params = new URLSearchParams(location.search)
   // Only same-site paths are followed — a crafted ?redirect= can't send
@@ -57,7 +44,6 @@ export default function LoginPage() {
   const [error, setError] = useState(() => params.get('error') || '')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(null) // 'confirm' | 'reset'
-  const [googleLoading, setGoogleLoading] = useState(false)
 
   // Already signed in (or a session just arrived) → straight into the app.
   useEffect(() => {
@@ -67,17 +53,6 @@ export default function LoginPage() {
   function switchMode(next) {
     setMode(next)
     setError('')
-  }
-
-  async function google() {
-    setError('')
-    setGoogleLoading(true)
-    const { error: e } = await signInWithGoogle(redirectTo)
-    if (e) {
-      setError(e.message || 'Could not start Google sign-in.')
-      setGoogleLoading(false)
-    }
-    // On success the browser leaves for Google.
   }
 
   async function submit(e) {
@@ -166,28 +141,7 @@ export default function LoginPage() {
         )
       }
     >
-      {mode !== 'forgot' && (
-        <>
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.97 }}
-            onClick={google}
-            disabled={googleLoading || submitting}
-            className="w-full h-11 rounded-[8px] bg-card flex items-center justify-center gap-2.5 text-headline font-medium disabled:opacity-50"
-            style={{ boxShadow: 'inset 0 0 0 1px var(--separator)' }}
-          >
-            <GoogleGlyph />
-            {googleLoading ? 'Opening Google…' : 'Continue with Google'}
-          </motion.button>
-          <div className="flex items-center gap-3 my-5">
-            <span className="h-px flex-1 bg-separator" />
-            <span className="eyebrow text-label-3">or email</span>
-            <span className="h-px flex-1 bg-separator" />
-          </div>
-        </>
-      )}
-
-      <form onSubmit={submit}>
+      <form onSubmit={submit} className="mt-7">
         <FieldGroup>
           <AnimatePresence initial={false}>
             {mode === 'signup' && (
@@ -205,7 +159,7 @@ export default function LoginPage() {
             value={email}
             maxLength={EMAIL_MAX}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="you@example.com"
           />
           {mode !== 'forgot' && (
             <div className="relative" style={{ '--inset': '16px' }}>
@@ -216,7 +170,8 @@ export default function LoginPage() {
                 minLength={mode === 'signup' ? 6 : undefined}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === 'signup' ? 'Password (6+ characters)' : 'Password'}
+                placeholder={mode === 'signup' ? '6+ characters' : ''}
+                className="pr-10"
               />
               <button
                 type="button"

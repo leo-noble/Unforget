@@ -1,10 +1,8 @@
-import { useId, useMemo } from 'react'
 import { appIconSVG } from './iconArt'
 
 // The app icon, drawn inline — same art as the Home Screen icon.
 export default function AppIcon({ size = 56, className = '' }) {
-  const id = `ai${useId().replace(/[^a-zA-Z0-9]/g, '')}`
-  const html = useMemo(() => appIconSVG({ id }), [id])
+  const html = appIconSVG()
   return (
     <span
       role="img"

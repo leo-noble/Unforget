@@ -5,13 +5,15 @@ import { TABS } from './tabs'
 import MiniTimer from './MiniTimer'
 import { useTimerStatus } from '../../lib/TimerContext'
 
-const pillSpring = { type: 'spring', stiffness: 520, damping: 34, mass: 0.9 }
+const pillSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.85 }
 
-// Four destinations stay together in the floating glass dock. The add action
-// gets its own button beside the dock, with the live timer pill above both.
+// Four icon-only destinations stay together in the floating glass dock. The
+// add action keeps its own round control beside the dock.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
   const { status } = useTimerStatus()
   const showTimer = status !== 'idle' && active !== 'focus'
+  const activeIndex = Math.max(0, TABS.findIndex((tab) => tab.id === active))
+  const activeSlot = activeIndex < 2 ? activeIndex : activeIndex + 1
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
 
   return (
     <div
-      className="lg:hidden fixed inset-x-0 bottom-0 z-50 pointer-events-none"
+      className="md:hidden fixed inset-x-0 bottom-0 z-50 pointer-events-none"
       style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 6px), 14px)' }}
     >
       <div className="mx-auto max-w-[540px] px-4">
@@ -39,28 +41,36 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <div className="flex items-center gap-3">
-          <nav
-            aria-label="Main navigation"
-            className="liquid-dock relative flex h-[62px] min-w-0 flex-1 items-center rounded-full p-1 pointer-events-auto"
-          >
-            {TABS.map((tab) => (
+        <nav
+          aria-label="Main navigation"
+          className="liquid-dock relative grid h-[66px] w-full grid-cols-5 items-center rounded-full p-1 pointer-events-auto"
+        >
+            <motion.span
+              aria-hidden="true"
+              initial={false}
+              animate={{ x: `${activeSlot * 100}%` }}
+              transition={{ type: 'spring', stiffness: 360, damping: 34, mass: 0.82 }}
+              className="dock-lens pointer-events-none absolute left-1 top-1 bottom-1 z-0 rounded-full"
+              style={{ width: 'calc((100% - 8px) / 5)' }}
+            />
+            {TABS.slice(0, 2).map((tab) => (
               <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
             ))}
-          </nav>
-
           <motion.button
             type="button"
             onClick={onAdd}
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.94 }}
             transition={pillSpring}
             aria-label="Add chapter"
             title="Add chapter"
-            className="liquid-add relative z-[1] pointer-events-auto flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-full"
+            className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[52px] w-[52px] items-center justify-center rounded-full"
           >
             <Plus size={25} strokeWidth={1.9} />
           </motion.button>
-        </div>
+            {TABS.slice(2).map((tab) => (
+              <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
+            ))}
+        </nav>
       </div>
     </div>
   )
@@ -74,22 +84,14 @@ function DockTab({ tab, active, onSelect }) {
     <motion.button
       type="button"
       onClick={() => onSelect(tab.id)}
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ scale: 0.96 }}
       transition={pillSpring}
       aria-current={selected ? 'page' : undefined}
       aria-label={tab.label}
       title={tab.label}
-      className={`relative flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-[3px] rounded-full ${selected ? 'text-label' : 'text-label-2'}`}
+      className={`relative z-[1] flex h-full min-w-0 w-full items-center justify-center rounded-full transition-colors ${selected ? 'text-label' : 'text-label-2'}`}
     >
-      {selected && (
-        <motion.span
-          layoutId="tabbar-lens"
-          transition={pillSpring}
-          className="dock-lens absolute inset-[3px] rounded-full"
-        />
-      )}
-      <Icon size={21} strokeWidth={selected ? 2.1 : 1.8} className="relative z-[1]" />
-      <span className="relative z-[1] text-[10px] leading-none font-medium">{tab.label}</span>
+      <Icon size={19} strokeWidth={selected ? 2 : 1.7} className="relative z-[1]" />
     </motion.button>
   )
 }

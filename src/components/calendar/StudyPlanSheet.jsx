@@ -226,7 +226,6 @@ export default function StudyPlanSheet({
           {!editing && (
             <div className="px-4 py-3">
               <Segmented
-                layoutId="plan-spread"
                 ariaLabel="One day or several"
                 value={spread}
                 onChange={changeSpread}
@@ -360,7 +359,6 @@ export default function StudyPlanSheet({
           >
             <div className="px-4 py-3">
               <Segmented
-                layoutId="plan-scope"
                 ariaLabel="Apply to"
                 value={scope}
                 onChange={setScope}

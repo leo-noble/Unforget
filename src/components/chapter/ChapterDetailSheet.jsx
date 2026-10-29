@@ -98,14 +98,14 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
 
         <div className="flex flex-wrap items-center gap-2 mt-3">
           <span
-            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[9px] text-footnote font-medium"
+            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium"
             style={{ color: tone, background: `color-mix(in srgb, ${tone} 14%, transparent)` }}
           >
             {mastered ? <Award size={14} /> : <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone }} />}
             {mastered ? 'Mastered' : whenLabel(chapter)}
           </span>
           {chapter.struggleFlag && !mastered && (
-            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[9px] text-footnote font-medium text-orange bg-orange/15">
+            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium text-orange bg-orange/15">
               <AlertCircle size={14} /> Needs attention
             </span>
           )}

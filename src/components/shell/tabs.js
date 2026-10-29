@@ -1,8 +1,7 @@
 import { SunMedium, LibraryBig, CalendarDays, Timer } from 'lucide-react'
 
-// Four tabs, never more — iOS tab bars stop reading at a glance past that.
-// Stats moved into Insights (opened from Today) and Settings into the account
-// button, which is where Apple's own apps keep them.
+// Keep the mobile dock to four quick destinations. Insights is reachable from
+// the desktop sidebar and Today summary.
 export const TABS = [
   { id: 'today', path: '/dashboard', label: 'Today', icon: SunMedium },
   { id: 'library', path: '/dashboard/library', label: 'Library', icon: LibraryBig },
@@ -12,5 +11,5 @@ export const TABS = [
 
 export function tabFromPath(pathname) {
   const seg = pathname.replace(/^\/dashboard\/?/, '').split('/')[0]
-  return TABS.find((t) => t.id === seg)?.id || 'today'
+  return seg === 'insights' ? 'insights' : TABS.find((t) => t.id === seg)?.id || 'today'
 }

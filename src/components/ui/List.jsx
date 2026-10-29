@@ -71,7 +71,7 @@ export function Row({
       type={onClick ? 'button' : undefined}
       onClick={onClick}
       style={{ '--inset': `${insetPx}px` }}
-      className={`w-full flex items-center gap-3 min-h-[46px] px-4 py-2 text-left ${
+      className={`w-full flex items-center gap-3 min-h-[52px] px-4 py-2.5 text-left ${
         onClick ? 'active:bg-fill transition-colors duration-75' : ''
       } ${center ? 'justify-center' : ''} ${className}`}
       {...rest}

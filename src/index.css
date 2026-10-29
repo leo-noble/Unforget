@@ -10,86 +10,87 @@
 :root,
 :root[data-mode='light'] {
   color-scheme: light;
-  --canvas: #fbfbfb;
-  --card: #ffffff;
-  --card-2: #f6f6f7;
-  --label: #18191b;
-  --label-2: #6b6f76;
-  --label-3: #a3a6ac;
-  --separator: rgba(0, 0, 0, 0.07);
-  --border: rgba(0, 0, 0, 0.08);
-  --fill: rgba(0, 0, 0, 0.04);
-  --fill-2: rgba(0, 0, 0, 0.07);
-  --dot: rgba(0, 0, 0, 0.1);
+  --canvas: #f3f3f1;
+  --card: #fbfbf9;
+  --card-2: #ffffff;
+  --label: #151615;
+  --label-2: rgba(21, 22, 21, 0.58);
+  --label-3: rgba(21, 22, 21, 0.32);
+  --separator: rgba(21, 22, 21, 0.1);
+  --fill: rgba(21, 22, 21, 0.045);
+  --fill-2: rgba(21, 22, 21, 0.085);
+  --dot: rgba(21, 22, 21, 0.14);
 
-  --tint: #18191b;
-  --tint-fg: #ffffff;
+  --tint: #191a19;
+  --tint-fg: #f3f3f1;
 
-  --shadow-card: inset 0 0 0 1px var(--border);
-  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.14);
-  --scrim: rgba(0, 0, 0, 0.2);
+  --shadow-card: inset 0 0 0 1px rgba(21, 22, 21, 0.06), 0 12px 32px -22px rgba(0, 0, 0, 0.16);
+  --shadow-float: 0 12px 30px -18px rgba(0, 0, 0, 0.2), 0 2px 6px -2px rgba(0, 0, 0, 0.06);
+  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.1);
+  --scrim: rgba(0, 0, 0, 0.22);
 
-  --glass-bg: rgba(255, 255, 255, 0.92);
-  --lens-bg: rgba(0, 0, 0, 0.05);
-  --glass-selected: rgba(255, 255, 255, 0.84);
-  --dock-surface: rgba(238, 240, 244, 0.72);
-  --dock-edge: rgba(255, 255, 255, 0.82);
-  --dock-active: rgba(255, 255, 255, 0.74);
-  --dock-button: rgba(255, 255, 255, 0.48);
+  --glass-bg: rgba(249, 249, 247, 0.82);
+  --glass-bg-strong: rgba(252, 252, 250, 0.92);
+  --lens-bg: rgba(255, 255, 255, 0.5);
+  --glass-selected: rgba(255, 255, 255, 0.74);
+  --dock-surface: rgba(248, 248, 246, 0.62);
+  --dock-edge: rgba(255, 255, 255, 0.84);
+  --dock-active: rgba(255, 255, 255, 0.72);
+  --dock-button: rgba(255, 255, 255, 0.45);
 
-  --sheet-bg: #ffffff;
-  --sheet-card: #f7f7f8;
+  --sheet-bg: rgba(248, 248, 250, 0.86);
+  --sheet-card: rgba(255, 255, 255, 0.82);
   --segment-pill: #ffffff;
 }
 
 :root[data-mode='dark'] {
   color-scheme: dark;
-  --canvas: #090b0e;
-  --card: #111419;
-  --card-2: #191d24;
-  --label: #f0f1f4;
-  --label-2: #969ba7;
-  --label-3: #666d7a;
-  --separator: rgba(236, 240, 255, 0.08);
-  --border: rgba(236, 240, 255, 0.1);
-  --fill: rgba(236, 240, 255, 0.055);
-  --fill-2: rgba(236, 240, 255, 0.09);
-  --dot: rgba(236, 240, 255, 0.15);
+  --canvas: #101110;
+  --card: #191a19;
+  --card-2: #202120;
+  --label: #f1f1ed;
+  --label-2: #a0a19c;
+  --label-3: #70716c;
+  --separator: rgba(241, 241, 237, 0.09);
+  --border: rgba(241, 241, 237, 0.1);
+  --fill: rgba(241, 241, 237, 0.05);
+  --fill-2: rgba(241, 241, 237, 0.09);
+  --dot: rgba(241, 241, 237, 0.16);
 
-  --tint: #ded9fa;
-  --tint-fg: #201d2a;
-  --accent: #b8afff;
-  --red: #ff9eae;
+  --tint: #f1f1ed;
+  --tint-fg: #101110;
+  --accent: #f1f1ed;
+  --red: #a0a19c;
 
   --shadow-card: inset 0 0 0 1px var(--border);
   --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.42), 0 2px 8px rgba(0, 0, 0, 0.22);
   --shadow-sheet: 0 18px 56px rgba(0, 0, 0, 0.64);
   --scrim: rgba(2, 3, 5, 0.72);
 
-  --glass-bg: rgba(27, 30, 37, 0.66);
-  --lens-bg: linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.045));
+  --glass-bg: rgba(33, 34, 33, 0.82);
+  --glass-bg-strong: rgba(37, 38, 37, 0.9);
+  --lens-bg: rgba(255, 255, 255, 0.07);
 
-  --sheet-bg: rgba(18, 21, 26, 0.96);
-  --sheet-card: #191d24;
-  --segment-pill: rgba(255, 255, 255, 0.13);
-  --glass-selected: rgba(255, 255, 255, 0.1);
-  --dock-surface: rgba(25, 27, 32, 0.72);
-  --dock-edge: rgba(255, 255, 255, 0.24);
-  --dock-active: rgba(255, 255, 255, 0.14);
-  --dock-button: rgba(255, 255, 255, 0.09);
+  --sheet-bg: rgba(23, 24, 23, 0.96);
+  --sheet-card: #202120;
+  --segment-pill: rgba(255, 255, 255, 0.1);
+  --glass-selected: rgba(255, 255, 255, 0.08);
+  --dock-surface: rgba(37, 38, 37, 0.36);
+  --dock-edge: rgba(255, 255, 255, 0.25);
+  --dock-active: rgba(255, 255, 255, 0.2);
+  --dock-button: rgba(255, 255, 255, 0.12);
 }
 
 /* Black and white only. "Accent" (what needs attention: overdue, the add
    button, today) is full-strength ink, same as tint. */
 :root {
-  --accent: var(--label);
-  --red: #df5d70;
+  --accent: #191a19;
+  --red: #777873;
 }
 
 :root[data-mode='dark'] {
-  --accent: #b8afff;
-  --red: #ff9eae;
+  --accent: #f1f1ed;
+  --red: #a0a19c;
 }
 
 /* Legacy colour names, folded into the monochrome system. "Positive"
@@ -112,9 +113,9 @@
 
 /* The floating sidebar's footprint on wide screens; fixed bars offset by it. */
 :root { --sidebar-w: 0px; }
-@media (min-width: 1024px) {
-  :root { --sidebar-w: 248px; }
-  :root[data-sidebar='collapsed'] { --sidebar-w: 60px; }
+@media (min-width: 768px) {
+  :root { --sidebar-w: 284px; }
+  :root[data-sidebar='collapsed'] { --sidebar-w: 92px; }
 }
 
 /* Inside a sheet, cells sit on the sheet's own glass. */
@@ -133,8 +134,8 @@ html {
 body {
   @apply text-label font-sans antialiased;
   background: transparent;
-  font-size: 15px;
-  line-height: 21px;
+  font-size: 17px;
+  line-height: 22px;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -164,6 +165,17 @@ button,
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease,
+    box-shadow 180ms ease, transform 220ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Controls use soft pill geometry throughout; content cards keep their own shape. */
+button[class*='rounded-'], [role='button'][class*='rounded-'] {
+  border-radius: 999px !important;
+}
+button:active, [role='button']:active { transform: scale(.975); }
+@media (prefers-reduced-motion: reduce) {
+  button, [role='button'] { transition-duration: 0.01ms; }
 }
 
 /* iOS zooms the page into any focused field under 16px. */
@@ -204,20 +216,33 @@ input[type='search']::-webkit-search-cancel-button {
     display: none;
   }
 
-  /* Section headers and metadata: small, medium-weight, muted. */
+  /* Small uppercase label — section headers, metadata. */
   .eyebrow {
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 11px;
+    line-height: 14px;
     font-weight: 500;
-    letter-spacing: 0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 }
 
 @layer components {
   /* ---------- Backdrop ----------
-     Flat. The class keeps its old name; it's simply the canvas now. */
+     A colourless wash of light: a soft glow from the top and a faint one in
+     the far corner, on a neutral base. Enough for glass to read as glass,
+     without adding any colour. Static and cheap to scroll over. Rendered
+     once, fixed, behind every screen. (The class keeps its old name.) */
   .aurora {
-    background: var(--canvas);
+    background:
+      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.95), transparent 70%),
+      radial-gradient(50% 40% at 100% 100%, rgba(0, 0, 0, 0.04), transparent 70%),
+      var(--canvas);
+  }
+  :root[data-mode='dark'] .aurora {
+    background:
+      radial-gradient(70% 45% at 50% -8%, rgba(255, 255, 255, 0.09), transparent 70%),
+      radial-gradient(50% 40% at 100% 100%, rgba(255, 255, 255, 0.03), transparent 70%),
+      var(--canvas);
   }
   :root[data-mode='dark'] .aurora {
     background:
@@ -234,7 +259,7 @@ input[type='search']::-webkit-search-cancel-button {
     position: fixed;
     inset: 0 0 auto 0;
     height: calc(env(safe-area-inset-top) + 10px);
-    background: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0));
+    background: linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
     pointer-events: none;
     z-index: 200;
   }
@@ -244,25 +269,29 @@ input[type='search']::-webkit-search-cancel-button {
     }
   }
 
-  /* ---------- Surfaces ----------
-     Panels are opaque and outlined with a 1px border — no blur, no glow.
-     Floating chrome (tab bar, toasts) adds a soft shadow and a light blur so
-     content passing underneath doesn't cut off abruptly. The class names
-     are kept from the glass era so every component resolves. */
+  /* ---------- Cards ----------
+     Frosted panes: a translucent fill with a fine bright edge. No blur — the
+     backdrop is smooth gradients, so blur would cost frames and add nothing. */
   .bg-card {
     box-shadow: var(--shadow-card);
   }
 
+  /* ---------- Liquid glass ----------
+     The chrome — tab bar, sidebar, floating buttons — is real glass: a heavy
+     saturated blur, a fine edge, and a highlight along the top. */
   .glass,
   .glass-strong {
     position: relative;
-    -webkit-backdrop-filter: blur(24px) saturate(170%);
-    backdrop-filter: blur(24px) saturate(170%);
-    background: linear-gradient(145deg, color-mix(in srgb, var(--glass-bg) 90%, white 10%), var(--glass-bg));
-    border: 1px solid color-mix(in srgb, var(--border) 80%, white 20%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.025), var(--shadow-float);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+    backdrop-filter: blur(18px) saturate(125%);
+    background: color-mix(in srgb, var(--glass-bg) 94%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 86%, white 14%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), var(--shadow-float);
   }
-  /* The selected item in a bar or list. */
+  .glass-strong {
+    background: var(--glass-bg-strong);
+  }
+  /* The selected item inside a glass bar: a brighter bubble of glass. */
   .glass-lens {
     position: relative;
     background: var(--lens-bg);
@@ -271,17 +300,15 @@ input[type='search']::-webkit-search-cancel-button {
   .liquid-dock {
     position: relative;
     isolation: isolate;
-    -webkit-backdrop-filter: blur(24px) saturate(165%);
-    backdrop-filter: blur(24px) saturate(165%);
+    -webkit-backdrop-filter: blur(24px) saturate(145%);
+    backdrop-filter: blur(24px) saturate(145%);
     background:
-      linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.025) 54%, rgba(0, 0, 0, 0.08)),
-      color-mix(in srgb, var(--canvas) 38%, var(--dock-surface));
+      linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025) 62%),
+      color-mix(in srgb, var(--dock-surface) 94%, transparent);
     border: 1px solid var(--dock-edge);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.32),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-      0 12px 28px rgba(0, 0, 0, 0.2),
-      0 2px 6px rgba(0, 0, 0, 0.12);
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      0 10px 28px rgba(0, 0, 0, 0.16);
   }
   .liquid-dock::before {
     position: absolute;
@@ -303,27 +330,28 @@ input[type='search']::-webkit-search-cancel-button {
   }
   .dock-lens {
     position: absolute;
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.2), var(--dock-active) 58%, rgba(255, 255, 255, 0.045));
-    border: 1px solid var(--dock-edge);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.045), 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: color-mix(in srgb, var(--dock-active) 88%, transparent);
+    border: 1px solid color-mix(in srgb, var(--dock-edge) 55%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
   }
   .dock-action {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.14), transparent 72%), var(--dock-button);
-    border: 1px solid var(--dock-edge);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.12), transparent 74%), var(--dock-button);
+    border: 1px solid color-mix(in srgb, var(--dock-edge) 72%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.11);
   }
   .liquid-add {
     color: var(--label);
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.19), rgba(255, 255, 255, 0.065) 58%, rgba(255, 255, 255, 0.035));
-    -webkit-backdrop-filter: blur(28px) saturate(190%);
-    backdrop-filter: blur(28px) saturate(190%);
-    border: 1px solid rgba(255, 255, 255, 0.19);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.045), 0 12px 28px rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    backdrop-filter: blur(18px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 22px rgba(0, 0, 0, 0.22);
   }
   .glass-tint {
     position: relative;
     background: var(--tint);
     color: var(--tint-fg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), var(--shadow-float);
   }
 
   .bar-glass {
@@ -337,7 +365,7 @@ input[type='search']::-webkit-search-cancel-button {
     -webkit-backdrop-filter: blur(28px) saturate(150%);
     backdrop-filter: blur(28px) saturate(150%);
     background: var(--sheet-bg);
-    box-shadow: inset 0 0 0 1px var(--border), var(--shadow-sheet);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--shadow-sheet);
   }
 
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -395,7 +423,7 @@ input[type='search']::-webkit-search-cancel-button {
      figures so counts don't jitter as they change. */
   .font-display {
     font-weight: 600;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.045em;
     font-variant-numeric: tabular-nums;
   }
 }
@@ -412,4 +440,124 @@ input[type='search']::-webkit-search-cancel-button {
   .pulse-dot {
     animation: none;
   }
+}
+
+/* Unforget / Nothing inspired visual language: graphite, paper, neutral ink,
+   a fine dot field and quiet glass reserved for the controls that float. */
+:root { --radius-cell: 20px; }
+html { background-color: var(--canvas); }
+body { letter-spacing: -0.012em; }
+.aurora {
+  background:
+    radial-gradient(45% 34% at 0% 0%, color-mix(in srgb, var(--label) 3%, transparent), transparent 78%),
+    radial-gradient(56% 42% at 100% 100%, rgba(0, 0, 0, 0.025), transparent 78%),
+    var(--canvas);
+}
+:root[data-mode='dark'] .aurora {
+  background:
+    radial-gradient(40% 32% at 0% 0%, color-mix(in srgb, var(--label) 5%, transparent), transparent 78%),
+    radial-gradient(54% 25% at 50% 100%, rgba(255, 255, 255, 0.06), transparent 78%),
+    var(--canvas);
+}
+.dot-grid {
+  display: block;
+  background-image: radial-gradient(color-mix(in srgb, var(--label) 9%, transparent) 0.7px, transparent 0.8px);
+  background-size: 13px 13px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+.font-display {
+  letter-spacing: -0.055em;
+  font-weight: 650;
+}
+.page-title { letter-spacing: -0.06em; }
+.eyebrow {
+  font-family: inherit;
+  letter-spacing: 0.015em;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+}
+.bg-card {
+  background-color: var(--card);
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow-card);
+}
+.rounded-cell { border-radius: 20px; }
+.glass,
+.glass-strong {
+  -webkit-backdrop-filter: blur(18px) saturate(128%);
+  backdrop-filter: blur(18px) saturate(128%);
+}
+.bar-glass {
+  -webkit-backdrop-filter: blur(15px) saturate(122%);
+  backdrop-filter: blur(15px) saturate(122%);
+  background: color-mix(in srgb, var(--canvas) 84%, transparent);
+}
+.sheet-surface {
+  -webkit-backdrop-filter: blur(20px) saturate(128%);
+  backdrop-filter: blur(20px) saturate(128%);
+  border: 1px solid color-mix(in srgb, var(--label) 8%, transparent);
+}
+.liquid-dock {
+  -webkit-backdrop-filter: blur(30px) saturate(158%);
+  backdrop-filter: blur(30px) saturate(158%);
+  background:
+    radial-gradient(100% 155% at 50% -22%, rgba(255, 255, 255, 0.15), transparent 64%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.018) 58%),
+    color-mix(in srgb, var(--dock-surface) 94%, transparent);
+  border-color: color-mix(in srgb, var(--dock-edge) 88%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 14px 34px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.dock-lens {
+  -webkit-backdrop-filter: blur(10px) saturate(170%);
+  backdrop-filter: blur(10px) saturate(170%);
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.035) 72%),
+    color-mix(in srgb, var(--dock-active) 88%, transparent);
+  border-color: color-mix(in srgb, var(--dock-edge) 78%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 3px 12px rgba(0, 0, 0, 0.14);
+  transition: background 300ms ease, border-color 300ms ease;
+}
+.dock-action {
+  -webkit-backdrop-filter: blur(14px) saturate(165%);
+  backdrop-filter: blur(14px) saturate(165%);
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.035) 72%),
+    var(--dock-button);
+  border-color: color-mix(in srgb, var(--dock-edge) 88%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 3px 12px rgba(0, 0, 0, 0.14);
+}
+button[class*='rounded-'], [role='button'][class*='rounded-'] {
+  border-radius: 999px !important;
+}
+.insights-content .bg-card { background-color: var(--card-2); }
+.insights-content > section > .ios-list { border: 1px solid var(--separator); }
+.insights-content > .grid > .bg-card { position: relative; }
+.insights-content > .grid > .bg-card::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--label-2);
+  opacity: 0.55;
+}
+.auth-field { transition: background-color 180ms ease; }
+.auth-field:focus-within { background-color: var(--fill); }
+.auth-input::placeholder { opacity: 0.72; }
+::selection { background: var(--accent); color: white; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
 }

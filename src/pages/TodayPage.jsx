@@ -32,7 +32,7 @@ function TodayHero({ name, done, remaining, overdue }) {
   else line = `${done} of ${total} done.`
 
   return (
-    <motion.div {...stagger(0)} className="bg-card rounded-[12px] p-6">
+    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6">
       <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
       <div className="mt-2 flex items-baseline gap-3">
         <motion.span
@@ -40,7 +40,7 @@ function TodayHero({ name, done, remaining, overdue }) {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={spring}
-          className="font-display text-[52px] leading-[0.95]"
+          className="font-display text-[76px] leading-[0.9]"
         >
           {remaining}
         </motion.span>
@@ -88,7 +88,7 @@ function WeekDots({ events, streak = 0 }) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <p className="font-display text-[32px] leading-none">{week}</p>
+        <p className="font-display text-[44px] leading-[0.9]">{week}</p>
         <p className="text-footnote text-label-2 mt-1.5">{week === 1 ? 'review' : 'reviews'} · {streak}-day streak</p>
       </div>
       <div className="flex items-end gap-[9px]">
@@ -212,7 +212,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
           </AnimatePresence>
 
           {remaining === 0 && (
-            <motion.div {...stagger(1)} className="bg-card rounded-[12px] px-6 py-10 text-center">
+            <motion.div {...stagger(1)} className="bg-card rounded-[28px] px-6 py-10 text-center">
               <h2 className="text-title-2 font-medium">
                 {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
               </h2>

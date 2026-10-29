@@ -17,7 +17,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
 
   return (
     <div
-      className={`glass pointer-events-auto flex items-center gap-3 rounded-[14px] ${
+      className={`glass pointer-events-auto flex items-center gap-3 rounded-full ${
         compact ? 'h-[52px] pl-2 pr-1.5' : 'h-[54px] pl-2.5 pr-2'
       }`}
     >
@@ -61,7 +61,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
         transition={snappy}
         onClick={timer.toggle}
         aria-label={running ? 'Pause' : 'Resume'}
-        className="h-9 w-9 shrink-0 rounded-[10px] flex items-center justify-center bg-fill"
+        className="h-10 w-10 shrink-0 rounded-full flex items-center justify-center bg-fill"
       >
         {running ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
       </motion.button>

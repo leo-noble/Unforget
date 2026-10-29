@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-mode="dark" data-theme-mode="dark" data-accent="indigo">
+      <html lang="en" data-mode="dark" data-theme-mode="dark" data-accent="graphite">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Unforget</title>
+    <title>Unforget — Remember what you study</title>
     <meta name="description" content="Unforget schedules every chapter you study for five spaced reviews and tells you exactly what to revise each day." />
 
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
@@ -20,16 +20,16 @@
     <meta name="application-name" content="Unforget" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#090B0E" />
+    <meta name="theme-color" content="#101110" />
 
     <script>
       // Paint the first frame in the user's own appearance. Mirrors
       // resolveAccent/resolveMode in src/lib/appearance.js — keep them in step.
       (function () {
         var root = document.documentElement
-        var ACCENTS = ['indigo', 'blue', 'teal', 'green', 'orange', 'pink', 'purple']
-        var LEGACY = { slate: 'indigo', aurora: 'purple', forest: 'green', linen: 'green', fog: 'indigo', graphite: 'indigo', verdant: 'green' }
-        var accent = 'indigo'
+        var ACCENTS = ['graphite', 'indigo', 'blue', 'teal', 'green', 'orange', 'pink', 'purple']
+        var LEGACY = { slate: 'graphite', aurora: 'purple', forest: 'green', linen: 'green', fog: 'graphite', graphite: 'graphite', red: 'graphite', verdant: 'green' }
+        var accent = 'graphite'
         var themeMode = 'dark'
         try {
           var boot = JSON.parse(localStorage.getItem('unforget.appearance') || 'null')
@@ -39,7 +39,7 @@
           if ((boot ? boot.appearanceVersion : prefs.appearanceVersion) !== 1 && (!themeMode || themeMode === 'system')) {
             themeMode = 'dark'
           }
-          accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'indigo'
+          accent = ACCENTS.indexOf(a) >= 0 ? a : LEGACY[a] || 'graphite'
         } catch (e) {}
         if (['light', 'dark', 'system'].indexOf(themeMode) < 0) themeMode = 'dark'
         var mode = themeMode === 'system'
@@ -51,7 +51,7 @@
         root.style.colorScheme = mode
         var metas = document.querySelectorAll('meta[name="theme-color"]')
         for (var i = 0; i < metas.length; i++) {
-          metas[i].setAttribute('content', mode === 'dark' ? '#090B0E' : '#FBFBFB')
+          metas[i].setAttribute('content', mode === 'dark' ? '#101110' : '#F3F3F1')
           metas[i].removeAttribute('media')
         }
       })()

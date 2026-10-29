@@ -248,7 +248,6 @@ export default function FocusPage({ cadence, account }) {
 
       <div className="flex flex-col items-center">
         <Segmented
-          layoutId="focus-mode"
           ariaLabel="Timer mode"
           value={timer.phase}
           onChange={timer.switchMode}

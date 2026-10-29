@@ -85,7 +85,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
           placeholder="Search chapters and subjects"
           aria-label="Search chapters and subjects"
           enterKeyHint="search"
-          className="w-full h-10 rounded-[10px] bg-card pl-10 pr-10 text-body outline-none placeholder:text-label-3 focus:ring-1 focus:ring-label-3"
+          className="w-full h-11 rounded-full bg-card pl-10 pr-10 text-body outline-none placeholder:text-label-3 focus:ring-1 focus:ring-label-3"
         />
         <AnimatePresence>
           {query && (
@@ -118,11 +118,11 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
                 whileTap={{ scale: 0.94 }}
                 transition={snappy}
                 onClick={() => setFilter(f.id)}
-                className={`relative h-9 px-4 rounded-[9px] text-subhead flex items-center gap-1.5 ${
+                className={`relative h-9 px-4 rounded-full text-subhead flex items-center gap-1.5 ${
                   on ? 'text-tint-fg' : 'bg-card text-label'
                 }`}
               >
-                {on && <motion.span layoutId="library-chip" transition={snappy} className="absolute inset-0 rounded-[9px] tint-fill" />}
+                {on && <motion.span layoutId="library-chip" transition={snappy} className="absolute inset-0 rounded-full tint-fill" />}
                 <span className="relative">{f.label}</span>
                 <span className={`relative font-mono text-[12px] tabular ${on ? 'text-tint-fg/70' : 'text-label-2'}`}>{counts[f.id] || 0}</span>
               </motion.button>
@@ -132,7 +132,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
       </div>
 
       {chapters.length === 0 ? (
-        <div className="bg-card rounded-[12px] px-6 py-10 text-center">
+        <div className="bg-card rounded-[28px] px-6 py-10 text-center">
           <span className="mx-auto h-14 w-14 rounded-full bg-fill text-label flex items-center justify-center">
             <LibraryBig size={24} strokeWidth={1.6} />
           </span>

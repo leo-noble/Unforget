@@ -23,6 +23,7 @@ import { toISODate } from './lib/srs'
 import { APP_NAME } from './brand'
 
 const TAB_PATH = Object.fromEntries(TABS.map((t) => [t.id, t.path]))
+TAB_PATH.insights = '/dashboard/insights'
 const SIDEBAR_KEY = 'unforget.sidebarCollapsed'
 
 export default function AppShell() {
@@ -178,7 +179,7 @@ export default function AppShell() {
           active={tab}
           onSelect={selectTab}
           onAdd={openAdd}
-          onOpenInsights={() => setSheet('insights')}
+          onOpenInsights={() => selectTab('insights')}
           onOpenSettings={openSettings}
           profile={profile}
           dueCount={dueCount}
@@ -200,11 +201,12 @@ export default function AppShell() {
             {tab === 'library' && <LibraryPage {...pageProps} onAdd={openAdd} />}
             {tab === 'plan' && <PlanPage {...pageProps} />}
             {tab === 'focus' && <FocusPage {...pageProps} />}
+            {tab === 'insights' && <InsightsSheet cadence={cadence} asPage account={account} />}
           </motion.div>
         </main>
 
         <TabBar
-          active={tab}
+          active={tab === 'insights' ? 'today' : tab}
           onSelect={selectTab}
           onAdd={openAdd}
           onOpenFocus={() => selectTab('focus')}

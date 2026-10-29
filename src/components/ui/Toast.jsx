@@ -47,7 +47,7 @@ export function ToastProvider({ children }) {
                   if (info.offset.y < -20) setToast(null)
                 }}
                 onClick={() => setToast(null)}
-                className="glass-strong pointer-events-auto flex items-center gap-3 rounded-[12px] pl-3 pr-5 py-2.5 max-w-[420px] min-w-[220px] cursor-default"
+                className="glass-strong pointer-events-auto flex items-center gap-3 rounded-full pl-3 pr-5 py-2.5 max-w-[420px] min-w-[220px] cursor-default"
                 role="status"
               >
                 {toast.icon && (

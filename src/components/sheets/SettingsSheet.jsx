@@ -109,8 +109,8 @@ export default function SettingsSheet({ cadence, onClose }) {
         </div>
 
         {/* Appearance */}
-        <Section title="Appearance" footer="Dark is the default. System follows your iPhone or browser setting.">
-          <div className="p-1.5 bg-card rounded-cell grid grid-cols-3 gap-1" role="group" aria-label="Appearance">
+        <Section title="Appearance" footer="Dark is the default. System follows your iPhone or browser setting." listClassName="!rounded-full">
+          <div className="p-1 bg-fill rounded-full grid grid-cols-3 gap-1" role="group" aria-label="Appearance">
             {APPEARANCE_MODES.map(({ id, label, icon: Icon }) => {
               const selected = (prefs.themeMode || 'dark') === id
               return (
@@ -119,7 +119,7 @@ export default function SettingsSheet({ cadence, onClose }) {
                   type="button"
                   onClick={() => updatePrefs({ themeMode: id })}
                   aria-pressed={selected}
-                  className={`h-10 rounded-[11px] flex items-center justify-center gap-1.5 text-subhead transition-colors ${
+                  className={`h-10 rounded-full flex items-center justify-center gap-1.5 text-subhead transition-colors ${
                     selected ? 'text-label shadow-card' : 'text-label-2 hover:text-label'
                   }`}
                   style={{ background: selected ? 'var(--glass-selected)' : undefined }}
