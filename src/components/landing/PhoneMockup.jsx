@@ -1,105 +1,87 @@
 import { motion } from 'framer-motion'
 import { SunMedium, LibraryBig, CalendarDays, Timer, Plus } from 'lucide-react'
 
-const ROWS = [
-  { title: 'Vector Algebra', meta: 'Physics · Review 2 of 5', when: '1d late', color: '#0A84FF', late: true },
-  { title: 'Periodic Trends', meta: 'Chemistry · Review 1 of 5', when: 'Today', color: '#FF9500' },
-  { title: 'Cell Division', meta: 'Biology · Review 3 of 5', when: 'Today', color: '#34C759' },
-]
+const TABS = [SunMedium, LibraryBig, CalendarDays, Timer]
+const WEEK_DOTS = [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
 
-const TABS = [
-  [SunMedium, 'Today'],
-  [LibraryBig, 'Library'],
-  [CalendarDays, 'Plan'],
-  [Timer, 'Focus'],
-]
+const dateLabel = new Intl.DateTimeFormat('en', {
+  weekday: 'long',
+  month: 'short',
+  day: 'numeric',
+}).format(new Date())
 
-// A faithful miniature of the Today screen in a phone frame — what a student
-// actually opens every morning. Sized in px against a fixed 300px-wide screen
-// and scaled as a whole, so it keeps its proportions on any viewport.
+// A legible, static preview of the real Today screen, sized as a phone rather
+// than a tiny dashboard illustration.
 export default function PhoneMockup() {
   return (
     <div className="relative w-[min(76vw,300px)] select-none" aria-hidden="true">
-      <div className="relative rounded-[48px] bg-[#0a0a0a] p-[8px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
-        <div className="aurora relative overflow-hidden rounded-[40px] aspect-[9/19.5]">
-          <div className="absolute top-[9px] left-1/2 -translate-x-1/2 h-[24px] w-[84px] rounded-full bg-black z-20" />
-          <div className="relative z-10 flex items-center justify-between px-7 pt-[12px] font-mono text-[10px]">
+      <div className="relative rounded-[48px] bg-[#090a09] p-[7px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/15">
+        <div className="relative aspect-[9/19.5] overflow-hidden rounded-[41px] bg-canvas text-label">
+          <div className="absolute top-[8px] left-1/2 z-20 h-[24px] w-[82px] -translate-x-1/2 rounded-full bg-black" />
+
+          <div className="relative z-10 flex items-center justify-between px-7 pt-[11px] font-mono text-[9px] leading-3 text-label">
             <span>9:41</span>
-            <span className="h-[8px] w-[15px] rounded-[2px] border border-label/60 p-[1px]">
-              <span className="block h-full w-[70%] rounded-[1px] bg-label" />
+            <span className="flex h-[9px] items-end gap-[2px]" aria-hidden="true">
+              {[4, 6, 8].map((height) => <span key={height} className="w-[2px] rounded-full bg-label" style={{ height }} />)}
             </span>
           </div>
 
-          <div className="relative z-10 px-4 pt-7">
-            <p className="text-[7.5px] font-medium tracking-[0.08em] uppercase text-label-2">Tuesday, Oct 28</p>
-            <p className="font-display text-[26px] leading-none mt-1.5">Today</p>
+          <div className="relative z-10 px-4 pt-7 pb-[94px]">
+            <p className="text-[10px] leading-[14px] font-medium text-label-2">{dateLabel}</p>
+            <h2 className="mt-1 font-display text-[34px] leading-[38px] tracking-[-0.04em]">Today</h2>
 
-            <div className="mt-3.5 bg-card rounded-[18px] p-3.5">
-              <p className="text-[8.5px] text-label-2">Good morning, Sam</p>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="font-display text-[44px] leading-[0.9]">3</span>
-                <span className="text-[10px] text-label-2">reviews left</span>
+            <div className="mt-3 rounded-[22px] bg-card px-4 py-3.5 shadow-card">
+              <p className="text-[13px] leading-[18px] text-label-2">Good evening, Nabil</p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="font-display text-[62px] leading-[0.95] tracking-[-0.045em]">0</span>
+                <span className="text-[14px] leading-[18px] text-label-2">reviews left</span>
               </div>
-              <p className="text-[8px] text-label-2 mt-1">1 overdue — start there.</p>
-              <div className="flex gap-[4px] mt-2.5">
-                {[1, 1, 0, 0, 0].map((on, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 22, delay: 0.5 + i * 0.06 }}
-                    className="h-[6px] w-[6px] rounded-full"
-                    style={{ background: on ? 'var(--label)' : 'transparent', boxShadow: on ? 'none' : 'inset 0 0 0 1px var(--label-3)' }}
-                  />
-                ))}
-              </div>
+              <p className="mt-1 text-[12px] leading-4 text-label-2">Nothing scheduled today.</p>
             </div>
 
-            <p className="text-[7px] font-medium tracking-[0.08em] uppercase mt-4 mb-1.5 px-0.5">Due today</p>
-            <div className="bg-card rounded-[16px] overflow-hidden">
-              {ROWS.map((r, i) => (
-                <motion.div
-                  key={r.title}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.7 + i * 0.1, ease: [0.32, 0.72, 0, 1] }}
-                  className={`flex items-center gap-2.5 px-3 py-[7px] ${i > 0 ? 'hairline-t' : ''}`}
-                >
-                  <span
-                    className="h-[13px] w-[13px] rounded-full shrink-0"
-                    style={{ boxShadow: 'inset 0 0 0 1px var(--label)' }}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[10.5px] truncate">{r.title}</span>
-                    <span className="block text-[8px] text-label-2 truncate">
-                      {r.meta}
-                    </span>
-                  </span>
-                  <span className="text-[8px] font-medium shrink-0 text-label-2">{r.when}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 z-10 px-3 pb-[16px]">
-            <div className="liquid-dock mx-auto flex h-[40px] items-center rounded-full p-[2px]">
-              {TABS.slice(0, 2).map(([Icon, label], i) => (
-                <span key={label} className={`relative flex flex-1 items-center justify-center rounded-full ${i === 0 ? 'text-label' : 'text-label-2'}`}>
-                  {i === 0 && <span className="dock-lens absolute inset-[2px] rounded-full" />}
-                  <Icon size={13} strokeWidth={1.8} className="relative z-[1]" />
-                </span>
-              ))}
-              <span className="dock-action relative z-[1] mx-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-label">
-                <Plus size={15} strokeWidth={1.9} />
+            <div className="mt-3 rounded-[22px] bg-card px-3.5 py-3.5 text-center shadow-card">
+              <h3 className="text-[15px] leading-5 font-medium">Nothing else due today.</h3>
+              <p className="mt-1 text-[11px] leading-[15px] text-label-2">Add a chapter to start your review plan.</p>
+              <span className="mx-auto mt-2.5 inline-flex h-8 items-center gap-1.5 rounded-full bg-tint px-3.5 text-[12px] font-medium text-tint-fg">
+                <Plus size={14} strokeWidth={2} /> Add chapter
               </span>
-              {TABS.slice(2).map(([Icon, label]) => (
-                <span key={label} className="flex flex-1 items-center justify-center rounded-full text-label-2">
-                  <Icon size={13} strokeWidth={1.8} />
+            </div>
+
+            <div className="mt-3">
+              <p className="mb-1.5 px-1 text-[9px] leading-3 font-semibold tracking-[0.12em] text-label-2">THIS WEEK</p>
+              <div className="flex items-center justify-between rounded-[18px] bg-card px-3 py-2.5 shadow-card">
+                <div>
+                  <p className="font-display text-[32px] leading-[34px]">10</p>
+                  <p className="mt-0.5 text-[10px] leading-[13px] text-label-2">reviews · 3-day streak</p>
+                </div>
+                <div className="grid grid-cols-7 gap-[4px]" aria-hidden="true">
+                  {WEEK_DOTS.map((active, index) => (
+                    <span key={index} className={`h-[5px] w-[5px] rounded-full ${active ? 'bg-label' : 'bg-fill-2'}`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute inset-x-3 bottom-[22px] z-10">
+            <div className="liquid-dock grid h-[46px] grid-cols-5 items-center rounded-full p-1">
+              {TABS.slice(0, 2).map((Icon, index) => (
+                <span key={index} className={`relative flex h-full items-center justify-center rounded-full ${index === 0 ? 'text-label' : 'text-label-2'}`}>
+                  {index === 0 && <span className="dock-lens absolute inset-0 rounded-full" />}
+                  <Icon size={15} strokeWidth={1.8} className="relative z-[1]" />
+                </span>
+              ))}
+              <span className="dock-action mx-auto flex h-[36px] w-[36px] items-center justify-center rounded-full text-label">
+                <Plus size={18} strokeWidth={1.9} />
+              </span>
+              {TABS.slice(2).map((Icon, index) => (
+                <span key={index} className="flex h-full items-center justify-center rounded-full text-label-2">
+                  <Icon size={15} strokeWidth={1.8} />
                 </span>
               ))}
             </div>
           </div>
-          <div className="absolute bottom-[5px] left-1/2 -translate-x-1/2 h-[4px] w-[90px] rounded-full bg-label/80 z-20" />
+          <div className="absolute bottom-[7px] left-1/2 z-20 h-[4px] w-[82px] -translate-x-1/2 rounded-full bg-label/80" />
         </div>
       </div>
     </div>

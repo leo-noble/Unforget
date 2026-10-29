@@ -87,10 +87,9 @@ export default function LoginPage() {
 
   if (!isSupabaseConfigured) {
     return (
-      <AuthLayout title="Sign-in isn’t set up" subtitle="Connect a Supabase project to enable accounts.">
-        <p className="bg-card rounded-cell p-5 text-subhead text-label-2 shadow-card">
-          Copy <code className="text-label">.env.example</code> to <code className="text-label">.env</code> and add your
-          project’s URL and anon key.
+      <AuthLayout title="Sign-in unavailable" subtitle="Authentication isn’t configured for this environment.">
+        <p className="glass rounded-[24px] p-5 text-subhead text-label-2 shadow-card">
+          Add the Supabase URL and anon key to the local environment to enable sign in.
         </p>
       </AuthLayout>
     )

@@ -151,7 +151,7 @@ export default function LandingPage() {
           </nav>
           <Link
             to={session ? '/dashboard' : '/login'}
-            className="h-9 px-4 rounded-[9px] bg-tint text-tint-fg text-subhead font-medium flex items-center"
+            className="h-9 px-4 rounded-full bg-tint text-tint-fg text-subhead font-medium flex items-center"
           >
             {session ? 'Open app' : 'Sign in'}
           </Link>
@@ -194,14 +194,11 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* On a phone only the top of the mockup shows, fading out — the
-              screen is what matters, and a whole second phone-height of hero
-              is what made the page feel endless. */}
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.12 }}
-            className="flex justify-center max-lg:h-[440px] max-lg:overflow-hidden max-lg:[mask-image:linear-gradient(to_bottom,#000_70%,transparent)] max-lg:[-webkit-mask-image:linear-gradient(to_bottom,#000_70%,transparent)]"
+            className="mt-10 flex justify-center lg:mt-0"
           >
             <PhoneMockup />
           </motion.div>

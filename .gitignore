@@ -12,12 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Environment variables — never commit real Supabase credentials.
-# .env.example is intentionally NOT ignored; it's the template committed
-# to the repo so anyone cloning it knows which variables to set.
+# Environment variables and local templates — keep them out of Git.
 .env
 .env.*
-!.env.example
 
 # Editor directories and files
 .vscode/*

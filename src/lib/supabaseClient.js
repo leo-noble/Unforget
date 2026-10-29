@@ -5,9 +5,8 @@ import { createClient } from '@supabase/supabase-js'
 // (it's the public, RLS-restricted key Supabase is designed to expose),
 // but it still belongs in an untracked .env file, not in source, so that
 // switching projects (dev/staging/prod) never means editing committed
-// code. See .env.example for the variable names to set locally, and set
-// the same two variables in your host's dashboard (Vercel, Netlify, etc.)
-// for deployed builds.
+// code. Set the same two variables in your host's dashboard for deployed
+// builds.
 export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -16,9 +15,8 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 if (!isSupabaseConfigured && import.meta.env.DEV) {
   // eslint-disable-next-line no-console
   console.warn(
-    'Supabase is not configured — copy .env.example to .env and fill in ' +
-      'VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY from your Supabase ' +
-      'project settings (Project Settings → API) to enable sign in.'
+    'Supabase is not configured — set VITE_SUPABASE_URL and ' +
+      'VITE_SUPABASE_ANON_KEY to enable sign in.'
   )
 }
 
