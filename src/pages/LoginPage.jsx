@@ -151,10 +151,14 @@ export default function LoginPage() {
           </AnimatePresence>
           <Field
             label="Email"
-            type="email"
+            type="text"
             inputMode="email"
             autoComplete="email"
             autoCapitalize="off"
+            autoCorrect="on"
+            spellCheck={true}
+            pattern="[^\s@]+@[^\s@]+"
+            title="Enter an email address"
             value={email}
             maxLength={EMAIL_MAX}
             onChange={(e) => setEmail(e.target.value)}

@@ -556,6 +556,8 @@ button[class*='rounded-'], [role='button'][class*='rounded-'] {
 }
 .auth-field { transition: background-color 180ms ease; }
 .auth-field:focus-within { background-color: var(--fill); }
+.auth-field:focus-within > span { color: var(--label); }
+.auth-input:focus-visible { outline: none; }
 .auth-input::placeholder { opacity: 0.72; }
 ::selection { background: var(--accent); color: white; }
 @media (prefers-reduced-motion: reduce) {

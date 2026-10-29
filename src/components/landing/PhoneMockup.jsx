@@ -3,6 +3,11 @@ import { SunMedium, LibraryBig, CalendarDays, Timer, Plus } from 'lucide-react'
 
 const TABS = [SunMedium, LibraryBig, CalendarDays, Timer]
 const WEEK_DOTS = [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
+const CHAPTERS = [
+  ['Cell division', 'Biology · Review 2'],
+  ['Newton’s laws', 'Physics · Review 1'],
+  ['Chemical bonding', 'Chemistry · Review 3'],
+]
 
 const dateLabel = new Intl.DateTimeFormat('en', {
   weekday: 'long',
@@ -33,18 +38,32 @@ export default function PhoneMockup() {
             <div className="mt-3 rounded-[22px] bg-card px-4 py-3.5 shadow-card">
               <p className="text-[13px] leading-[18px] text-label-2">Good evening, Nabil</p>
               <div className="mt-0.5 flex items-baseline gap-2">
-                <span className="font-display text-[62px] leading-[0.95] tracking-[-0.045em]">0</span>
+                <span className="font-display text-[62px] leading-[0.95] tracking-[-0.045em]">3</span>
                 <span className="text-[14px] leading-[18px] text-label-2">reviews left</span>
               </div>
-              <p className="mt-1 text-[12px] leading-4 text-label-2">Nothing scheduled today.</p>
+              <p className="mt-1 text-[12px] leading-4 text-label-2">3 chapters ready to review.</p>
             </div>
 
-            <div className="mt-3 rounded-[22px] bg-card px-3.5 py-3.5 text-center shadow-card">
-              <h3 className="text-[15px] leading-5 font-medium">Nothing else due today.</h3>
-              <p className="mt-1 text-[11px] leading-[15px] text-label-2">Add a chapter to start your review plan.</p>
-              <span className="mx-auto mt-2.5 inline-flex h-8 items-center gap-1.5 rounded-full bg-tint px-3.5 text-[12px] font-medium text-tint-fg">
-                <Plus size={14} strokeWidth={2} /> Add chapter
-              </span>
+            <div className="mt-3">
+              <p className="mb-1.5 px-1 text-[9px] leading-3 font-semibold tracking-[0.12em] text-label-2">DUE TODAY</p>
+              <div className="overflow-hidden rounded-[20px] bg-card shadow-card">
+                {CHAPTERS.map(([title, meta], index) => (
+                  <motion.div
+                    key={title}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.36, delay: 0.18 + index * 0.08 }}
+                    className={`flex items-center gap-2 px-3 py-[8px] ${index ? 'hairline-t' : ''}`}
+                  >
+                    <span className="h-5 w-5 shrink-0 rounded-full" style={{ boxShadow: 'inset 0 0 0 1px var(--label-3)' }} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[10px] leading-[13px] font-medium">{title}</span>
+                      <span className="block truncate text-[8px] leading-[11px] text-label-2">{meta}</span>
+                    </span>
+                    <span className="shrink-0 text-[8px] leading-[11px] text-label-2">Today</span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
 
             <div className="mt-3">

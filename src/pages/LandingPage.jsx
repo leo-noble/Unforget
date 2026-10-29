@@ -14,6 +14,7 @@ import {
   Share,
   SquarePlus,
   Download,
+  Smartphone,
   GraduationCap,
   School,
   ClipboardList,
@@ -107,9 +108,100 @@ function FaqItem({ q, a, open, onToggle }) {
   )
 }
 
+function InstallGuide({ open, onClose, canInstall, onInstall }) {
+  const ios = isIOS()
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/55 p-3 backdrop-blur-md sm:items-center sm:p-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="install-title"
+            className="glass-strong relative w-full max-w-[440px] overflow-hidden rounded-[32px] p-6 shadow-sheet sm:p-8"
+            initial={{ opacity: 0, y: 28, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 18, scale: 0.98 }}
+            transition={snappy}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div aria-hidden="true" className="pointer-events-none absolute -right-14 -top-20 h-56 w-56 rounded-full bg-white/[0.07] blur-3xl" />
+            <div className="relative flex items-start justify-between gap-4">
+              <span className="glass-lens flex h-14 w-14 items-center justify-center rounded-full">
+                <Smartphone size={23} strokeWidth={1.7} />
+              </span>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close install guide"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-fill text-label-2"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="relative mt-5">
+              <p className="eyebrow text-label-2">A little closer</p>
+              <h2 id="install-title" className="mt-1 text-[28px] font-semibold leading-tight tracking-[-0.04em]">
+                Install {APP_NAME}
+              </h2>
+              <p className="mt-2 text-subhead leading-relaxed text-label-2">Keep your study plan one tap away. It’s free and takes a few seconds.</p>
+            </div>
+
+            {ios ? (
+              <ol className="relative mt-6 space-y-2">
+                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Share size={17} /></span>
+                  <span className="text-subhead">Tap <strong className="font-semibold text-label">Share</strong> in your browser.</span>
+                </li>
+                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><SquarePlus size={17} /></span>
+                  <span className="text-subhead">Choose <strong className="font-semibold text-label">Add to Home Screen</strong>.</span>
+                </li>
+                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Plus size={17} /></span>
+                  <span className="text-subhead">Tap <strong className="font-semibold text-label">Add</strong> to finish.</span>
+                </li>
+              </ol>
+            ) : canInstall ? (
+              <div className="relative mt-6">
+                <p className="text-subhead text-label-2">Add it to your device from the browser’s secure install prompt.</p>
+                <button
+                  type="button"
+                  onClick={onInstall}
+                  className="mt-5 flex h-[52px] w-full items-center justify-center gap-2 rounded-full bg-tint px-6 text-subhead font-semibold text-tint-fg"
+                >
+                  <Download size={17} /> Install app
+                </button>
+              </div>
+            ) : (
+              <div className="relative mt-6 rounded-[22px] bg-fill p-4">
+                <p className="text-subhead leading-relaxed text-label-2">
+                  Open your browser menu and choose <strong className="font-semibold text-label">Install app</strong> or <strong className="font-semibold text-label">Add to Home Screen</strong>.
+                </p>
+              </div>
+            )}
+
+            <button type="button" onClick={onClose} className="relative mt-5 h-11 w-full rounded-full text-subhead font-medium text-label-2 hover:bg-fill">
+              Maybe later
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function LandingPage() {
   const { session } = useAuth()
   const [installPrompt, setInstallPrompt] = useState(null)
+  const [installGuideOpen, setInstallGuideOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState(0)
 
   useEffect(() => {
@@ -117,7 +209,11 @@ export default function LandingPage() {
       e.preventDefault()
       setInstallPrompt(e)
     }
-    const onInstalled = () => setInstallPrompt(null)
+    const onInstalled = () => {
+      window.__unforgetInstallPrompt = null
+      setInstallPrompt(null)
+    }
+    if (window.__unforgetInstallPrompt) setInstallPrompt(window.__unforgetInstallPrompt)
     window.addEventListener('beforeinstallprompt', onPrompt)
     window.addEventListener('appinstalled', onInstalled)
     return () => {
@@ -126,11 +222,26 @@ export default function LandingPage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!installGuideOpen) return undefined
+    const previousOverflow = document.body.style.overflow
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setInstallGuideOpen(false)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [installGuideOpen])
+
   async function install() {
     if (!installPrompt) return
     installPrompt.prompt()
     await installPrompt.userChoice
     setInstallPrompt(null)
+    setInstallGuideOpen(false)
   }
 
   const cta = session ? { to: '/dashboard', label: 'Open Today' } : { to: '/login', label: 'Get started — free' }
@@ -323,33 +434,25 @@ export default function LandingPage() {
           <div className={WRAP}>
             <motion.div
               {...reveal}
-              className="relative overflow-hidden rounded-[28px] text-white p-6 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10"
-              style={{
-                background:
-                  'radial-gradient(80% 90% at 50% -10%, rgba(255,255,255,0.14), transparent 70%), linear-gradient(180deg, #2a2a2e, #121214)',
-              }}
+              className="glass relative isolate flex flex-col gap-6 overflow-hidden rounded-[30px] p-5 sm:flex-row sm:items-center sm:gap-8 sm:p-8"
             >
-              <AppIcon size={72} />
-              <div className="flex-1">
-                <h2 className="text-[26px] sm:text-[32px] leading-[1.1] font-semibold tracking-[-0.03em]">Put it on your Home Screen.</h2>
-                <p className="text-[16px] text-white/75 mt-2">Opens full-screen, straight to today’s list.</p>
-                {isIOS() ? (
-                  <div className="mt-5 flex flex-wrap gap-2 text-[15px]">
-                    <span className="h-10 px-4 rounded-full bg-white/15 flex items-center gap-2">
-                      <Share size={15} /> Tap Share
-                    </span>
-                    <span className="h-10 px-4 rounded-full bg-white/15 flex items-center gap-2">
-                      <SquarePlus size={15} /> Add to Home Screen
-                    </span>
-                  </div>
-                ) : installPrompt ? (
-                  <button onClick={install} className="mt-5 inline-flex h-12 px-6 items-center gap-2 rounded-full bg-white text-[#121214] text-[16px] font-semibold">
-                    <Download size={17} /> Install {APP_NAME}
-                  </button>
-                ) : (
-                  <p className="mt-5 text-[15px] text-white/85">In your browser menu, choose “Install app” or “Add to Home Screen”.</p>
-                )}
+              <div aria-hidden="true" className="pointer-events-none absolute -right-12 -top-24 -z-10 h-72 w-72 rounded-full bg-white/[0.06] blur-3xl" />
+              <span className="glass-lens flex h-14 w-14 shrink-0 items-center justify-center rounded-full sm:h-[68px] sm:w-[68px]">
+                <Smartphone size={25} strokeWidth={1.7} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow text-label-2 mb-1">TAKE IT WITH YOU</p>
+                <h2 className="text-[25px] leading-tight font-semibold tracking-[-0.035em] sm:text-[30px]">Your study plan, one tap away.</h2>
+                <p className="mt-2 text-subhead leading-relaxed text-label-2">Install on iPhone, iPad, or Android. Opens like an app, no app store needed.</p>
               </div>
+              <button
+                type="button"
+                onClick={() => setInstallGuideOpen(true)}
+                aria-haspopup="dialog"
+                className="inline-flex h-[50px] shrink-0 items-center justify-center gap-2 rounded-full bg-tint px-6 text-subhead font-semibold text-tint-fg"
+              >
+                <Download size={17} /> Get the app
+              </button>
             </motion.div>
           </div>
         </section>
@@ -373,8 +476,12 @@ export default function LandingPage() {
       {/* Closing */}
       <section className="pb-16 sm:pb-24">
         <div className={WRAP}>
-          <motion.div {...reveal} className="bg-card rounded-[12px] px-6 py-12 sm:py-16 text-center flex flex-col items-center shadow-card">
-            <AppIcon size={60} />
+          <motion.div {...reveal} className="relative isolate flex flex-col items-center px-5 py-12 text-center sm:py-16">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-[15%] top-1/2 -z-10 h-40 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08),transparent_70%)] blur-2xl"
+            />
+            <AppIcon size={52} />
             <h2 className="text-[30px] sm:text-[44px] leading-[1.05] font-semibold tracking-[-0.04em] mt-6 max-w-[560px] text-balance">
               Start with the chapter you studied today.
             </h2>
@@ -402,6 +509,13 @@ export default function LandingPage() {
           </span>
         </div>
       </footer>
+
+      <InstallGuide
+        open={installGuideOpen}
+        onClose={() => setInstallGuideOpen(false)}
+        canInstall={Boolean(installPrompt)}
+        onInstall={install}
+      />
     </div>
   )
 }
