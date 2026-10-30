@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, ChartNoAxesCombined, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { Plus, ChartNoAxesCombined, PanelLeft, PanelLeftClose } from 'lucide-react'
 import { TABS } from './tabs'
 import AppIcon from '../ui/AppIcon'
 import Avatar from './Avatar'
@@ -60,7 +60,7 @@ export default function Sidebar({
 }) {
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus' && !collapsed
-  const ToggleIcon = collapsed ? PanelLeftOpen : PanelLeftClose
+  const ToggleIcon = collapsed ? PanelLeft : PanelLeftClose
 
   return (
     <motion.aside
@@ -78,9 +78,10 @@ export default function Sidebar({
             onClick={onToggle}
             title="Show sidebar (⌘\)"
             aria-label="Show sidebar"
-            className="h-11 w-11 rounded-full flex items-center justify-center text-label-2 hover:text-label hover:bg-fill"
+            className="group relative h-11 w-11 rounded-full flex items-center justify-center text-label-2 hover:text-label hover:bg-fill focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-label-2"
           >
-            <ToggleIcon size={19} strokeWidth={1.7} />
+            <AppIcon size={30} bare className="transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0" />
+            <ToggleIcon size={19} strokeWidth={1.7} className="absolute opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100" />
           </button>
         ) : (
           <>
