@@ -315,10 +315,10 @@ export default function LandingPage() {
               forget.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 max-w-[360px] sm:max-w-none mx-auto lg:mx-0">
-              <motion.div whileTap={{ scale: 0.97 }}>
+              <motion.div whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                 <Link
                   to={cta.to}
-                  className="flex h-[54px] px-7 items-center justify-center gap-2 rounded-full bg-tint text-tint-fg text-[17px] font-semibold shadow-float"
+                  className="flex h-[54px] w-full sm:w-auto px-7 items-center justify-center gap-2 rounded-full bg-tint text-tint-fg text-[17px] font-semibold shadow-float"
                 >
                   {cta.label} <ArrowRight size={18} strokeWidth={2.2} />
                 </Link>
@@ -329,13 +329,13 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.97 }}
                   onClick={beginInstall}
                   aria-haspopup="dialog"
-                  className="flex h-[54px] items-center justify-center gap-2 rounded-full glass-lens px-6 text-[17px] font-semibold"
+                  className="flex h-[50px] self-center sm:self-auto items-center justify-center gap-2 rounded-full glass px-5 text-subhead font-medium"
                 >
-                  <Download size={17} /> Install app
+                  <Download size={16} strokeWidth={1.9} /> Install app
                 </motion.button>
               )}
-              <a href="#how" className="flex h-[54px] px-6 items-center justify-center rounded-full glass text-[17px] font-medium">
-                How it works
+              <a href="#how" className="flex h-10 items-center justify-center gap-1.5 px-2 text-subhead font-medium text-label-2 hover:text-label">
+                How it works <ArrowRight size={14} />
               </a>
             </div>
           </motion.div>
