@@ -65,7 +65,7 @@ function Dial({ timer, big = false }) {
             </span>
             <span
               aria-hidden="true"
-              className={`font-display tabular leading-none ${big ? 'text-[clamp(4.5rem,16vw,9rem)]' : 'text-[clamp(3.6rem,17vw,4.8rem)]'}`}
+              className={`font-display tabular leading-none tracking-[-0.045em] ${big ? 'text-[clamp(3rem,10vw,6rem)]' : 'text-[clamp(3.6rem,17vw,4.8rem)]'}`}
             >
               {timer.mins}:{timer.secs}
             </span>
