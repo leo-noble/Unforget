@@ -141,6 +141,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const suggestions = useMemo(() => recommendChapters(chapters), [chapters])
   const nextEstimate = suggestions[0] ? estimateChapterMinutes(suggestions[0].id, cadence.focusSessions) : null
   const goalMinutes = cadence.prefs.weeklyFocusGoalMinutes
+  const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const weeklyStats = useMemo(() => weeklyFocusStats(cadence.focusSessions, cadence.pomodoroLog), [cadence.focusSessions, cadence.pomodoroLog])
   const eyebrow = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
 
@@ -174,11 +175,14 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
                 size="sm"
                 className="mt-4"
                 onClick={() => {
-                  if (timer.status === 'idle') timer.startForChapter(suggestions[0].id)
-                  onOpenFocus?.()
+                  if (!showFocusTimer) onOpenChapter(suggestions[0])
+                  else if (timer.status === 'idle') {
+                    timer.startForChapter(suggestions[0].id)
+                    onOpenFocus?.()
+                  } else onOpenFocus?.()
                 }}
               >
-                {timer.status === 'idle' ? <>Start focus <ArrowRight size={15} /></> : <>Open focus <ArrowRight size={15} /></>}
+                {!showFocusTimer ? <>View chapter <ArrowRight size={15} /></> : timer.status === 'idle' ? <>Start focus <ArrowRight size={15} /></> : <>Open focus <ArrowRight size={15} /></>}
               </Button>
             </>
           ) : chapters.length ? (

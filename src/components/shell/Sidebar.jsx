@@ -56,9 +56,10 @@ export default function Sidebar({
   chapterMap,
   collapsed,
   onToggle,
+  showFocusTimer = true,
 }) {
   const { status } = useTimerStatus()
-  const showTimer = status !== 'idle' && active !== 'focus' && !collapsed
+  const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus' && !collapsed
   const ToggleIcon = collapsed ? PanelLeftOpen : PanelLeftClose
 
   return (
@@ -116,7 +117,7 @@ export default function Sidebar({
       </motion.button>
 
       <nav className={`flex flex-col gap-1 ${collapsed ? 'items-center' : ''}`} aria-label="Sections">
-        {TABS.map((t) => (
+        {TABS.filter((tab) => showFocusTimer || tab.id !== 'focus').map((t) => (
           <Item
             key={t.id}
             icon={t.icon}

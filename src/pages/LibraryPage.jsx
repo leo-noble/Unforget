@@ -79,25 +79,25 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
       wide
     >
       {nextChapter && filter === 'all' && !query && (
-        <motion.button
-          type="button"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: easeOut }}
-          onClick={() => onOpenChapter(nextChapter)}
-          className="relative mb-5 grid w-full grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-[22px] border border-separator bg-card p-4 text-left sm:p-5"
-        >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-fill text-label-2"><Clock3 size={18} /></span>
-          <span className="min-w-0">
-            <span className="eyebrow text-label-2">Next to review</span>
-            <span className="mt-1 block truncate text-headline font-medium">{nextChapter.title}</span>
-            <span className="mt-0.5 block truncate text-footnote text-label-2">{nextEstimate.label} · {formatMinutes(nextEstimate.minutes)}</span>
-          </span>
-          <span className="flex items-center gap-1.5 rounded-full bg-fill px-3 py-2 text-footnote text-label-2">
-            <span className="max-w-[94px] truncate">{nextChapter.coachReason}</span>
-            <ArrowUpRight size={15} className="shrink-0" />
-          </span>
-        </motion.button>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: easeOut }} className="mb-5">
+          <Section prominent title="Next up">
+            <button
+              type="button"
+              onClick={() => onOpenChapter(nextChapter)}
+              style={{ '--inset': '58px' }}
+              className="flex min-h-[68px] w-full items-center gap-3 px-4 py-3 text-left active:bg-fill transition-colors duration-75"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill text-label-2"><Clock3 size={17} /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-body font-medium">{nextChapter.title}</span>
+                <span className="mt-0.5 block truncate text-footnote text-label-2">
+                  {nextChapter.coachReason} · {nextEstimate.label} · {formatMinutes(nextEstimate.minutes)}
+                </span>
+              </span>
+              <ArrowUpRight size={17} className="shrink-0 text-label-2" />
+            </button>
+          </Section>
+        </motion.div>
       )}
       {/* Search, iOS 26 style: a capsule field */}
       <div className="relative mb-3">

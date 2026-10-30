@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, BellRing, Clock, RefreshCw, Check, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
+import { Bell, BellRing, Clock, Timer, RefreshCw, Check, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -128,6 +128,21 @@ export default function SettingsSheet({ cadence, onClose }) {
               )
             })}
           </div>
+        </Section>
+
+        <Section title="Navigation" footer="You can study without using the Focus timer. Hide it from the dock and sidebar whenever you like.">
+          <Row
+            icon={Timer}
+            title="Show Focus timer"
+            subtitle="Keep Focus in app navigation"
+            trailing={
+              <Switch
+                checked={prefs.showFocusTimer !== false}
+                onChange={(showFocusTimer) => updatePrefs({ showFocusTimer })}
+                label="Show Focus timer"
+              />
+            }
+          />
         </Section>
 
         {/* Reminders */}

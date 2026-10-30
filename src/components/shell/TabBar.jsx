@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Fragment } from 'react'
 import { Plus } from 'lucide-react'
 import { TABS } from './tabs'
 import MiniTimer from './MiniTimer'
@@ -9,11 +10,15 @@ const pillSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.85 }
 
 // Four icon-only destinations stay together in the floating glass dock. The
 // add action keeps its own round control beside the dock.
-export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap }) {
+export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap, showFocusTimer = true }) {
   const { status } = useTimerStatus()
-  const showTimer = status !== 'idle' && active !== 'focus'
-  const activeIndex = Math.max(0, TABS.findIndex((tab) => tab.id === active))
-  const activeSlot = activeIndex < 2 ? activeIndex : activeIndex + 1
+  const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus'
+  const navTabs = showFocusTimer ? TABS : TABS.filter((tab) => tab.id !== 'focus')
+  const slotCount = navTabs.length + 1
+  const gridClass = slotCount === 5 ? 'grid-cols-5' : 'grid-cols-4'
+  const addSlot = Math.ceil(navTabs.length / 2)
+  const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === active))
+  const activeSlot = activeIndex < addSlot ? activeIndex : activeIndex + 1
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -43,7 +48,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
 
         <nav
           aria-label="Main navigation"
-          className="liquid-dock relative grid h-[66px] w-full grid-cols-5 items-center rounded-full p-1 pointer-events-auto"
+          className={`liquid-dock relative grid h-[66px] w-full ${gridClass} items-center rounded-full p-1 pointer-events-auto`}
         >
             <motion.span
               aria-hidden="true"
@@ -51,28 +56,33 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
               animate={{ x: `${activeSlot * 100}%` }}
               transition={{ type: 'spring', stiffness: 360, damping: 34, mass: 0.82 }}
               className="dock-lens pointer-events-none absolute left-1 top-1 bottom-1 z-0 rounded-full"
-              style={{ width: 'calc((100% - 8px) / 5)' }}
+              style={{ width: `calc((100% - 8px) / ${slotCount})` }}
             />
-            {TABS.slice(0, 2).map((tab) => (
-              <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
-            ))}
-          <motion.button
-            type="button"
-            onClick={onAdd}
-            whileTap={{ scale: 0.94 }}
-            transition={pillSpring}
-            aria-label="Add chapter"
-            title="Add chapter"
-            className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[52px] w-[52px] items-center justify-center rounded-full"
-          >
-            <Plus size={25} strokeWidth={1.9} />
-          </motion.button>
-            {TABS.slice(2).map((tab) => (
-              <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />
-            ))}
+          {navTabs.map((tab, index) => (
+            <Fragment key={tab.id}>
+              {index === addSlot && <AddDockButton onAdd={onAdd} />}
+              <DockTab tab={tab} active={active} onSelect={onSelect} />
+            </Fragment>
+          ))}
         </nav>
       </div>
     </div>
+  )
+}
+
+function AddDockButton({ onAdd }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onAdd}
+      whileTap={{ scale: 0.94 }}
+      transition={pillSpring}
+      aria-label="Add chapter"
+      title="Add chapter"
+      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[52px] w-[52px] items-center justify-center rounded-full"
+    >
+      <Plus size={25} strokeWidth={1.9} />
+    </motion.button>
   )
 }
 

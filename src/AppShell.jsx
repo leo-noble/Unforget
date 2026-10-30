@@ -55,6 +55,10 @@ export default function AppShell() {
   const profile = useMemo(() => ({ name: displayName, email: user?.email, avatarUrl }), [displayName, user?.email, avatarUrl])
   const { prefs, updatePrefs } = cadence
 
+  useEffect(() => {
+    if (tab === 'focus' && prefs.showFocusTimer === false) navigate('/dashboard', { replace: true })
+  }, [tab, prefs.showFocusTimer, navigate])
+
   // ---- appearance ----
   // Apply the chosen appearance live; system mode tracks the device.
   useEffect(() => {
@@ -186,6 +190,7 @@ export default function AppShell() {
           chapterMap={chapterMap}
           collapsed={sidebarCollapsed}
           onToggle={toggleSidebar}
+          showFocusTimer={prefs.showFocusTimer !== false}
         />
 
         <main className="relative md:pl-[var(--sidebar-w)] transition-[padding] duration-300 ease-ios">
@@ -211,6 +216,7 @@ export default function AppShell() {
           onAdd={openAdd}
           onOpenFocus={() => selectTab('focus')}
           chapterMap={chapterMap}
+          showFocusTimer={prefs.showFocusTimer !== false}
         />
       </div>
 

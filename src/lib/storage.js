@@ -116,6 +116,7 @@ export const DEFAULT_PREFS = {
   pomodoroAutoTransition: false,
   pomodoroSound: true,
   weeklyFocusGoalMinutes: null,
+  showFocusTimer: true,
 }
 
 export const SUBJECT_COLORS = [
