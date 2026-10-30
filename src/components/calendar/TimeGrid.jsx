@@ -360,8 +360,8 @@ export default function TimeGrid({
         {marks.slice(1, -1).map((m) => (
           <span
             key={m}
-            style={{ top: minutesToY(m, win) }}
-            className="absolute right-2.5 -translate-y-1/2 text-[11px] font-medium text-label-3 tabular whitespace-nowrap"
+            style={{ top: minutesToY(m, win) + 5 }}
+            className="absolute right-2 -translate-y-0 text-xs font-medium text-label-2 tabular whitespace-nowrap"
           >
             {minutesToLabel(m, { omitMinutes: true })}
           </span>
