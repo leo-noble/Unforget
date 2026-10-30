@@ -251,11 +251,13 @@ export default function LandingPage() {
     const prompt = installPrompt
     window.__unforgetInstallPrompt = null
     setInstallPrompt(null)
-    setInstallGuideOpen(false)
     try {
       prompt.prompt()
       const choice = await prompt.userChoice
-      if (choice?.outcome === 'accepted') setInstalled(true)
+      if (choice?.outcome === 'accepted') {
+        setInstalled(true)
+        setInstallGuideOpen(false)
+      }
     } catch {
       // The browser may withdraw its prompt if its install criteria changed.
       setInstallGuideOpen(true)
@@ -263,10 +265,7 @@ export default function LandingPage() {
   }
 
   function beginInstall() {
-    // Android and desktop browsers can show their native install confirmation
-    // directly from this click. iOS intentionally opens the guided sheet.
-    if (!isIOS() && installPrompt) void install()
-    else setInstallGuideOpen(true)
+    setInstallGuideOpen(true)
   }
 
   const cta = session ? { to: '/dashboard', label: 'Open Today' } : { to: '/login', label: 'Get started — free' }
@@ -324,6 +323,17 @@ export default function LandingPage() {
                   {cta.label} <ArrowRight size={18} strokeWidth={2.2} />
                 </Link>
               </motion.div>
+              {!installed && (
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.97 }}
+                  onClick={beginInstall}
+                  aria-haspopup="dialog"
+                  className="flex h-[54px] items-center justify-center gap-2 rounded-full glass-lens px-6 text-[17px] font-semibold"
+                >
+                  <Download size={17} /> Install app
+                </motion.button>
+              )}
               <a href="#how" className="flex h-[54px] px-6 items-center justify-center rounded-full glass text-[17px] font-medium">
                 How it works
               </a>
