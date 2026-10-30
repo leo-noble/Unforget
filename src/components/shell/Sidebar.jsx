@@ -24,7 +24,7 @@ function Item({ icon: Icon, label, selected, onClick, badge, collapsed }) {
         selected ? 'text-label font-medium' : 'text-label-2 hover:text-label hover:bg-fill'
       }`}
     >
-      {selected && <motion.span layoutId="sidebar-lens" transition={snappy} className="glass-lens absolute inset-0 rounded-full" />}
+      {selected && <motion.span layoutId="sidebar-lens" transition={snappy} className="desktop-nav-active absolute inset-0 rounded-full" />}
       <span className="relative">
         <Icon size={20} strokeWidth={selected ? 2.1 : 1.7} />
         {collapsed && badge > 0 && (
@@ -67,8 +67,8 @@ export default function Sidebar({
       initial={false}
       animate={{ width: collapsed ? 68 : 260 }}
       transition={widthSpring}
-      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 glass desktop-glass flex-col py-3 overflow-hidden ${
-        collapsed ? 'rounded-[34px]' : 'rounded-[28px]'
+      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 desktop-sidebar flex-col py-3 overflow-hidden ${
+        collapsed ? 'rounded-[22px]' : 'rounded-[18px]'
       } ${
         collapsed ? 'items-center px-0' : 'px-3'
       }`}
