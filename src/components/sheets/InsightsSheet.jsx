@@ -28,6 +28,7 @@ function Tile({ icon: Icon, value, label, accent = false }) {
 // that say the work is adding up, without a whole tab to itself.
 export default function InsightsSheet({ cadence, onClose, asPage = false, account }) {
   const { subjects, chapters, events, streak, focusSessions, pomodoroLog } = cadence
+  const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const [picked, setPicked] = useState(null)
 
   const totals = useMemo(() => {
@@ -85,8 +86,8 @@ export default function InsightsSheet({ cadence, onClose, asPage = false, accoun
           />
           <Tile icon={CheckCheck} value={totals.completed} label="Reviews done" />
           <Tile icon={Award} value={totals.mastered} label="Mastered" />
-          <Tile icon={Clock3} value={formatMinutes(focusWeek.minutes)} label="Focus this week" />
-          <Tile icon={Target} value={focusWeek.sessions} label="Focus sessions" />
+          {showFocusTimer && <Tile icon={Clock3} value={formatMinutes(focusWeek.minutes)} label="Focus this week" />}
+          {showFocusTimer && <Tile icon={Target} value={focusWeek.sessions} label="Focus sessions" />}
         </div>
 
         <Section title="Last 30 days">

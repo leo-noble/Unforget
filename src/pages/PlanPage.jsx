@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ChevronDown, Plus, Clock3 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, Plus, Clock3, CalendarDays } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { IconButton } from '../components/ui/Button'
 import Segmented from '../components/ui/Segmented'
@@ -88,6 +88,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
   } = cadence
   const desktop = useIsDesktop()
   const todayISO = toISODate(new Date())
+  const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const focusWeek = useMemo(() => weeklyFocusStats(cadence.focusSessions, cadence.pomodoroLog), [cadence.focusSessions, cadence.pomodoroLog])
   const activeWeekDates = useMemo(
     () => new Set(Array.from({ length: 7 }, (_, i) => toISODate(addDays(startOfDay(focusWeek.startDate), i)))),
@@ -269,13 +270,13 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
         />
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: easeOut }} className="mb-4 flex items-center gap-3 rounded-[20px] bg-card px-4 py-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fill"><Clock3 size={16} /></span>
+      {(showFocusTimer || plannedThisWeek > 0) && <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: easeOut }} className="mb-4 flex items-center gap-3 rounded-[20px] bg-card px-4 py-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fill">{showFocusTimer ? <Clock3 size={16} /> : <CalendarDays size={16} />}</span>
         <div className="min-w-0 flex-1">
-          <p className="text-footnote font-medium">This week · {formatMinutes(focusWeek.minutes)} focused · {plannedThisWeek} planned</p>
-          <p className="text-caption text-label-2">Your study rhythm, alongside the plan.</p>
+          <p className="text-footnote font-medium">{showFocusTimer ? `This week · ${formatMinutes(focusWeek.minutes)} focused · ${plannedThisWeek} planned` : `This week · ${plannedThisWeek} planned`}</p>
+          <p className="text-caption text-label-2">{showFocusTimer ? 'Your study rhythm, alongside the plan.' : 'Your planned study sessions.'}</p>
         </div>
-        {cadence.prefs.weeklyFocusGoalMinutes && (
+        {showFocusTimer && cadence.prefs.weeklyFocusGoalMinutes && (
           <div className="w-14 shrink-0">
             <span className="block text-right text-caption text-label-2">{Math.min(100, Math.round(focusWeek.minutes / cadence.prefs.weeklyFocusGoalMinutes * 100))}%</span>
             <div className="mt-1 h-1.5 rounded-full bg-fill-2 overflow-hidden" aria-hidden="true">
@@ -283,7 +284,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
             </div>
           </div>
         )}
-      </motion.div>
+      </motion.div>}
 
       {!desktop && view === 'day' && (
         <WeekStrip

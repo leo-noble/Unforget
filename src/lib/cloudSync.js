@@ -145,8 +145,15 @@ export function mergeSnapshots(local, remote) {
     // Settings and streak aren't collections — take the server's, since
     // that's the copy every device agrees on.
     prefs: { ...left.prefs, ...right.prefs },
-    streak:
-      (left.streak?.count ?? 0) > (right.streak?.count ?? 0) ? left.streak : right.streak,
+    streak: (() => {
+      const preferred = (left.streak?.count ?? 0) > (right.streak?.count ?? 0)
+        ? left.streak
+        : right.streak || left.streak || { count: 0, lastCompletedDay: null }
+      const completedDays = [...new Set([...(left.streak?.completedDays || []), ...(right.streak?.completedDays || [])])]
+        .sort()
+        .slice(-365)
+      return { ...preferred, completedDays }
+    })(),
   }
 }
 

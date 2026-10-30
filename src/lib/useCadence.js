@@ -17,6 +17,7 @@ import {
   snoozeChapter,
   markStruggled,
   masterEarly,
+  addDays,
   nextReviewDateForIndex,
   toISODate,
   MAX_REVIEW_INDEX,
@@ -327,10 +328,14 @@ export function useCadence(userId) {
     const stillDue = store.getChapters().some((c) => isDueOrOverdue(c))
     setStreak((prev) => {
       if (stillDue) return prev
-      if (prev.lastCompletedDay === today) return prev
-      const yesterday = toISODate(new Date(Date.now() - 86400000))
+      const completedDays = Array.isArray(prev.completedDays) ? prev.completedDays : []
+      if (prev.lastCompletedDay === today) {
+        if (completedDays.includes(today)) return prev
+        return { ...prev, completedDays: [...new Set([...completedDays, today])].sort().slice(-365) }
+      }
+      const yesterday = toISODate(addDays(new Date(), -1))
       const count = prev.lastCompletedDay === yesterday ? prev.count + 1 : 1
-      return { count, lastCompletedDay: today }
+      return { count, lastCompletedDay: today, completedDays: [...new Set([...completedDays, today])].sort().slice(-365) }
     })
   }, [])
 

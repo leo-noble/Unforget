@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Clock3, Plus, Sparkles, Target } from 'lucide-react'
+import { ArrowRight, Clock3, Flame, Plus, Sparkles, Target } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
@@ -12,6 +12,7 @@ import { spring, easeOut } from '../components/ui/motion'
 import { useTimer } from '../lib/TimerContext'
 import { estimateChapterMinutes, formatMinutes, recommendChapters, weeklyFocusStats } from '../lib/studyCoach'
 import WeeklyGoalSheet from '../components/sheets/WeeklyGoalSheet'
+import StreakSheet from '../components/sheets/StreakSheet'
 
 const stagger = (i) => ({
   initial: { opacity: 0, y: 12 },
@@ -74,7 +75,7 @@ function TodayHero({ name, done, remaining, overdue }) {
 }
 
 // Last seven days as columns of dots — a dot-matrix bar chart.
-function WeekDots({ events, streak = 0 }) {
+function WeekDots({ events, streak = 0, onOpenStreak, onOpenInsights }) {
   const ROWS = 6
   const days = useMemo(() => {
     const today = new Date()
@@ -94,9 +95,12 @@ function WeekDots({ events, streak = 0 }) {
     <div className="flex items-end justify-between gap-4">
       <div>
         <p className="font-display text-[44px] leading-[0.9]">{week}</p>
-        <p className="text-footnote text-label-2 mt-1.5">{week === 1 ? 'review' : 'reviews'} · {streak}-day streak</p>
+        <p className="text-footnote text-label-2 mt-1.5">{week === 1 ? 'review' : 'reviews'}</p>
+        <button type="button" onClick={onOpenStreak} className="mt-1 inline-flex min-h-8 items-center gap-1.5 rounded-full pr-2 text-footnote text-label-2 hover:text-label hover:bg-fill" aria-label={`Open study streak: ${streak} days`}>
+          <Flame size={13} className="text-label-3" /> {streak}-day streak
+        </button>
       </div>
-      <div className="flex items-end gap-[9px]">
+      <button type="button" onClick={onOpenInsights} className="flex items-end gap-[9px] rounded-2xl px-2 py-1 hover:bg-fill" aria-label="Open review activity insights">
         {days.map((x, i) => (
           <div key={x.d} className="flex flex-col items-center gap-[5px]">
             {Array.from({ length: ROWS }).map((_, r) => {
@@ -115,7 +119,7 @@ function WeekDots({ events, streak = 0 }) {
             <span className={`text-[10px] mt-1 ${i === 6 ? 'text-label font-medium' : 'text-label-3'}`}>{letter(x.d)}</span>
           </div>
         ))}
-      </div>
+      </button>
     </div>
   )
 }
@@ -124,6 +128,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const { overdue, dueToday, chapters, events, streak, subjectMap } = cadence
   const timer = useTimer()
   const [showGoal, setShowGoal] = useState(false)
+  const [showStreak, setShowStreak] = useState(false)
 
   const doneToday = useMemo(() => {
     const t = todayISO()
@@ -140,15 +145,15 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   )
 
   const remaining = overdue.length + dueToday.length
+  const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const suggestions = useMemo(() => recommendChapters(chapters), [chapters])
-  const nextEstimate = suggestions[0] ? estimateChapterMinutes(suggestions[0].id, cadence.focusSessions) : null
+  const nextEstimate = showFocusTimer && suggestions[0] ? estimateChapterMinutes(suggestions[0].id, cadence.focusSessions) : null
   const queue = useMemo(() => suggestions.map((chapter) => ({
     chapter,
-    estimate: estimateChapterMinutes(chapter.id, cadence.focusSessions),
-  })), [suggestions, cadence.focusSessions])
-  const queueMinutes = queue.reduce((total, item) => total + item.estimate.minutes, 0)
+    estimate: showFocusTimer ? estimateChapterMinutes(chapter.id, cadence.focusSessions) : null,
+  })), [suggestions, cadence.focusSessions, showFocusTimer])
+  const queueMinutes = queue.reduce((total, item) => total + (item.estimate?.minutes || 0), 0)
   const goalMinutes = cadence.prefs.weeklyFocusGoalMinutes
-  const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const weeklyStats = useMemo(() => weeklyFocusStats(cadence.focusSessions, cadence.pomodoroLog), [cadence.focusSessions, cadence.pomodoroLog])
   const eyebrow = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
 
@@ -169,13 +174,13 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
       <div className="relative flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill"><Sparkles size={18} /></span>
         <div className="min-w-0 flex-1">
-          <p className="eyebrow text-label-2">{suggestions.length > 1 ? `Study queue · ${suggestions.length} chapters · ~${formatMinutes(queueMinutes)}` : 'Study coach · next up'}</p>
+          <p className="eyebrow text-label-2">{suggestions.length > 1 ? `Study queue · ${suggestions.length} chapters${showFocusTimer ? ` · ~${formatMinutes(queueMinutes)}` : ''}` : 'Study coach · next up'}</p>
           {suggestions.length ? (
             <>
               <h2 className="mt-2 text-title-2 font-medium leading-tight">{suggestions[0].title}</h2>
               <p className="mt-1 text-subhead text-label-2">{suggestions[0].coachReason}</p>
               <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-footnote text-label-2">
-                <span className="inline-flex items-center gap-1.5"><Clock3 size={14} /> {nextEstimate.label} · {formatMinutes(nextEstimate.minutes)}</span>
+                {nextEstimate && <span className="inline-flex items-center gap-1.5"><Clock3 size={14} /> {nextEstimate.label} · {formatMinutes(nextEstimate.minutes)}</span>}
                 <span>{subjectMap.get(suggestions[0].subjectId)?.name}</span>
               </div>
               <Button
@@ -209,7 +214,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
                     >
                       <span className="min-w-0 flex-1">
                         <span className="block text-body truncate">{chapter.title}</span>
-                        <span className="block text-footnote text-label-2 truncate">{chapter.coachReason} · {estimate.label}: {formatMinutes(estimate.minutes)}</span>
+                        <span className="block text-footnote text-label-2 truncate">{chapter.coachReason}{estimate ? ` · ${estimate.label}: ${formatMinutes(estimate.minutes)}` : ''}</span>
                       </span>
                       <ArrowRight size={15} className="shrink-0 text-label-2" />
                     </button>
@@ -263,10 +268,8 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const insights = (
     <Section prominent title="This week" className="lg:col-span-2">
       <div className="p-5">
-        <button type="button" onClick={onOpenInsights} className="w-full text-left active:bg-fill transition-colors duration-75">
-          <WeekDots events={events} streak={streak.count} />
-        </button>
-        <div className="mt-4 border-t border-separator pt-3">
+        <WeekDots events={events} streak={streak.count} onOpenStreak={() => setShowStreak(true)} onOpenInsights={onOpenInsights} />
+        {showFocusTimer && <div className="mt-4 border-t border-separator pt-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-footnote text-label-2"><Target size={15} /> Weekly focus</div>
             <button type="button" className="min-h-9 rounded-full px-3 text-footnote font-medium hover:bg-fill" onClick={() => setShowGoal(true)}>
@@ -284,7 +287,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
               </div>
             </>
           ) : <p className="mt-1 text-footnote text-label-2">Choose a weekly target; completed Focus time adds up here.</p>}
-        </div>
+        </div>}
       </div>
     </Section>
   )
@@ -321,7 +324,10 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
         {insights}
         {comingUp}
       </div>
-      <AnimatePresence>{showGoal && <WeeklyGoalSheet key="weekly-goal" value={goalMinutes} onClose={() => setShowGoal(false)} onSave={(minutes) => { cadence.updatePrefs({ weeklyFocusGoalMinutes: minutes }); setShowGoal(false) }} />}</AnimatePresence>
+      <AnimatePresence>
+        {showFocusTimer && showGoal && <WeeklyGoalSheet key="weekly-goal" value={goalMinutes} onClose={() => setShowGoal(false)} onSave={(minutes) => { cadence.updatePrefs({ weeklyFocusGoalMinutes: minutes }); setShowGoal(false) }} />}
+        {showStreak && <StreakSheet key="streak-sheet" streak={streak} onClose={() => setShowStreak(false)} />}
+      </AnimatePresence>
     </Page>
   )
 }

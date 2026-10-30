@@ -329,7 +329,8 @@ export function savePrefs(prefs) {
 
 // ---------- Streak ----------
 export function getStreakData() {
-  return read(KEYS.streak, { count: 0, lastCompletedDay: null })
+  const streak = read(KEYS.streak, { count: 0, lastCompletedDay: null })
+  return { ...streak, completedDays: Array.isArray(streak.completedDays) ? streak.completedDays : [] }
 }
 export function saveStreakData(data) {
   write(KEYS.streak, data)

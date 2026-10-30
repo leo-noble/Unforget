@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 import { usePomodoro } from './usePomodoro'
 
 // The focus timer lives above the tabs, so it keeps running — and keeps
@@ -12,7 +12,16 @@ const TimerStatusContext = createContext({ status: 'idle', phase: 'work' })
 
 export function TimerProvider({ prefs, updatePrefs, children }) {
   const timer = usePomodoro({ prefs, updatePrefs })
-  const status = useMemo(() => ({ status: timer.status, phase: timer.phase }), [timer.status, timer.phase])
+  const timerStatus = timer.status
+  const stopTimer = timer.stop
+
+  // Turning Focus off also ends any active/paused timer. This avoids leaving
+  // a clock running invisibly after its controls have been removed.
+  useEffect(() => {
+    if (prefs.showFocusTimer === false && timerStatus !== 'idle') stopTimer()
+  }, [prefs.showFocusTimer, timerStatus, stopTimer])
+
+  const status = useMemo(() => ({ status: timerStatus, phase: timer.phase }), [timerStatus, timer.phase])
   return (
     <TimerStatusContext.Provider value={status}>
       <TimerContext.Provider value={timer}>{children}</TimerContext.Provider>

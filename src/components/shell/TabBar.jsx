@@ -73,9 +73,9 @@ function AddDockButton({ onAdd }) {
       transition={pillSpring}
       aria-label="Add chapter"
       title="Add chapter"
-      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[52px] w-[52px] items-center justify-center rounded-full"
+      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full"
     >
-      <Plus size={25} strokeWidth={1.9} />
+      <Plus size={27} strokeWidth={1.9} />
     </motion.button>
   )
 }

@@ -130,7 +130,7 @@ export default function SettingsSheet({ cadence, onClose }) {
           </div>
         </Section>
 
-        <Section title="Navigation" footer="You can study without using the Focus timer. Hide it from the dock and sidebar whenever you like.">
+        <Section title="Navigation" footer="Turn Focus off to hide its timer, estimates and study-time summaries, and stop any active timer.">
           <Row
             icon={Timer}
             title="Show Focus timer"

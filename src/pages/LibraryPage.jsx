@@ -57,7 +57,8 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
 
   const anyVisible = [...groups.values()].some((l) => l.length > 0)
   const nextChapter = useMemo(() => recommendChapters(chapters)[0], [chapters])
-  const nextEstimate = nextChapter ? estimateChapterMinutes(nextChapter.id, cadence.focusSessions) : null
+  const showFocusTimer = cadence.prefs.showFocusTimer !== false
+  const nextEstimate = showFocusTimer && nextChapter ? estimateChapterMinutes(nextChapter.id, cadence.focusSessions) : null
 
   async function deleteSubject(subject, count) {
     const ok = await confirm({
@@ -91,7 +92,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-body font-medium">{nextChapter.title}</span>
                 <span className="mt-0.5 block truncate text-footnote text-label-2">
-                  {nextChapter.coachReason} · {nextEstimate.label} · {formatMinutes(nextEstimate.minutes)}
+                  {nextChapter.coachReason}{nextEstimate ? ` · ${nextEstimate.label} · ${formatMinutes(nextEstimate.minutes)}` : ''}
                 </span>
               </span>
               <ArrowUpRight size={17} className="shrink-0 text-label-2" />
