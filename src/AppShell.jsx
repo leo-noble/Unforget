@@ -197,7 +197,7 @@ export default function AppShell() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
           >
-            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenInsights={() => setSheet('insights')} />}
+            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenFocus={() => selectTab('focus')} onOpenInsights={() => setSheet('insights')} />}
             {tab === 'library' && <LibraryPage {...pageProps} onAdd={openAdd} />}
             {tab === 'plan' && <PlanPage {...pageProps} />}
             {tab === 'focus' && <FocusPage {...pageProps} />}

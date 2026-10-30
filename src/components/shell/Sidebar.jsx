@@ -66,7 +66,9 @@ export default function Sidebar({
       initial={false}
       animate={{ width: collapsed ? 68 : 260 }}
       transition={widthSpring}
-      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 glass rounded-[30px] flex-col py-3 overflow-hidden ${
+      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 glass desktop-glass flex-col py-3 overflow-hidden ${
+        collapsed ? 'rounded-[34px]' : 'rounded-[28px]'
+      } ${
         collapsed ? 'items-center px-0' : 'px-3'
       }`}
     >

@@ -33,6 +33,9 @@ const BASE = {
   events: 'cadence.events',
   prefs: 'cadence.prefs',
   streak: 'cadence.streak',
+  pomodoroLog: 'cadence.pomodoroLog',
+  focusSessions: 'cadence.focusSessions',
+  tombstones: 'cadence.syncTombstones',
   plans: 'cadence.studyPlans', // now stores blocks, not date-range plans
 }
 
@@ -60,6 +63,41 @@ function write(key, value) {
   localStorage.setItem(key, JSON.stringify(value))
 }
 
+const SYNC_COLLECTIONS = ['subjects', 'chapters', 'events', 'blocks']
+
+export function getSyncTombstones() {
+  const stored = read(KEYS.tombstones, {})
+  return Object.fromEntries(
+    SYNC_COLLECTIONS.map((collection) => [
+      collection,
+      Array.isArray(stored[collection]) ? [...new Set(stored[collection])] : [],
+    ])
+  )
+}
+
+export function saveSyncTombstones(tombstones) {
+  const next = Object.fromEntries(
+    SYNC_COLLECTIONS.map((collection) => [
+      collection,
+      Array.isArray(tombstones?.[collection]) ? [...new Set(tombstones[collection])] : [],
+    ])
+  )
+  write(KEYS.tombstones, next)
+}
+
+function saveCollection(key, collection, previous, next) {
+  const beforeIds = new Set((previous || []).map((item) => item?.id).filter(Boolean))
+  const afterIds = new Set((next || []).map((item) => item?.id).filter(Boolean))
+  const tombstones = getSyncTombstones()
+  const removed = [...beforeIds].filter((id) => !afterIds.has(id))
+  const retained = tombstones[collection].filter((id) => !afterIds.has(id))
+  if (removed.length || retained.length !== tombstones[collection].length) {
+    tombstones[collection] = [...new Set([...retained, ...removed])]
+    saveSyncTombstones(tombstones)
+  }
+  write(key, next)
+}
+
 function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
 }
@@ -77,6 +115,7 @@ export const DEFAULT_PREFS = {
   pomodoroCycleLength: 4, // focus sessions before a long break
   pomodoroAutoTransition: false,
   pomodoroSound: true,
+  weeklyFocusGoalMinutes: null,
 }
 
 export const SUBJECT_COLORS = [
@@ -88,7 +127,7 @@ export function getSubjects() {
   return read(KEYS.subjects, [])
 }
 export function saveSubjects(subjects) {
-  write(KEYS.subjects, subjects)
+  saveCollection(KEYS.subjects, 'subjects', getSubjects(), subjects)
 }
 export function addSubject({ name, colorTag }) {
   const subjects = getSubjects()
@@ -108,7 +147,7 @@ export function getChapters() {
   return read(KEYS.chapters, [])
 }
 export function saveChapters(chapters) {
-  write(KEYS.chapters, chapters)
+  saveCollection(KEYS.chapters, 'chapters', getChapters(), chapters)
 }
 export function getChapter(id) {
   return getChapters().find((c) => c.id === id) || null
@@ -164,7 +203,7 @@ export function getStudyBlocks() {
   return normalizeBlocks(read(KEYS.plans, []))
 }
 export function saveStudyBlocks(blocks) {
-  write(KEYS.plans, blocks)
+  saveCollection(KEYS.plans, 'blocks', getStudyBlocks(), blocks)
 }
 
 // Every calendar date a legacy date-range plan covered, inclusive of both
@@ -246,7 +285,7 @@ export function getEvents() {
   return read(KEYS.events, [])
 }
 export function saveEvents(events) {
-  write(KEYS.events, events)
+  saveCollection(KEYS.events, 'events', getEvents(), events)
 }
 export function logEvent({ chapterId, scheduledDate, action }) {
   const events = getEvents()
@@ -312,11 +351,33 @@ const POMODORO_LOG_KEY = 'cadence.pomodoroLog'
 export function getPomodoroLog() {
   return read(scoped(POMODORO_LOG_KEY), {}) // { 'YYYY-MM-DD': { sessions: n, minutes: n } }
 }
-export function logPomodoroSession(dateStr, minutes) {
+export function savePomodoroLog(log) {
+  write(scoped(POMODORO_LOG_KEY), log || {})
+}
+export function getFocusSessions() {
+  return read(scoped('cadence.focusSessions'), [])
+}
+export function saveFocusSessions(sessions) {
+  write(scoped('cadence.focusSessions'), Array.isArray(sessions) ? sessions : [])
+}
+export function logPomodoroSession(dateStr, minutes, chapterId = null) {
   const log = getPomodoroLog()
   const entry = log[dateStr] || { sessions: 0, minutes: 0 }
   log[dateStr] = { sessions: entry.sessions + 1, minutes: entry.minutes + minutes }
-  write(scoped(POMODORO_LOG_KEY), log)
+  savePomodoroLog(log)
+  const sessions = getFocusSessions()
+  sessions.push({
+    id: uid(),
+    date: dateStr,
+    minutes,
+    chapterId: typeof chapterId === 'string' && chapterId ? chapterId : null,
+    completedAt: new Date().toISOString(),
+  })
+  saveFocusSessions(sessions)
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('cadence:pomodoro-log-change'))
+    window.dispatchEvent(new Event('cadence:focus-session-change'))
+  }
   return log[dateStr]
 }
 
@@ -406,6 +467,8 @@ export function exportAllData() {
       blocks: getStudyBlocks(),
       prefs: getPrefs(),
       streak: getStreakData(),
+      pomodoroLog: getPomodoroLog(),
+      focusSessions: getFocusSessions(),
     },
     null,
     2
@@ -430,6 +493,8 @@ export function importAllData(jsonString) {
   else if (Array.isArray(data.plans)) saveStudyBlocks(data.plans)
   if (data.prefs && typeof data.prefs === 'object') savePrefs(data.prefs)
   if (data.streak && typeof data.streak === 'object') saveStreakData(data.streak)
+  if (data.pomodoroLog && typeof data.pomodoroLog === 'object') savePomodoroLog(data.pomodoroLog)
+  if (Array.isArray(data.focusSessions)) saveFocusSessions(data.focusSessions)
   return { ok: true }
 }
 
@@ -438,12 +503,21 @@ export function importAllData(jsonString) {
 // responsible for confirming with the user first (and for clearing the
 // server copy, which is what actually persists).
 export function deleteAllData() {
+  const existing = getSyncTombstones()
+  saveSyncTombstones({
+    subjects: [...existing.subjects, ...getSubjects().map((item) => item.id)],
+    chapters: [...existing.chapters, ...getChapters().map((item) => item.id)],
+    events: [...existing.events, ...getEvents().map((item) => item.id)],
+    blocks: [...existing.blocks, ...getStudyBlocks().map((item) => item.id)],
+  })
   localStorage.removeItem(KEYS.subjects)
   localStorage.removeItem(KEYS.chapters)
   localStorage.removeItem(KEYS.events)
   localStorage.removeItem(KEYS.plans)
   localStorage.removeItem(KEYS.prefs)
   localStorage.removeItem(KEYS.streak)
+  localStorage.removeItem(KEYS.pomodoroLog)
+  localStorage.removeItem(KEYS.focusSessions)
 }
 
 // ---------- Snapshots ----------
@@ -458,11 +532,15 @@ export function readSnapshot() {
     blocks: getStudyBlocks(),
     prefs: getPrefs(),
     streak: getStreakData(),
+    pomodoroLog: getPomodoroLog(),
+    focusSessions: getFocusSessions(),
+    tombstones: getSyncTombstones(),
   }
 }
 
 export function writeSnapshot(snap) {
   if (!snap) return
+  if (snap.tombstones) saveSyncTombstones(snap.tombstones)
   if (Array.isArray(snap.subjects)) saveSubjects(snap.subjects)
   if (Array.isArray(snap.chapters)) saveChapters(snap.chapters)
   if (Array.isArray(snap.events)) saveEvents(snap.events)
@@ -473,6 +551,8 @@ export function writeSnapshot(snap) {
   if (Array.isArray(blocks)) saveStudyBlocks(normalizeBlocks(blocks))
   if (snap.prefs) savePrefs(snap.prefs)
   if (snap.streak) saveStreakData(snap.streak)
+  if (snap.pomodoroLog) savePomodoroLog(snap.pomodoroLog)
+  if (Array.isArray(snap.focusSessions)) saveFocusSessions(snap.focusSessions)
 }
 
 /**
@@ -485,13 +565,21 @@ export function claimLegacyData() {
   const prior = scope
   scope = 'anon'
   const legacy = readSnapshot()
-  const hasData = legacy.subjects.length > 0 || legacy.chapters.length > 0
+  const hasData =
+    legacy.subjects.length > 0 ||
+    legacy.chapters.length > 0 ||
+    Object.keys(legacy.pomodoroLog || {}).length > 0 ||
+    legacy.focusSessions.length > 0 ||
+    SYNC_COLLECTIONS.some((collection) => legacy.tombstones[collection].length > 0)
   if (hasData) {
     localStorage.removeItem(BASE.subjects)
     localStorage.removeItem(BASE.chapters)
     localStorage.removeItem(BASE.events)
     localStorage.removeItem(BASE.plans)
     localStorage.removeItem(BASE.streak)
+    localStorage.removeItem(BASE.pomodoroLog)
+    localStorage.removeItem(BASE.focusSessions)
+    localStorage.removeItem(BASE.tombstones)
     // Prefs go too, or the next account to sign in on this browser inherits
     // the first one's theme — the same class of leak as the data itself.
     localStorage.removeItem(BASE.prefs)

@@ -133,7 +133,8 @@ export function usePomodoro({ prefs, updatePrefs }) {
           remainingMs: durationMsFor(next),
           cycleCount: nextCount,
           linkedChapterId: saved.linkedChapterId || '',
-          _pendingLog: wasWork ? { minutes: workMin } : null,
+          sessionChapterId: saved.sessionChapterId || null,
+          _pendingLog: wasWork ? { minutes: workMin, chapterId: saved.sessionChapterId || null } : null,
         }
       }
       return {
@@ -142,6 +143,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
         remainingMs: remaining,
         cycleCount: saved.cycleCount || 0,
         linkedChapterId: saved.linkedChapterId || '',
+        sessionChapterId: saved.sessionChapterId || null,
       }
     }
     return {
@@ -151,6 +153,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
         typeof saved.remainingMs === 'number' ? saved.remainingMs : durationMsFor(saved.phase || 'work'),
       cycleCount: saved.cycleCount || 0,
       linkedChapterId: saved.linkedChapterId || '',
+      sessionChapterId: saved.sessionChapterId || null,
     }
     // Restoring is a mount-time concern: re-deriving it when durations change
     // would throw away a running timer.
@@ -171,13 +174,14 @@ export function usePomodoro({ prefs, updatePrefs }) {
   const [announcement, setAnnouncement] = useState('')
 
   const endAtRef = useRef(status === 'running' ? Date.now() + initial.remainingMs : null)
+  const sessionChapterIdRef = useRef(initial.sessionChapterId || initial._pendingLog?.chapterId || null)
   const rafRef = useRef(null)
 
   // A work session that completed while this page wasn't open still needs to
   // be logged, exactly once, after mount.
   useEffect(() => {
     if (initial._pendingLog) {
-      setTodayStats(logPomodoroSession(toISODate(new Date()), initial._pendingLog.minutes))
+      setTodayStats(logPomodoroSession(toISODate(new Date()), initial._pendingLog.minutes, initial._pendingLog.chapterId))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -197,6 +201,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
       remainingMs: status === 'running' ? null : remainingMs,
       cycleCount,
       linkedChapterId,
+      sessionChapterId: status === 'idle' ? null : sessionChapterIdRef.current,
     })
   }, [phase, status, remainingMs, cycleCount, linkedChapterId])
 
@@ -227,7 +232,8 @@ export function usePomodoro({ prefs, updatePrefs }) {
     if (ended === 'work') {
       nextCount = cycleCount + 1
       setCycleCount(nextCount)
-      setTodayStats(logPomodoroSession(toISODate(new Date()), workMin))
+      setTodayStats(logPomodoroSession(toISODate(new Date()), workMin, sessionChapterIdRef.current))
+      sessionChapterIdRef.current = null
     }
     if (soundEnabled) playChime(ended)
     notifyPhaseEnd(ended)
@@ -238,10 +244,22 @@ export function usePomodoro({ prefs, updatePrefs }) {
 
   // ---- controls ----
   const start = useCallback(() => {
+    if (phase === 'work') sessionChapterIdRef.current = linkedChapterId || null
     endAtRef.current = Date.now() + remainingMs
     setStatus('running')
     setAnnouncement(`${PHASE_META[phase].label} started.`)
-  }, [remainingMs, phase])
+  }, [remainingMs, phase, linkedChapterId])
+
+  const startForChapter = useCallback((chapterId) => {
+    const duration = durationMsFor('work')
+    sessionChapterIdRef.current = chapterId || null
+    setLinkedChapterId(chapterId || '')
+    setPhase('work')
+    setRemainingMs(duration)
+    endAtRef.current = Date.now() + duration
+    setStatus('running')
+    setAnnouncement('Focus started for the recommended chapter.')
+  }, [durationMsFor])
 
   const pause = useCallback(() => {
     setRemainingMs(Math.max(0, endAtRef.current - Date.now()))
@@ -264,6 +282,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
   // Reset returns the *current* phase to its full duration. It deliberately
   // doesn't touch the cycle — you're restarting this session, not the day.
   const reset = useCallback(() => {
+    sessionChapterIdRef.current = null
     setStatus('idle')
     setRemainingMs(durationMsFor(phase))
     setAnnouncement(`${PHASE_META[phase].label} reset.`)
@@ -278,6 +297,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
    * about unattended transitions, and someone pressing Skip is right there.
    */
   const skip = useCallback(() => {
+    sessionChapterIdRef.current = null
     const next = phaseAfter(phase, phase === 'work' ? cycleCount + 1 : cycleCount)
     if (phase === 'work') setCycleCount((c) => c + 1)
     setAnnouncement(`Skipped to ${PHASE_META[next].label.toLowerCase()}.`)
@@ -288,6 +308,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
   const switchMode = useCallback(
     (next) => {
       if (!PHASES.includes(next) || next === phase) return
+      sessionChapterIdRef.current = null
       setAnnouncement(`Switched to ${PHASE_META[next].label.toLowerCase()}.`)
       enterPhase(next, { autostart: false })
     },
@@ -296,11 +317,13 @@ export function usePomodoro({ prefs, updatePrefs }) {
 
   /** Back to the very start: work phase, cycle cleared, nothing persisted. */
   const stop = useCallback(() => {
+    sessionChapterIdRef.current = null
     setStatus('idle')
     setPhase('work')
     setCycleCount(0)
     setRemainingMs(durationMsFor('work'))
     setAnnouncement('Timer stopped.')
+    setLinkedChapterId('')
     clearTimerState()
   }, [durationMsFor])
 
@@ -378,6 +401,7 @@ export function usePomodoro({ prefs, updatePrefs }) {
     timeLabel,
     linkedChapterId,
     setLinkedChapterId,
+    startForChapter,
     // settings passthrough
     autoTransition,
     soundEnabled,

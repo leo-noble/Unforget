@@ -39,6 +39,7 @@ export default function StudyBlock({
   return (
     <div
       role="button"
+      data-calendar-block="true"
       tabIndex={0}
       aria-label={fullLabel}
       title={fullLabel}

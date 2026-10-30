@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Search, X, Trash2, LibraryBig, Plus } from 'lucide-react'
+import { Search, X, Trash2, LibraryBig, Plus, Clock3, ArrowUpRight } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
@@ -9,6 +9,7 @@ import { useConfirm } from '../components/ui/Alert'
 import { subjectColor } from '../lib/colors'
 import { MAX_REVIEW_INDEX } from '../lib/srs'
 import { snappy, easeOut } from '../components/ui/motion'
+import { estimateChapterMinutes, formatMinutes, recommendChapters } from '../lib/studyCoach'
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -55,6 +56,8 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
   }, [subjects, chapters, filter, query, subjectMap])
 
   const anyVisible = [...groups.values()].some((l) => l.length > 0)
+  const nextChapter = useMemo(() => recommendChapters(chapters)[0], [chapters])
+  const nextEstimate = nextChapter ? estimateChapterMinutes(nextChapter.id, cadence.focusSessions) : null
 
   async function deleteSubject(subject, count) {
     const ok = await confirm({
@@ -75,6 +78,24 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
       trailing={account}
       wide
     >
+      {nextChapter && filter === 'all' && !query && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: easeOut }}
+          onClick={() => onOpenChapter(nextChapter)}
+          className="relative mb-5 flex w-full items-center gap-4 overflow-hidden rounded-[26px] bg-card p-4 text-left sm:p-5"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-fill"><Clock3 size={18} /></span>
+          <span className="min-w-0 flex-1">
+            <span className="eyebrow text-label-2">Ready when you are · {nextChapter.coachReason}</span>
+            <span className="mt-1 block truncate text-body font-medium">{nextChapter.title}</span>
+            <span className="mt-0.5 block text-footnote text-label-2">{nextEstimate.label}: {formatMinutes(nextEstimate.minutes)}</span>
+          </span>
+          <ArrowUpRight size={18} className="shrink-0 text-label-2" />
+        </motion.button>
+      )}
       {/* Search, iOS 26 style: a capsule field */}
       <div className="relative mb-3">
         <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-label-2 pointer-events-none" />

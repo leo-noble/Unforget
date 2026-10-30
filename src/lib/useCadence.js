@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as store from './storage'
-import { pullCloudData, pushCloudData, flushCloudData, mergeSnapshots } from './cloudSync'
+import {
+  pullCloudData,
+  pushCloudData,
+  flushCloudData,
+  mergeSnapshots,
+  hasPendingPush,
+  subscribeCloudData,
+  subscribeCloudSyncStatus,
+  setCloudSyncStatus,
+} from './cloudSync'
 import {
   deriveStatus,
   isDueOrOverdue,
@@ -13,6 +22,32 @@ import {
   MAX_REVIEW_INDEX,
 } from './srs'
 import { MIN_BLOCK_MINUTES, DEFAULT_BLOCK_MINUTES } from './timeGrid'
+
+function stableValue(value) {
+  if (Array.isArray(value)) return value.map(stableValue)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value).sort().map((key) => [key, stableValue(value[key])])
+    )
+  }
+  return value
+}
+
+function snapshotSignature(snapshot) {
+  return JSON.stringify(
+    stableValue({
+      subjects: snapshot?.subjects || [],
+      chapters: snapshot?.chapters || [],
+      events: snapshot?.events || [],
+      blocks: snapshot?.blocks ?? snapshot?.plans ?? [],
+      prefs: snapshot?.prefs || {},
+      streak: snapshot?.streak || {},
+      pomodoroLog: snapshot?.pomodoroLog || {},
+      focusSessions: snapshot?.focusSessions || [],
+      tombstones: snapshot?.tombstones || {},
+    })
+  )
+}
 
 export function useCadence(userId) {
   // The cache is scoped to the user before the first read, so a second
@@ -29,9 +64,11 @@ export function useCadence(userId) {
   const [blocks, setBlocks] = useState(() => store.getStudyBlocks())
   const [prefs, setPrefs] = useState(() => store.getPrefs())
   const [streak, setStreak] = useState(() => store.getStreakData())
+  const [pomodoroLog, setPomodoroLog] = useState(() => store.getPomodoroLog())
+  const [focusSessions, setFocusSessions] = useState(() => store.getFocusSessions())
+  const [syncReady, setSyncReady] = useState(false)
   const [justMastered, setJustMastered] = useState(null) // chapter id, for celebration
-  // 'idle' before sign-in, 'syncing' while a pull is in flight, 'synced' once
-  // the server copy has landed, 'offline' if it couldn't be reached.
+  // Status reflects queued writes and realtime pulls automatically.
   const [syncState, setSyncState] = useState('idle')
 
   useEffect(() => { store.saveSubjects(subjects) }, [subjects])
@@ -40,43 +77,78 @@ export function useCadence(userId) {
   useEffect(() => { store.saveStudyBlocks(blocks) }, [blocks])
   useEffect(() => { store.savePrefs(prefs) }, [prefs])
   useEffect(() => { store.saveStreakData(streak) }, [streak])
+  useEffect(() => { store.savePomodoroLog(pomodoroLog) }, [pomodoroLog])
+  useEffect(() => { store.saveFocusSessions(focusSessions) }, [focusSessions])
 
   // ---- cloud sync (multi-device) ----
   // The server is the source of truth. This pulls on sign-in, on tab focus,
   // and on reconnect — not once per empty browser, which is what let a Mac
   // and a phone drift apart indefinitely. What's in the cache only survives
   // a pull if the server doesn't have a newer copy of that same record.
+  const syncReadyRef = useRef(false)
+  const lastAppliedSignatureRef = useRef(null)
+  const lastRemoteUpdatedAtRef = useRef(null)
+  const syncPromiseRef = useRef(null)
+
   const applySnapshot = useCallback((snap) => {
     if (!snap) return
+    store.writeSnapshot(snap)
     setSubjects(snap.subjects || [])
     setChapters(store.migrateSchedule(snap.chapters || []))
     setEvents(snap.events || [])
     setBlocks(store.normalizeBlocks(snap.blocks ?? snap.plans ?? []))
     if (snap.prefs) setPrefs((p) => ({ ...p, ...snap.prefs }))
     if (snap.streak) setStreak(snap.streak)
+    if (snap.pomodoroLog) setPomodoroLog(snap.pomodoroLog)
+    if (Array.isArray(snap.focusSessions)) setFocusSessions(snap.focusSessions)
   }, [])
 
   const syncedUser = useRef(null)
   const syncNow = useCallback(
     async (userIdArg, { merge = false } = {}) => {
-      if (!userIdArg) return
-      setSyncState('syncing')
-      const remote = await pullCloudData(userIdArg)
-      if (!remote) {
-        // No server copy yet (first sign-in) or unreachable. Seed the server
-        // from whatever this device holds so the next device has something
-        // to pull, rather than leaving the account empty.
+      if (!userIdArg) return false
+      if (syncPromiseRef.current) return syncPromiseRef.current
+
+      const run = (async () => {
+        setCloudSyncStatus(userIdArg, 'syncing')
+        if (hasPendingPush(userIdArg)) await flushCloudData(userIdArg)
+        const pulled = await pullCloudData(userIdArg)
+        if (!pulled.ok) {
+          setCloudSyncStatus(userIdArg, 'offline')
+          return false
+        }
+
         const local = store.readSnapshot()
-        const hasLocal = local.subjects.length > 0 || local.chapters.length > 0
-        if (hasLocal) pushCloudData(userIdArg, local, { immediate: true })
-        setSyncState(hasLocal ? 'synced' : 'offline')
-        return
+        const remote = pulled.snapshot
+        const preserveLocal = merge || hasPendingPush(userIdArg)
+        const next = remote
+          ? preserveLocal
+            ? mergeSnapshots(local, remote)
+            : remote
+          : local
+        const nextSignature = snapshotSignature(next)
+        const remoteSignature = remote ? snapshotSignature(remote) : null
+
+        lastRemoteUpdatedAtRef.current = pulled.updatedAt
+        lastAppliedSignatureRef.current = nextSignature
+        syncReadyRef.current = true
+        setSyncReady(true)
+        applySnapshot(next)
+
+        if (!pulled.found || nextSignature !== remoteSignature) {
+          const result = await pushCloudData(userIdArg, next, { immediate: true })
+          return Boolean(result?.ok)
+        }
+        setCloudSyncStatus(userIdArg, 'synced')
+        return true
+      })()
+
+      syncPromiseRef.current = run
+      try {
+        return await run
+      } finally {
+        syncPromiseRef.current = null
       }
-      // `merge` is the first pull after sign-in, where this device may hold
-      // work that never reached the server. Later pulls take the server as
-      // given, so a delete on another device isn't resurrected from cache.
-      applySnapshot(merge ? mergeSnapshots(store.readSnapshot(), remote) : remote)
-      setSyncState('synced')
     },
     [applySnapshot]
   )
@@ -86,12 +158,24 @@ export function useCadence(userId) {
       setSyncState('idle')
       return
     }
+    return subscribeCloudSyncStatus(userId, setSyncState)
+  }, [userId])
+
+  useEffect(() => {
+    if (!userId) {
+      syncReadyRef.current = false
+      setSyncReady(false)
+      syncedUser.current = null
+      return
+    }
     if (syncedUser.current === userId) return
+    syncReadyRef.current = false
+    setSyncReady(false)
+    lastAppliedSignatureRef.current = null
+    lastRemoteUpdatedAtRef.current = null
     const isFirstSyncForUser = syncedUser.current !== userId
     syncedUser.current = userId
 
-    // Re-scope the cache, then adopt any pre-namespacing data so an existing
-    // user's chapters aren't stranded in the old global keys.
     const scopeChanged = store.setStorageScope(userId)
     const legacy = store.claimLegacyData()
     if (legacy) store.writeSnapshot(mergeSnapshots(legacy, store.readSnapshot()))
@@ -102,41 +186,105 @@ export function useCadence(userId) {
       setBlocks(store.getStudyBlocks())
       setPrefs(store.getPrefs())
       setStreak(store.getStreakData())
+      setPomodoroLog(store.getPomodoroLog())
+      setFocusSessions(store.getFocusSessions())
     }
     syncNow(userId, { merge: isFirstSyncForUser })
   }, [userId, syncNow])
 
-  // Re-pull whenever the user comes back to the tab or the network returns.
-  // This is what makes a review ticked off on a phone show up on a laptop
-  // that was left open, without a refresh.
+  useEffect(() => {
+    if (!userId || !syncReady) return
+    let firstSubscription = true
+    const unsubscribe = subscribeCloudData(
+      userId,
+      (remote) => {
+        const remoteVersion = remote.updatedAt ? Date.parse(remote.updatedAt) || 0 : 0
+        const knownVersion = lastRemoteUpdatedAtRef.current
+          ? Date.parse(lastRemoteUpdatedAtRef.current) || 0
+          : 0
+        if (remoteVersion && knownVersion && remoteVersion <= knownVersion) return
+        lastRemoteUpdatedAtRef.current = remote.updatedAt || lastRemoteUpdatedAtRef.current
+
+        const remoteSignature = snapshotSignature(remote)
+        const local = store.readSnapshot()
+        if (remoteSignature === snapshotSignature(local)) {
+          lastAppliedSignatureRef.current = remoteSignature
+          setCloudSyncStatus(userId, 'synced')
+          return
+        }
+        if (remoteSignature === lastAppliedSignatureRef.current) return
+
+        const next = hasPendingPush(userId) ? mergeSnapshots(local, remote) : remote
+        const nextSignature = snapshotSignature(next)
+        lastAppliedSignatureRef.current = nextSignature
+        applySnapshot(next)
+        if (nextSignature !== remoteSignature) {
+          pushCloudData(userId, next, { immediate: true })
+        } else {
+          setCloudSyncStatus(userId, 'synced')
+        }
+      },
+      (status) => {
+        if (status === 'SUBSCRIBED' && firstSubscription) {
+          firstSubscription = false
+        } else if (status === 'SUBSCRIBED') {
+          syncNow(userId)
+        }
+      }
+    )
+    return unsubscribe
+  }, [userId, syncReady, applySnapshot, syncNow])
+
   useEffect(() => {
     if (!userId) return
     function onFocus() {
       if (document.visibilityState === 'visible') syncNow(userId)
     }
-    // A pending write must not die with the tab.
     function onHide() {
-      if (document.visibilityState === 'hidden') flushCloudData()
+      if (document.visibilityState === 'hidden') flushCloudData(userId)
+    }
+    function onPomodoroLogChange() {
+      setPomodoroLog(store.getPomodoroLog())
+    }
+    function onFocusSessionChange() {
+      setFocusSessions(store.getFocusSessions())
     }
     document.addEventListener('visibilitychange', onFocus)
     document.addEventListener('visibilitychange', onHide)
     window.addEventListener('online', onFocus)
-    window.addEventListener('pagehide', flushCloudData)
+    window.addEventListener('pagehide', onHide)
+    window.addEventListener('cadence:pomodoro-log-change', onPomodoroLogChange)
+    window.addEventListener('cadence:focus-session-change', onFocusSessionChange)
     return () => {
       document.removeEventListener('visibilitychange', onFocus)
       document.removeEventListener('visibilitychange', onHide)
       window.removeEventListener('online', onFocus)
-      window.removeEventListener('pagehide', flushCloudData)
+      window.removeEventListener('pagehide', onHide)
+      window.removeEventListener('cadence:pomodoro-log-change', onPomodoroLogChange)
+      window.removeEventListener('cadence:focus-session-change', onFocusSessionChange)
     }
   }, [userId, syncNow])
 
-  // Every local change goes up. Skipped until the first pull has landed, so
-  // an empty initial render can't overwrite the server copy with nothing.
   useEffect(() => {
-    if (!userId || syncState === 'syncing' || syncState === 'idle') return
+    if (!userId || !syncReadyRef.current) return
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-    pushCloudData(userId, { subjects, chapters, events, blocks, streak, prefs, timezone })
-  }, [userId, subjects, chapters, events, blocks, streak, prefs, syncState])
+    const payload = {
+      subjects,
+      chapters,
+      events,
+      blocks,
+      streak,
+      prefs,
+      pomodoroLog,
+      focusSessions,
+      tombstones: store.getSyncTombstones(),
+      timezone,
+    }
+    const signature = snapshotSignature(payload)
+    if (signature === lastAppliedSignatureRef.current) return
+    lastAppliedSignatureRef.current = signature
+    pushCloudData(userId, payload)
+  }, [userId, subjects, chapters, events, blocks, streak, prefs, pomodoroLog, focusSessions])
 
   const refreshAll = useCallback(() => {
     setSubjects(store.getSubjects())
@@ -145,6 +293,8 @@ export function useCadence(userId) {
     setBlocks(store.getStudyBlocks())
     setPrefs(store.getPrefs())
     setStreak(store.getStreakData())
+    setPomodoroLog(store.getPomodoroLog())
+    setFocusSessions(store.getFocusSessions())
   }, [])
 
   // ---- derived ----
@@ -407,6 +557,8 @@ export function useCadence(userId) {
     blocks,
     prefs,
     streak,
+    pomodoroLog,
+    focusSessions,
     syncState,
     syncNow: useCallback(() => syncNow(userId), [syncNow, userId]),
     overdue,

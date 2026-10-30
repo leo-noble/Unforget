@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Flame, Target, CheckCheck, Award } from 'lucide-react'
+import { Flame, Target, CheckCheck, Award, Clock3 } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import Page from '../ui/Page'
 import { Section } from '../ui/List'
@@ -8,6 +8,7 @@ import { toISODate, addDays, MAX_REVIEW_INDEX } from '../../lib/srs'
 import { formatDay, plural } from '../../lib/format'
 import { subjectColor } from '../../lib/colors'
 import { easeOut } from '../ui/motion'
+import { formatMinutes, weeklyFocusStats } from '../../lib/studyCoach'
 
 const DAYS = 30
 
@@ -26,7 +27,7 @@ function Tile({ icon: Icon, value, label, accent = false }) {
 // Everything the old Stats tab showed, as a sheet off Today: the numbers
 // that say the work is adding up, without a whole tab to itself.
 export default function InsightsSheet({ cadence, onClose, asPage = false, account }) {
-  const { subjects, chapters, events, streak } = cadence
+  const { subjects, chapters, events, streak, focusSessions, pomodoroLog } = cadence
   const [picked, setPicked] = useState(null)
 
   const totals = useMemo(() => {
@@ -71,6 +72,7 @@ export default function InsightsSheet({ cadence, onClose, asPage = false, accoun
   )
 
   const sel = picked != null ? activity.bars[picked] : null
+  const focusWeek = useMemo(() => weeklyFocusStats(focusSessions, pomodoroLog), [focusSessions, pomodoroLog])
 
   const content = (
       <div className="space-y-7 insights-content">
@@ -83,6 +85,8 @@ export default function InsightsSheet({ cadence, onClose, asPage = false, accoun
           />
           <Tile icon={CheckCheck} value={totals.completed} label="Reviews done" />
           <Tile icon={Award} value={totals.mastered} label="Mastered" />
+          <Tile icon={Clock3} value={formatMinutes(focusWeek.minutes)} label="Focus this week" />
+          <Tile icon={Target} value={focusWeek.sessions} label="Focus sessions" />
         </div>
 
         <Section title="Last 30 days">

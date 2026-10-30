@@ -12,6 +12,7 @@ import { PHASES, PHASE_META } from '../lib/usePomodoro'
 import { PHASE_COLOR, PHASE_FG } from '../components/focus/phase'
 import { lockScroll } from '../components/ui/scrollLock'
 import { snappy, bouncy, easeOut } from '../components/ui/motion'
+import { estimateChapterMinutes, formatMinutes, weeklyFocusStats } from '../lib/studyCoach'
 
 const MODE_OPTIONS = PHASES.map((id) => ({ id, label: PHASE_META[id].label }))
 
@@ -200,6 +201,8 @@ export default function FocusPage({ cadence, account }) {
 
   const activeChapters = useMemo(() => chapters.filter((c) => c.derivedStatus !== 'mastered'), [chapters])
   const linked = activeChapters.find((c) => c.id === timer.linkedChapterId) || null
+  const estimate = linked ? estimateChapterMinutes(linked.id, cadence.focusSessions) : null
+  const weeklyStats = useMemo(() => weeklyFocusStats(cadence.focusSessions, cadence.pomodoroLog), [cadence.focusSessions, cadence.pomodoroLog])
 
   // Keyboard shortcuts, ignored while typing and with modifiers held so they
   // never shadow browser shortcuts like ⌘R.
@@ -306,7 +309,7 @@ export default function FocusPage({ cadence, account }) {
                   {linked ? linked.title : 'Choose a chapter'}
                 </span>
                 {linked && (
-                  <span className="block text-footnote text-label-2 truncate">{subjectMap.get(linked.subjectId)?.name}</span>
+                  <span className="block text-footnote text-label-2 truncate">{subjectMap.get(linked.subjectId)?.name} · {estimate.label}: {formatMinutes(estimate.minutes)}</span>
                 )}
               </span>
               <ChevronsUpDown size={17} className="text-label-3 shrink-0" />
@@ -335,6 +338,19 @@ export default function FocusPage({ cadence, account }) {
             detail={`${timer.todayStats.minutes} min`}
           />
         </Section>
+        {cadence.prefs.weeklyFocusGoalMinutes && (
+          <Section title="Weekly rhythm">
+            <div className="px-4 py-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="text-body font-medium">{formatMinutes(weeklyStats.minutes)} <span className="text-label-2 font-normal">of {formatMinutes(cadence.prefs.weeklyFocusGoalMinutes)}</span></p>
+                <span className="text-footnote text-label-2">{weeklyStats.sessions} sessions</span>
+              </div>
+              <div className="mt-2 h-2 rounded-full bg-fill-2 overflow-hidden" role="progressbar" aria-label="Weekly focus goal" aria-valuemin={0} aria-valuemax={cadence.prefs.weeklyFocusGoalMinutes} aria-valuenow={Math.min(weeklyStats.minutes, cadence.prefs.weeklyFocusGoalMinutes)}>
+                <motion.div className="h-full rounded-full bg-label" animate={{ width: `${Math.min(100, (weeklyStats.minutes / cadence.prefs.weeklyFocusGoalMinutes) * 100)}%` }} transition={snappy} />
+              </div>
+            </div>
+          </Section>
+        )}
       </div>
 
       <AnimatePresence>

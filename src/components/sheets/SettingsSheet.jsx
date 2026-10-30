@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Bell, BellRing, Clock, RefreshCw, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
+import { Bell, BellRing, Clock, RefreshCw, Check, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -14,10 +13,10 @@ import { isIOS, isStandalone } from '../ui/useMediaQuery'
 import { APP_NAME, TAGLINE } from '../../brand'
 
 const SYNC_LABEL = {
-  synced: 'Up to date',
-  syncing: 'Syncing…',
-  offline: 'Offline — saved on this device',
-  idle: 'Not signed in',
+  synced: 'Synced across devices',
+  syncing: 'Saving changes…',
+  offline: 'Offline — changes will retry automatically',
+  idle: 'Sign in to sync across devices',
 }
 
 const APPEARANCE_MODES = [
@@ -27,7 +26,7 @@ const APPEARANCE_MODES = [
 ]
 
 export default function SettingsSheet({ cadence, onClose }) {
-  const { prefs, updatePrefs, subjects, chapters, events, syncState, syncNow } = cadence
+  const { prefs, updatePrefs, subjects, chapters, events, syncState } = cadence
   const navigate = useNavigate()
   const confirm = useConfirm()
   const { user, displayName, avatarUrl, signOut } = useAuth()
@@ -175,22 +174,23 @@ export default function SettingsSheet({ cadence, onClose }) {
         </Section>
 
         {/* Sync */}
-        <Section title="Sync" footer="Your chapters sync to every device you sign in on.">
+        <Section title="Sync" footer="Your chapters, plans, progress, and settings sync automatically across your devices.">
           <Row
             icon={syncState === 'offline' ? CloudOff : Cloud}
-            title="Cloud sync"
+            title="Automatic cloud sync"
             subtitle={SYNC_LABEL[syncState] || SYNC_LABEL.synced}
             trailing={
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.9 }}
-                onClick={() => syncNow()}
-                disabled={syncState === 'syncing'}
-                aria-label="Sync now"
-                className="h-9 w-9 rounded-full bg-fill flex items-center justify-center text-label disabled:opacity-40"
-              >
-                <RefreshCw size={17} className={syncState === 'syncing' ? 'animate-spin' : ''} />
-              </motion.button>
+              <span className="h-9 w-9 rounded-full bg-fill flex items-center justify-center text-label-2" aria-hidden="true">
+                {syncState === 'syncing' ? (
+                  <RefreshCw size={16} className="animate-spin" />
+                ) : syncState === 'offline' ? (
+                  <CloudOff size={17} />
+                ) : syncState === 'synced' ? (
+                  <Check size={17} />
+                ) : (
+                  <Cloud size={17} />
+                )}
+              </span>
             }
           />
         </Section>
