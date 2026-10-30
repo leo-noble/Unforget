@@ -110,6 +110,7 @@ function FaqItem({ q, a, open, onToggle }) {
 
 function InstallGuide({ open, onClose, canInstall, onInstall }) {
   const ios = isIOS()
+  const android = typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent)
 
   return (
     <AnimatePresence>
@@ -155,20 +156,25 @@ function InstallGuide({ open, onClose, canInstall, onInstall }) {
             </div>
 
             {ios ? (
-              <ol className="relative mt-6 space-y-2">
-                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Share size={17} /></span>
-                  <span className="text-subhead">Tap <strong className="font-semibold text-label">Share</strong> in your browser.</span>
-                </li>
-                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><SquarePlus size={17} /></span>
-                  <span className="text-subhead">Choose <strong className="font-semibold text-label">Add to Home Screen</strong>.</span>
-                </li>
-                <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Plus size={17} /></span>
-                  <span className="text-subhead">Tap <strong className="font-semibold text-label">Add</strong> to finish.</span>
-                </li>
-              </ol>
+              <>
+                <p className="relative mt-5 rounded-[18px] bg-fill px-4 py-3 text-footnote leading-relaxed text-label-2">
+                  iPhone and iPad require one final confirmation in Safari. A website can’t add itself to your Home Screen.
+                </p>
+                <ol className="relative mt-3 space-y-2">
+                  <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Share size={17} /></span>
+                    <span className="text-subhead">Tap <strong className="font-semibold text-label">Share</strong> in your browser.</span>
+                  </li>
+                  <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><SquarePlus size={17} /></span>
+                    <span className="text-subhead">Choose <strong className="font-semibold text-label">Add to Home Screen</strong>.</span>
+                  </li>
+                  <li className="flex items-center gap-3 rounded-[20px] bg-fill px-3.5 py-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card"><Plus size={17} /></span>
+                    <span className="text-subhead">Tap <strong className="font-semibold text-label">Add</strong> to finish.</span>
+                  </li>
+                </ol>
+              </>
             ) : canInstall ? (
               <div className="relative mt-6">
                 <p className="text-subhead text-label-2">Add it to your device from the browser’s secure install prompt.</p>
@@ -183,7 +189,8 @@ function InstallGuide({ open, onClose, canInstall, onInstall }) {
             ) : (
               <div className="relative mt-6 rounded-[22px] bg-fill p-4">
                 <p className="text-subhead leading-relaxed text-label-2">
-                  Open your browser menu and choose <strong className="font-semibold text-label">Install app</strong> or <strong className="font-semibold text-label">Add to Home Screen</strong>.
+                  {android ? 'Open your browser menu and choose ' : 'Open your browser’s install menu and choose '}
+                  <strong className="font-semibold text-label">Install app</strong> or <strong className="font-semibold text-label">Add to Home Screen</strong>.
                 </p>
               </div>
             )}
@@ -202,6 +209,7 @@ export default function LandingPage() {
   const { session } = useAuth()
   const [installPrompt, setInstallPrompt] = useState(null)
   const [installGuideOpen, setInstallGuideOpen] = useState(false)
+  const [installed, setInstalled] = useState(isStandalone)
   const [openFaq, setOpenFaq] = useState(0)
 
   useEffect(() => {
@@ -212,6 +220,8 @@ export default function LandingPage() {
     const onInstalled = () => {
       window.__unforgetInstallPrompt = null
       setInstallPrompt(null)
+      setInstalled(true)
+      setInstallGuideOpen(false)
     }
     if (window.__unforgetInstallPrompt) setInstallPrompt(window.__unforgetInstallPrompt)
     window.addEventListener('beforeinstallprompt', onPrompt)
@@ -238,10 +248,25 @@ export default function LandingPage() {
 
   async function install() {
     if (!installPrompt) return
-    installPrompt.prompt()
-    await installPrompt.userChoice
+    const prompt = installPrompt
+    window.__unforgetInstallPrompt = null
     setInstallPrompt(null)
     setInstallGuideOpen(false)
+    try {
+      prompt.prompt()
+      const choice = await prompt.userChoice
+      if (choice?.outcome === 'accepted') setInstalled(true)
+    } catch {
+      // The browser may withdraw its prompt if its install criteria changed.
+      setInstallGuideOpen(true)
+    }
+  }
+
+  function beginInstall() {
+    // Android and desktop browsers can show their native install confirmation
+    // directly from this click. iOS intentionally opens the guided sheet.
+    if (!isIOS() && installPrompt) void install()
+    else setInstallGuideOpen(true)
   }
 
   const cta = session ? { to: '/dashboard', label: 'Open Today' } : { to: '/login', label: 'Get started — free' }
@@ -429,7 +454,7 @@ export default function LandingPage() {
       </section>
 
       {/* Install */}
-      {!isStandalone() && (
+      {!installed && (
         <section className="pb-16 sm:pb-24">
           <div className={WRAP}>
             <motion.div
@@ -447,11 +472,11 @@ export default function LandingPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setInstallGuideOpen(true)}
-                aria-haspopup="dialog"
+                onClick={beginInstall}
+                aria-haspopup={!isIOS() && installPrompt ? undefined : 'dialog'}
                 className="inline-flex h-[50px] shrink-0 items-center justify-center gap-2 rounded-full bg-tint px-6 text-subhead font-semibold text-tint-fg"
               >
-                <Download size={17} /> Get the app
+                <Download size={17} /> Install app
               </button>
             </motion.div>
           </div>
