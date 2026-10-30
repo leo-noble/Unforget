@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Fragment } from 'react'
 import { Plus } from 'lucide-react'
 import { TABS } from './tabs'
 import MiniTimer from './MiniTimer'
@@ -14,11 +13,8 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus'
   const navTabs = showFocusTimer ? TABS : TABS.filter((tab) => tab.id !== 'focus')
-  const slotCount = navTabs.length + 1
-  const gridClass = slotCount === 5 ? 'grid-cols-5' : 'grid-cols-4'
-  const addSlot = Math.ceil(navTabs.length / 2)
+  const gridClass = navTabs.length === 4 ? 'grid-cols-4' : 'grid-cols-3'
   const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === active))
-  const activeSlot = activeIndex < addSlot ? activeIndex : activeIndex + 1
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -46,25 +42,23 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <nav
-          aria-label="Main navigation"
-          className={`liquid-dock relative grid h-[66px] w-full ${gridClass} items-center rounded-full p-1 pointer-events-auto`}
-        >
+        <div className="flex items-center gap-3">
+          <nav
+            aria-label="Main navigation"
+            className={`liquid-dock relative grid h-[66px] min-w-0 flex-1 ${gridClass} items-center rounded-full p-1 pointer-events-auto`}
+          >
             <motion.span
               aria-hidden="true"
               initial={false}
-              animate={{ x: `${activeSlot * 100}%` }}
+              animate={{ x: `${activeIndex * 100}%` }}
               transition={{ type: 'spring', stiffness: 360, damping: 34, mass: 0.82 }}
               className="dock-lens pointer-events-none absolute left-1 top-1 bottom-1 z-0 rounded-full"
-              style={{ width: `calc((100% - 8px) / ${slotCount})` }}
+              style={{ width: `calc((100% - 8px) / ${navTabs.length})` }}
             />
-          {navTabs.map((tab, index) => (
-            <Fragment key={tab.id}>
-              {index === addSlot && <AddDockButton onAdd={onAdd} />}
-              <DockTab tab={tab} active={active} onSelect={onSelect} />
-            </Fragment>
-          ))}
-        </nav>
+            {navTabs.map((tab) => <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />)}
+          </nav>
+          <AddDockButton onAdd={onAdd} />
+        </div>
       </div>
     </div>
   )

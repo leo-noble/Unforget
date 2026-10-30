@@ -37,7 +37,7 @@ export default function RhythmTimeline() {
                 transition={{ duration: 0.45, delay: 0.2 + i * 0.25, ease: 'easeOut' }}
               />
               <motion.span
-                className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap eyebrow text-label-3"
+                className={`absolute ${i === 1 ? '-top-16' : '-top-10'} left-1/2 -translate-x-1/2 whitespace-nowrap eyebrow text-label-3`}
                 initial={{ opacity: 0, y: 6 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.3, delay: 0.45 + i * 0.25 }}
@@ -60,7 +60,12 @@ export default function RhythmTimeline() {
               <Marker i={i} />
             </div>
             <p className="font-display text-[22px] leading-none tabular whitespace-nowrap mt-1">{String(day).padStart(2, '0')}</p>
-            <p className="eyebrow text-label-2 whitespace-nowrap mt-1.5">{LABELS[i]}</p>
+            <p
+              className="eyebrow text-label-2 whitespace-nowrap mt-1.5"
+              style={{ transform: i === 0 ? 'translateX(-20px)' : i === 1 ? 'translateX(20px)' : undefined }}
+            >
+              {LABELS[i]}
+            </p>
           </motion.div>
         ))}
       </div>
