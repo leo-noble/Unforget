@@ -35,23 +35,25 @@ function TodayHero({ name, done, remaining, overdue }) {
   else line = `${done} of ${total} done.`
 
   return (
-    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6">
-      <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
-      <div className="mt-2 flex items-baseline gap-3">
-        <motion.span
-          key={remaining}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={spring}
-          className="font-display text-[76px] leading-[0.9]"
-        >
-          {remaining}
-        </motion.span>
-        <span className="text-headline text-label-2">{remaining === 1 ? 'review left' : 'reviews left'}</span>
+    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6 lg:flex lg:items-center lg:justify-between lg:gap-10">
+      <div className="min-w-0">
+        <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
+        <div className="mt-2 flex items-baseline gap-3">
+          <motion.span
+            key={remaining}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={spring}
+            className="font-display text-[76px] leading-[0.9]"
+          >
+            {remaining}
+          </motion.span>
+          <span className="text-headline text-label-2">{remaining === 1 ? 'review left' : 'reviews left'}</span>
+        </div>
+        <p className="text-subhead text-label-2 mt-2">{line}</p>
       </div>
-      <p className="text-subhead text-label-2 mt-2">{line}</p>
       {dots > 0 && (
-        <div className="mt-5 flex flex-wrap gap-[7px]" aria-label={`${done} of ${total} reviews done`} role="img">
+        <div className="mt-5 flex max-w-full flex-wrap justify-start gap-[7px] lg:mt-0 lg:max-w-[52%] lg:justify-end" aria-label={`${done} of ${total} reviews done`} role="img">
           {Array.from({ length: dots }).map((_, i) => (
             <motion.span
               key={i}
@@ -140,6 +142,11 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const remaining = overdue.length + dueToday.length
   const suggestions = useMemo(() => recommendChapters(chapters), [chapters])
   const nextEstimate = suggestions[0] ? estimateChapterMinutes(suggestions[0].id, cadence.focusSessions) : null
+  const queue = useMemo(() => suggestions.map((chapter) => ({
+    chapter,
+    estimate: estimateChapterMinutes(chapter.id, cadence.focusSessions),
+  })), [suggestions, cadence.focusSessions])
+  const queueMinutes = queue.reduce((total, item) => total + item.estimate.minutes, 0)
   const goalMinutes = cadence.prefs.weeklyFocusGoalMinutes
   const showFocusTimer = cadence.prefs.showFocusTimer !== false
   const weeklyStats = useMemo(() => weeklyFocusStats(cadence.focusSessions, cadence.pomodoroLog), [cadence.focusSessions, cadence.pomodoroLog])
@@ -162,7 +169,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
       <div className="relative flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill"><Sparkles size={18} /></span>
         <div className="min-w-0 flex-1">
-          <p className="eyebrow text-label-2">Study coach · next up</p>
+          <p className="eyebrow text-label-2">{suggestions.length > 1 ? `Study queue · ${suggestions.length} chapters · ~${formatMinutes(queueMinutes)}` : 'Study coach · next up'}</p>
           {suggestions.length ? (
             <>
               <h2 className="mt-2 text-title-2 font-medium leading-tight">{suggestions[0].title}</h2>
@@ -184,6 +191,31 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
               >
                 {!showFocusTimer ? <>View chapter <ArrowRight size={15} /></> : timer.status === 'idle' ? <>Start focus <ArrowRight size={15} /></> : <>Open focus <ArrowRight size={15} /></>}
               </Button>
+              {suggestions.length > 1 && (
+                <div className="mt-4 border-t border-separator pt-3">
+                  <p className="eyebrow text-label-3 mb-1">UP NEXT</p>
+                  {queue.slice(1).map(({ chapter, estimate }) => (
+                    <button
+                      key={chapter.id}
+                      type="button"
+                      onClick={() => {
+                        if (timer.status === 'idle' && showFocusTimer) {
+                          timer.startForChapter(chapter.id)
+                          onOpenFocus?.()
+                        } else if (!showFocusTimer) onOpenChapter(chapter)
+                        else onOpenFocus?.()
+                      }}
+                      className="w-full flex items-center gap-3 rounded-2xl px-2 py-2 text-left hover:bg-fill transition-colors"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-body truncate">{chapter.title}</span>
+                        <span className="block text-footnote text-label-2 truncate">{chapter.coachReason} · {estimate.label}: {formatMinutes(estimate.minutes)}</span>
+                      </span>
+                      <ArrowRight size={15} className="shrink-0 text-label-2" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </>
           ) : chapters.length ? (
             <>
@@ -257,40 +289,62 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
 
   return (
     <Page title="Today" eyebrow={eyebrow} trailing={account} wide>
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10 lg:items-start">
-        <div className="space-y-8 min-w-0">
-          <div className="lg:hidden">{hero}</div>
+      <div className="space-y-8">
+        <div className="hidden lg:block">{hero}</div>
+        <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
+          <div className="space-y-8 min-w-0">
+            <div className="lg:hidden">{hero}</div>
+            {coach}
 
-          {coach}
+            <AnimatePresence initial={false}>
+              {overdue.length > 0 && (
+                <motion.div key="overdue" {...stagger(1)} exit={{ opacity: 0, height: 0 }}>
+                  <Section prominent title="Overdue">
+                    <AnimatePresence initial={false}>
+                      {overdue.map((c) => (
+                        <ChapterRow key={c.id} {...rowProps(c)} />
+                      ))}
+                    </AnimatePresence>
+                  </Section>
+                </motion.div>
+              )}
 
-          <AnimatePresence initial={false}>
-            {overdue.length > 0 && (
-              <motion.div key="overdue" {...stagger(1)} exit={{ opacity: 0, height: 0 }}>
-                <Section prominent title="Overdue">
-                  <AnimatePresence initial={false}>
-                    {overdue.map((c) => (
-                      <ChapterRow key={c.id} {...rowProps(c)} />
-                    ))}
-                  </AnimatePresence>
-                </Section>
+              {dueToday.length > 0 && (
+                <motion.div key="due" {...stagger(2)} exit={{ opacity: 0, height: 0 }}>
+                  <Section prominent title="Due today">
+                    <AnimatePresence initial={false}>
+                      {dueToday.map((c) => (
+                        <ChapterRow key={c.id} {...rowProps(c)} />
+                      ))}
+                    </AnimatePresence>
+                  </Section>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {remaining === 0 && (
+              <motion.div {...stagger(1)} className="bg-card rounded-[28px] px-6 py-10 text-center lg:hidden">
+              <h2 className="text-title-2 font-medium">
+                {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
+              </h2>
+              <p className="text-subhead text-label-2 mt-2 max-w-[320px] mx-auto">
+                {chapters.length === 0
+                  ? 'Add what you studied today. Five reviews get scheduled — 1, 3, 7, 15 and 30 days apart.'
+                  : 'Studied something new? Log it so its reviews start tomorrow.'}
+              </p>
+              <Button size="md" className="mt-6" onClick={onAdd}>
+                <Plus size={17} strokeWidth={2.2} /> Add chapter
+              </Button>
               </motion.div>
             )}
+          </div>
 
-            {dueToday.length > 0 && (
-              <motion.div key="due" {...stagger(2)} exit={{ opacity: 0, height: 0 }}>
-                <Section prominent title="Due today">
-                  <AnimatePresence initial={false}>
-                    {dueToday.map((c) => (
-                      <ChapterRow key={c.id} {...rowProps(c)} />
-                    ))}
-                  </AnimatePresence>
-                </Section>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
+          <div className="mt-8 space-y-8 min-w-0 lg:mt-0">
+            {comingUp}
+            {insights}
+          </div>
           {remaining === 0 && (
-            <motion.div {...stagger(1)} className="bg-card rounded-[28px] px-6 py-10 text-center">
+            <motion.div {...stagger(1)} className="hidden lg:block lg:col-span-2 bg-card rounded-[28px] px-6 py-10 text-center">
               <h2 className="text-title-2 font-medium">
                 {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
               </h2>
@@ -304,18 +358,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
               </Button>
             </motion.div>
           )}
-
-          <motion.div {...stagger(3)} className="lg:hidden space-y-8">
-            {comingUp}
-            {insights}
-          </motion.div>
         </div>
-
-        <motion.aside {...stagger(1)} className="hidden lg:block space-y-8 sticky top-[76px]">
-          {hero}
-          {insights}
-          {comingUp}
-        </motion.aside>
       </div>
       <AnimatePresence>{showGoal && <WeeklyGoalSheet key="weekly-goal" value={goalMinutes} onClose={() => setShowGoal(false)} onSave={(minutes) => { cadence.updatePrefs({ weeklyFocusGoalMinutes: minutes }); setShowGoal(false) }} />}</AnimatePresence>
     </Page>
