@@ -35,10 +35,10 @@ function TodayHero({ name, done, remaining, overdue }) {
   else line = `${done} of ${total} done.`
 
   return (
-    <motion.div {...stagger(0)} className={`bg-card rounded-[28px] p-6 lg:flex lg:items-center lg:gap-10 ${total === 0 ? 'lg:justify-center' : 'lg:justify-between'}`}>
-      <div className={`min-w-0 ${total === 0 ? 'lg:text-center' : ''}`}>
+    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6 lg:min-h-[210px] lg:flex lg:flex-col lg:justify-center">
+      <div className="min-w-0">
         <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
-        <div className={`mt-2 flex items-baseline gap-3 ${total === 0 ? 'lg:justify-center' : ''}`}>
+        <div className="mt-2 flex items-baseline gap-3">
           <motion.span
             key={remaining}
             initial={{ opacity: 0, y: 6 }}
@@ -53,7 +53,7 @@ function TodayHero({ name, done, remaining, overdue }) {
         <p className="text-subhead text-label-2 mt-2">{line}</p>
       </div>
       {dots > 0 && (
-        <div className="mt-5 flex max-w-full flex-wrap justify-start gap-[7px] lg:mt-0 lg:max-w-[52%] lg:justify-end" aria-label={`${done} of ${total} reviews done`} role="img">
+        <div className="mt-5 flex max-w-full flex-wrap justify-start gap-[7px]" aria-label={`${done} of ${total} reviews done`} role="img">
           {Array.from({ length: dots }).map((_, i) => (
             <motion.span
               key={i}
@@ -164,7 +164,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const hero = <TodayHero name={profile?.name} done={doneToday} remaining={remaining} overdue={overdue.length} />
 
   const coach = (
-    <motion.section {...stagger(1)} className={`relative overflow-hidden rounded-[28px] bg-card p-5 sm:p-6 ${suggestions.length === 0 ? 'lg:min-h-[248px] lg:flex lg:items-center' : ''}`}>
+    <motion.section {...stagger(1)} className="relative overflow-hidden rounded-[28px] bg-card p-5 sm:p-6 lg:min-h-[210px] lg:flex lg:items-center">
       <div className="pointer-events-none absolute -right-14 -top-20 h-52 w-52 rounded-full bg-label/[0.045] blur-3xl" />
       <div className="relative flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill"><Sparkles size={18} /></span>
@@ -236,7 +236,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   )
 
   const comingUp = upcoming.length > 0 && (
-    <Section prominent title="Coming up">
+    <Section prominent title="Coming up" className="lg:col-span-2">
       {upcoming.slice(0, 3).map((c) => {
         const subject = subjectMap.get(c.subjectId)
         return (
@@ -261,7 +261,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   )
 
   const insights = (
-    <Section prominent title="This week">
+    <Section prominent title="This week" className="lg:col-span-2">
       <div className="p-5">
         <button type="button" onClick={onOpenInsights} className="w-full text-left active:bg-fill transition-colors duration-75">
           <WeekDots events={events} streak={streak.count} />
@@ -291,46 +291,35 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
 
   return (
     <Page title="Today" eyebrow={eyebrow} trailing={account} wide>
-      <div className="space-y-8">
-        <div className="hidden lg:block">{hero}</div>
-        <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
-          <div className="space-y-8 min-w-0">
-            <div className="lg:hidden">{hero}</div>
-            {coach}
-
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+        {hero}
+        {coach}
+        {(overdue.length > 0 || dueToday.length > 0) && (
+          <div className="lg:col-span-2 space-y-8">
             <AnimatePresence initial={false}>
               {overdue.length > 0 && (
                 <motion.div key="overdue" {...stagger(1)} exit={{ opacity: 0, height: 0 }}>
                   <Section prominent title="Overdue">
                     <AnimatePresence initial={false}>
-                      {overdue.map((c) => (
-                        <ChapterRow key={c.id} {...rowProps(c)} />
-                      ))}
+                      {overdue.map((c) => <ChapterRow key={c.id} {...rowProps(c)} />)}
                     </AnimatePresence>
                   </Section>
                 </motion.div>
               )}
-
               {dueToday.length > 0 && (
                 <motion.div key="due" {...stagger(2)} exit={{ opacity: 0, height: 0 }}>
                   <Section prominent title="Due today">
                     <AnimatePresence initial={false}>
-                      {dueToday.map((c) => (
-                        <ChapterRow key={c.id} {...rowProps(c)} />
-                      ))}
+                      {dueToday.map((c) => <ChapterRow key={c.id} {...rowProps(c)} />)}
                     </AnimatePresence>
                   </Section>
                 </motion.div>
               )}
             </AnimatePresence>
-
           </div>
-
-          <div className="mt-8 space-y-8 min-w-0 lg:mt-0">
-            {comingUp}
-            {insights}
-          </div>
-        </div>
+        )}
+        {insights}
+        {comingUp}
       </div>
       <AnimatePresence>{showGoal && <WeeklyGoalSheet key="weekly-goal" value={goalMinutes} onClose={() => setShowGoal(false)} onSave={(minutes) => { cadence.updatePrefs({ weeklyFocusGoalMinutes: minutes }); setShowGoal(false) }} />}</AnimatePresence>
     </Page>
