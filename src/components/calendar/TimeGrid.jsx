@@ -366,14 +366,6 @@ export default function TimeGrid({
             {minutesToLabel(m, { omitMinutes: true })}
           </span>
         ))}
-        {nowVisible && dates.includes(now.iso) && (
-          <span
-            style={{ top: minutesToY(now.minute, win) }}
-            className="absolute right-1 -translate-y-1/2 text-[10.5px] font-medium text-accent tabular bg-card pl-1 whitespace-nowrap"
-          >
-            {minutesToLabel(now.minute)}
-          </span>
-        )}
       </div>
 
       {/* Day columns */}

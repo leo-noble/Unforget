@@ -300,7 +300,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: easeOut }}
-        className="bg-card rounded-[24px] shadow-card overflow-hidden"
+        className="bg-card rounded-[20px] shadow-card overflow-hidden isolate"
         style={{ height: gridHeight }}
       >
         {view === 'week' && <WeekView {...viewProps} />}
