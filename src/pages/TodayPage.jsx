@@ -35,10 +35,10 @@ function TodayHero({ name, done, remaining, overdue }) {
   else line = `${done} of ${total} done.`
 
   return (
-    <motion.div {...stagger(0)} className="bg-card rounded-[28px] p-6 lg:flex lg:items-center lg:justify-between lg:gap-10">
-      <div className="min-w-0">
+    <motion.div {...stagger(0)} className={`bg-card rounded-[28px] p-6 lg:flex lg:items-center lg:gap-10 ${total === 0 ? 'lg:justify-center' : 'lg:justify-between'}`}>
+      <div className={`min-w-0 ${total === 0 ? 'lg:text-center' : ''}`}>
         <p className="text-subhead text-label-2">{first ? `${greeting()}, ${first}` : greeting()}</p>
-        <div className="mt-2 flex items-baseline gap-3">
+        <div className={`mt-2 flex items-baseline gap-3 ${total === 0 ? 'lg:justify-center' : ''}`}>
           <motion.span
             key={remaining}
             initial={{ opacity: 0, y: 6 }}
@@ -164,7 +164,7 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
   const hero = <TodayHero name={profile?.name} done={doneToday} remaining={remaining} overdue={overdue.length} />
 
   const coach = (
-    <motion.section {...stagger(1)} className="relative overflow-hidden rounded-[28px] bg-card p-5 sm:p-6">
+    <motion.section {...stagger(1)} className={`relative overflow-hidden rounded-[28px] bg-card p-5 sm:p-6 ${suggestions.length === 0 ? 'lg:min-h-[248px] lg:flex lg:items-center' : ''}`}>
       <div className="pointer-events-none absolute -right-14 -top-20 h-52 w-52 rounded-full bg-label/[0.045] blur-3xl" />
       <div className="relative flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill"><Sparkles size={18} /></span>
@@ -232,25 +232,6 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
           )}
         </div>
       </div>
-      <div className="relative mt-5 border-t border-separator pt-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-footnote text-label-2"><Target size={15} /> Weekly focus</div>
-          <button type="button" className="min-h-9 rounded-full px-3 text-footnote font-medium hover:bg-fill" onClick={() => setShowGoal(true)}>
-            {goalMinutes ? 'Edit goal' : 'Set a goal'}
-          </button>
-        </div>
-        {goalMinutes ? (
-          <>
-            <div className="mt-2 flex items-baseline justify-between gap-3">
-              <p className="text-body font-medium">{formatMinutes(weeklyStats.minutes)} <span className="text-label-2 font-normal">of {formatMinutes(goalMinutes)}</span></p>
-              <span className="text-footnote text-label-2">{Math.min(100, Math.round((weeklyStats.minutes / goalMinutes) * 100))}%</span>
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-fill-2" role="progressbar" aria-label="Weekly focus goal" aria-valuemin={0} aria-valuemax={goalMinutes} aria-valuenow={Math.min(weeklyStats.minutes, goalMinutes)}>
-              <motion.div className="h-full rounded-full bg-label" initial={{ width: 0 }} animate={{ width: `${Math.min(100, (weeklyStats.minutes / goalMinutes) * 100)}%` }} transition={spring} />
-            </div>
-          </>
-        ) : <p className="mt-1 text-footnote text-label-2">Choose a weekly target; completed Focus time adds up here.</p>}
-      </div>
     </motion.section>
   )
 
@@ -279,11 +260,32 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
     </Section>
   )
 
-  const insights = chapters.length > 0 && (
+  const insights = (
     <Section prominent title="This week">
-      <button type="button" onClick={onOpenInsights} className="w-full text-left p-5 active:bg-fill transition-colors duration-75">
-        <WeekDots events={events} streak={streak.count} />
-      </button>
+      <div className="p-5">
+        <button type="button" onClick={onOpenInsights} className="w-full text-left active:bg-fill transition-colors duration-75">
+          <WeekDots events={events} streak={streak.count} />
+        </button>
+        <div className="mt-4 border-t border-separator pt-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-footnote text-label-2"><Target size={15} /> Weekly focus</div>
+            <button type="button" className="min-h-9 rounded-full px-3 text-footnote font-medium hover:bg-fill" onClick={() => setShowGoal(true)}>
+              {goalMinutes ? 'Edit goal' : 'Set a goal'}
+            </button>
+          </div>
+          {goalMinutes ? (
+            <>
+              <div className="mt-2 flex items-baseline justify-between gap-3">
+                <p className="text-body font-medium">{formatMinutes(weeklyStats.minutes)} <span className="text-label-2 font-normal">of {formatMinutes(goalMinutes)}</span></p>
+                <span className="text-footnote text-label-2">{Math.min(100, Math.round((weeklyStats.minutes / goalMinutes) * 100))}%</span>
+              </div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-fill-2" role="progressbar" aria-label="Weekly focus goal" aria-valuemin={0} aria-valuemax={goalMinutes} aria-valuenow={Math.min(weeklyStats.minutes, goalMinutes)}>
+                <motion.div className="h-full rounded-full bg-label" initial={{ width: 0 }} animate={{ width: `${Math.min(100, (weeklyStats.minutes / goalMinutes) * 100)}%` }} transition={spring} />
+              </div>
+            </>
+          ) : <p className="mt-1 text-footnote text-label-2">Choose a weekly target; completed Focus time adds up here.</p>}
+        </div>
+      </div>
     </Section>
   )
 
@@ -322,42 +324,12 @@ export default function TodayPage({ cadence, actions, profile, onOpenChapter, on
               )}
             </AnimatePresence>
 
-            {remaining === 0 && (
-              <motion.div {...stagger(1)} className="bg-card rounded-[28px] px-6 py-10 text-center lg:hidden">
-              <h2 className="text-title-2 font-medium">
-                {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
-              </h2>
-              <p className="text-subhead text-label-2 mt-2 max-w-[320px] mx-auto">
-                {chapters.length === 0
-                  ? 'Add what you studied today. Five reviews get scheduled — 1, 3, 7, 15 and 30 days apart.'
-                  : 'Studied something new? Log it so its reviews start tomorrow.'}
-              </p>
-              <Button size="md" className="mt-6" onClick={onAdd}>
-                <Plus size={17} strokeWidth={2.2} /> Add chapter
-              </Button>
-              </motion.div>
-            )}
           </div>
 
           <div className="mt-8 space-y-8 min-w-0 lg:mt-0">
             {comingUp}
             {insights}
           </div>
-          {remaining === 0 && (
-            <motion.div {...stagger(1)} className="hidden lg:block lg:col-span-2 bg-card rounded-[28px] px-6 py-10 text-center">
-              <h2 className="text-title-2 font-medium">
-                {chapters.length === 0 ? 'Log your first chapter.' : 'Nothing else due today.'}
-              </h2>
-              <p className="text-subhead text-label-2 mt-2 max-w-[320px] mx-auto">
-                {chapters.length === 0
-                  ? 'Add what you studied today. Five reviews get scheduled — 1, 3, 7, 15 and 30 days apart.'
-                  : 'Studied something new? Log it so its reviews start tomorrow.'}
-              </p>
-              <Button size="md" className="mt-6" onClick={onAdd}>
-                <Plus size={17} strokeWidth={2.2} /> Add chapter
-              </Button>
-            </motion.div>
-          )}
         </div>
       </div>
       <AnimatePresence>{showGoal && <WeeklyGoalSheet key="weekly-goal" value={goalMinutes} onClose={() => setShowGoal(false)} onSave={(minutes) => { cadence.updatePrefs({ weeklyFocusGoalMinutes: minutes }); setShowGoal(false) }} />}</AnimatePresence>
