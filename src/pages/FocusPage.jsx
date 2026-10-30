@@ -29,7 +29,7 @@ function Dial({ timer, big = false }) {
     <motion.div
       animate={timer.justCompleted ? { scale: [1, 1.04, 1] } : { scale: 1 }}
       transition={{ duration: 0.5, ease: easeOut }}
-      className={`relative ${big ? 'w-[min(80vw,62vh,30rem)]' : 'w-[min(76vw,300px)]'} aspect-square`}
+      className={`relative ${big ? 'w-[min(76vw,56vh,26rem)]' : 'w-[min(76vw,300px)]'} aspect-square`}
     >
       <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
         {Array.from({ length: TICKS }).map((_, i) => {
@@ -185,9 +185,6 @@ function FullscreenTimer({ timer, chapterTitle, onExit }) {
           <Controls timer={timer} big />
         </div>
       </motion.div>
-      <p className="absolute text-footnote text-label-3 text-center px-4 hidden md:block" style={{ bottom: 28 }}>
-        Space to start or pause · Esc to leave
-      </p>
     </motion.div>,
     document.body
   )
