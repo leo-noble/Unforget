@@ -67,9 +67,7 @@ export default function Sidebar({
       initial={false}
       animate={{ width: collapsed ? 68 : 260 }}
       transition={widthSpring}
-      className={`hidden md:flex fixed left-3 top-3 bottom-3 z-40 desktop-sidebar flex-col py-3 overflow-hidden ${
-        collapsed ? 'rounded-[22px]' : 'rounded-[18px]'
-      } ${
+      className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 desktop-sidebar flex-col py-3 overflow-hidden ${
         collapsed ? 'items-center px-0' : 'px-3'
       }`}
     >
@@ -86,7 +84,7 @@ export default function Sidebar({
           </button>
         ) : (
           <>
-            <AppIcon size={30} />
+            <AppIcon size={30} bare />
             <span className="font-display text-[21px] leading-none tracking-[-0.04em] flex-1">{APP_NAME}</span>
             <button
               type="button"

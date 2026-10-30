@@ -9,14 +9,14 @@
 const UNIT = 78 // one step of the schedule
 const LIT = [0, 1, 3, 6, 10] // gaps of 1, 2, 3, 4 steps
 
-export function appIconSVG({ shape = 'squircle', glyphScale = 1 } = {}) {
+export function appIconSVG({ shape = 'squircle', glyphScale = 1, background = true, dotColor = '#f1f1ed' } = {}) {
   const left = 512 - (UNIT * 10) / 2
-  const dots = LIT.map((step) => `<circle cx="${(left + step * UNIT).toFixed(1)}" cy="512" r="29" fill="#f1f1ed"/>`).join('')
+  const dots = LIT.map((step) => `<circle cx="${(left + step * UNIT).toFixed(1)}" cy="512" r="29" fill="${dotColor}"/>`).join('')
   const rx = shape === 'squircle' ? 232 : 0
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
   <defs>
   </defs>
-  <rect width="1024" height="1024" rx="${rx}" fill="#191a19"/>
+  ${background ? `<rect width="1024" height="1024" rx="${rx}" fill="#191a19"/>` : ''}
   <g transform="translate(512 512) scale(${glyphScale}) translate(-512 -512)">${dots}</g>
 </svg>`
 }

@@ -299,15 +299,16 @@ input[type='search']::-webkit-search-cancel-button {
      like a floating phone dock. */
   .desktop-sidebar {
     background: var(--card);
-    border: 1px solid var(--separator);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    border: 0;
+    border-right: 1px solid var(--separator);
+    box-shadow: none;
   }
   .desktop-nav-active {
     background: var(--fill);
     box-shadow: inset 0 0 0 1px var(--separator);
   }
   :root[data-mode='dark'] .desktop-sidebar {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+    box-shadow: none;
   }
   :root[data-mode='dark'] .desktop-glass {
     -webkit-backdrop-filter: blur(28px) saturate(145%);
