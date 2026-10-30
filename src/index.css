@@ -169,10 +169,6 @@ button,
     box-shadow 180ms ease, transform 220ms cubic-bezier(.2,.8,.2,1);
 }
 
-/* Controls use soft pill geometry throughout; content cards keep their own shape. */
-button[class*='rounded-'], [role='button'][class*='rounded-'] {
-  border-radius: 999px !important;
-}
 button:active, [role='button']:active { transform: scale(.975); }
 @media (prefers-reduced-motion: reduce) {
   button, [role='button'] { transition-duration: 0.01ms; }
@@ -581,9 +577,6 @@ body { letter-spacing: -0.012em; }
     inset 0 1px 0 rgba(255, 255, 255, 0.36),
     inset 0 -1px 0 rgba(255, 255, 255, 0.08),
     0 3px 12px rgba(0, 0, 0, 0.14);
-}
-button[class*='rounded-'], [role='button'][class*='rounded-'] {
-  border-radius: 999px !important;
 }
 .insights-content .bg-card { background-color: var(--card-2); }
 .insights-content > section > .ios-list { border: 1px solid var(--separator); }
