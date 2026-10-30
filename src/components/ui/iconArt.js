@@ -16,8 +16,7 @@ export function appIconSVG({ shape = 'squircle', glyphScale = 1, background = tr
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
   <defs>
   </defs>
-  ${background ? `<rect width="1024" height="1024" rx="${rx}" fill="#191a19"/>` : ''}
-  ${background ? '' : `<rect x="9" y="9" width="1006" height="1006" rx="${rx}" fill="none" stroke="${dotColor}" stroke-opacity="0.62" stroke-width="18"/>`}
+  ${background ? `<rect width="1024" height="1024" rx="${rx}" fill="#191a19"/>` : `<rect x="9" y="9" width="1006" height="1006" rx="${rx}" fill="var(--fill)" stroke="${dotColor}" stroke-opacity="0.2" stroke-width="18"/>`}
   <g transform="translate(512 512) scale(${glyphScale}) translate(-512 -512)">${dots}</g>
 </svg>`
 }
