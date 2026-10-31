@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import AppShell from './AppShell'
 import { trackPageView } from './lib/analytics'
+import { ADMIN_PATH } from './lib/adminPath'
 
 // The marketing page is only for people who haven't signed in yet, so it's
 // split out of the bundle everyone else downloads.
@@ -68,7 +69,7 @@ function PageViewTracker() {
   return null
 }
 
-// /admin is for the one admin account; anyone else lands back in the app.
+// The admin page is for the one admin account; anyone else lands back in the app.
 function RequireAdmin({ children }) {
   const { isAdmin, user } = useAuth()
   const [checked, setChecked] = useState(false)
@@ -132,7 +133,7 @@ export default function App() {
                   }
                 />
                 <Route
-                  path="/admin"
+                  path={ADMIN_PATH}
                   element={
                     <RequireAuth>
                       <RequireAdmin>

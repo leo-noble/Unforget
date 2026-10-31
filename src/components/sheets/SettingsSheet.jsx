@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, BellRing, Clock, Timer, RefreshCw, Check, Info, LogOut, ChartColumn, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
+import { Bell, BellRing, Clock, Timer, RefreshCw, Check, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Monitor, Sun, Moon } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -29,7 +29,7 @@ export default function SettingsSheet({ cadence, onClose }) {
   const { prefs, updatePrefs, subjects, chapters, events, syncState } = cadence
   const navigate = useNavigate()
   const confirm = useConfirm()
-  const { user, displayName, avatarUrl, signOut, isAdmin } = useAuth()
+  const { user, displayName, avatarUrl, signOut } = useAuth()
   const [message, setMessage] = useState('')
 
   const completed = events.filter((e) => e.action === 'completed').length
@@ -224,7 +224,6 @@ export default function SettingsSheet({ cadence, onClose }) {
         )}
 
         <Section>
-          {isAdmin && <Row icon={ChartColumn} title="Admin" subtitle="Visits, accounts and sign-ins" chevron onClick={() => navigate('/admin')} />}
           <Row icon={Info} title={`About ${APP_NAME}`} chevron onClick={() => navigate('/welcome')} />
         </Section>
 

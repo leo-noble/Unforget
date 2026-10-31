@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient'
+import { ADMIN_PATH } from './adminPath'
 
 // Anonymous visit counting for the admin page. Each device gets a random id
 // (no IPs, no fingerprinting); a signed-in user's id rides along so the admin
@@ -33,7 +34,7 @@ export function trackPageView(pathname, userId) {
   if (!isSupabaseConfigured || typeof window === 'undefined') return
   if (import.meta.env.DEV) return
   const path = bucket(pathname)
-  if (path === '/admin') return
+  if (path === ADMIN_PATH) return
   const key = `${path}|${userId || ''}`
   const now = Date.now()
   if (now - (lastLogged.get(key) || 0) < DEDUPE_MS) return
