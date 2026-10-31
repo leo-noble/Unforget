@@ -76,6 +76,7 @@ const FAQ = [
   ['Why 1, 3, 7, 15 and 30 days?', 'Each review lands just before you’d start to forget. Recalling it then makes the memory last longer, which earns the next, wider gap.'],
   ['What if I miss a day?', 'Nothing resets. Missed reviews move to the top of Today, marked overdue. You can push one back a day, twice at most.'],
   ['Does it work on my phone?', 'Yes. Add it to your Home Screen and it opens full-screen like an app. Your chapters sync between phone and computer.'],
+  ['Do you track me?', 'Only anonymously: we count page visits per device with a random id, never your IP, to see how many people use the app. Your chapters are private to your account.'],
 ]
 
 function FaqItem({ q, a, open, onToggle }) {

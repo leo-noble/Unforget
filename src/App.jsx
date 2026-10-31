@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import { AuthProvider, useAuth, hasSignedInBefore } from './lib/useAuth'
@@ -9,10 +9,12 @@ import { applyAppearance } from './lib/appearance'
 import LoginPage from './pages/LoginPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import AppShell from './AppShell'
+import { trackPageView } from './lib/analytics'
 
 // The marketing page is only for people who haven't signed in yet, so it's
 // split out of the bundle everyone else downloads.
 const LandingPage = lazy(() => import('./pages/LandingPage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 /**
  * "/" decides where you actually wanted to go:
@@ -55,6 +57,30 @@ function RequireAuth({ children }) {
   return children
 }
 
+// Logs one anonymous visit per area per half hour, once auth has resolved so
+// a signed-in visit is attributed to its account.
+function PageViewTracker() {
+  const { pathname } = useLocation()
+  const { user, loading } = useAuth()
+  useEffect(() => {
+    if (!loading) trackPageView(pathname, user?.id)
+  }, [pathname, user?.id, loading])
+  return null
+}
+
+// /admin is for the one admin account; anyone else lands back in the app.
+function RequireAdmin({ children }) {
+  const { isAdmin, user } = useAuth()
+  const [checked, setChecked] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setChecked(true), 1500)
+    return () => clearTimeout(t)
+  }, [user?.id])
+  if (isAdmin) return children
+  if (!checked) return <Splash />
+  return <Navigate to="/dashboard" replace />
+}
+
 // Keep old bookmarks and OAuth links working while moving the app to its new
 // canonical route. Preserve nested tabs, query parameters, and fragments.
 function LegacyAppRedirect() {
@@ -84,6 +110,7 @@ export default function App() {
         <ToastProvider>
           <ConfirmProvider>
             <BrowserRouter>
+              <PageViewTracker />
               <Routes>
                 <Route path="/" element={<Entry />} />
                 <Route
@@ -101,6 +128,18 @@ export default function App() {
                   element={
                     <RequireAuth>
                       <AppShell />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <RequireAuth>
+                      <RequireAdmin>
+                        <Suspense fallback={<Splash />}>
+                          <AdminPage />
+                        </Suspense>
+                      </RequireAdmin>
                     </RequireAuth>
                   }
                 />

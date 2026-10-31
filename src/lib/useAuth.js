@@ -82,6 +82,24 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Whether the signed-in account may open /admin. Only decides whether the
+  // link shows — the server re-checks on every admin query.
+  const [isAdmin, setIsAdmin] = useState(false)
+  const userId = session?.user?.id
+  useEffect(() => {
+    if (!isSupabaseConfigured || !userId) {
+      setIsAdmin(false)
+      return
+    }
+    let active = true
+    supabase.rpc('is_admin').then(({ data }) => {
+      if (active) setIsAdmin(data === true)
+    })
+    return () => {
+      active = false
+    }
+  }, [userId])
+
   const signInWithPassword = useCallback(async (email, password) => {
     if (!isSupabaseConfigured) return { error: { message: 'Supabase is not configured yet.' } }
     return supabase.auth.signInWithPassword({ email, password })
@@ -137,6 +155,7 @@ export function AuthProvider({ children }) {
       displayName,
       avatarUrl,
       loading,
+      isAdmin,
       signInWithPassword,
       signUp,
       signInWithGoogle,
@@ -144,7 +163,7 @@ export function AuthProvider({ children }) {
       updatePassword,
       signOut,
     }
-  }, [session, loading, signInWithPassword, signUp, signInWithGoogle, resetPasswordForEmail, updatePassword, signOut])
+  }, [session, loading, isAdmin, signInWithPassword, signUp, signInWithGoogle, resetPasswordForEmail, updatePassword, signOut])
 
   return createElement(AuthContext.Provider, { value }, children)
 }
