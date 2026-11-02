@@ -36,7 +36,7 @@ export function ToastProvider({ children }) {
             {toast && (
               <motion.div
                 key={toast.key}
-                initial={{ opacity: 0, y: -40, scale: 0.9 }}
+                initial={{ opacity: 0, y: -16, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -24, scale: 0.94, transition: { duration: 0.2 } }}
                 transition={bouncy}
@@ -47,16 +47,11 @@ export function ToastProvider({ children }) {
                   if (info.offset.y < -20) setToast(null)
                 }}
                 onClick={() => setToast(null)}
-                className="glass-strong pointer-events-auto flex items-center gap-3 rounded-full pl-3 pr-5 py-2.5 max-w-[420px] min-w-[220px] cursor-default"
+                className="glass-strong pointer-events-auto flex items-center gap-2.5 rounded-sheet px-4 py-2.5 max-w-[420px] min-w-[220px] cursor-default"
                 role="status"
               >
                 {toast.icon && (
-                  <span
-                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-tint-fg`}
-                    style={{ background: 'var(--tint)' }}
-                  >
-                    <toast.icon size={18} strokeWidth={2.6} />
-                  </span>
+                  <toast.icon size={16} strokeWidth={2} className="shrink-0 text-label-2" />
                 )}
                 <span className="min-w-0">
                   <span className="block text-subhead font-medium truncate">{toast.title}</span>

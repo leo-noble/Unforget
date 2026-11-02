@@ -18,13 +18,13 @@ export function Section({
     <section className={className}>
       {title &&
         (prominent ? (
-          <div className="flex items-center justify-between gap-3 px-1 mb-3">
-            <h2 className={`eyebrow text-label ${titleClassName}`}>{title}</h2>
+          <div className="flex items-center justify-between gap-3 px-0.5 mb-2.5 min-h-6">
+            <h2 className={`text-subhead font-medium text-label ${titleClassName}`}>{title}</h2>
             {action}
           </div>
         ) : (
-          <div className="flex items-end justify-between gap-3 px-4 mb-1.5">
-            <h3 className={`eyebrow text-label-2 ${titleClassName}`}>{title}</h3>
+          <div className="flex items-end justify-between gap-3 px-0.5 mb-2">
+            <h3 className={`text-footnote font-medium text-label-2 ${titleClassName}`}>{title}</h3>
             {action}
           </div>
         ))}
@@ -34,15 +34,11 @@ export function Section({
   )
 }
 
-// Settings.app-style leading glyph: a white symbol on a coloured squircle.
-export function RowIcon({ icon: Icon, size = 30 }) {
+// Leading glyph: a plain outline icon in grey, no chip behind it.
+export function RowIcon({ icon: Icon, size = 20 }) {
   return (
-    <span
-      className="shrink-0 rounded-full flex items-center justify-center text-label bg-fill"
-      style={{ width: size, height: size }}
-      aria-hidden="true"
-    >
-      <Icon size={size * 0.52} strokeWidth={1.75} />
+    <span className="shrink-0 flex items-center justify-center text-label-2" style={{ width: size, height: size }} aria-hidden="true">
+      <Icon size={17} strokeWidth={1.6} />
     </span>
   )
 }
@@ -65,14 +61,14 @@ export function Row({
 }) {
   const Comp = onClick ? 'button' : 'div'
   const hasLeading = !!(icon || leading)
-  const insetPx = inset ?? (hasLeading ? 58 : 16)
+  const insetPx = inset ?? (hasLeading ? 48 : 16)
   return (
     <Comp
       type={onClick ? 'button' : undefined}
       onClick={onClick}
       style={{ '--inset': `${insetPx}px` }}
-      className={`w-full flex items-center gap-3 min-h-[52px] px-4 py-2.5 text-left ${
-        onClick ? 'active:bg-fill transition-colors duration-75' : ''
+      className={`w-full flex items-center gap-3 min-h-[44px] px-4 py-2 text-left ${
+        onClick ? 'hover:bg-fill active:bg-fill transition-colors duration-75' : ''
       } ${center ? 'justify-center' : ''} ${className}`}
       {...rest}
     >
@@ -81,16 +77,16 @@ export function Row({
       {children ?? (
         <span className={`min-w-0 ${center ? '' : 'flex-1'}`}>
           <span
-            className={`block text-body truncate ${destructive ? 'text-accent' : center ? 'text-tint' : 'text-label'}`}
+            className={`block text-body truncate ${destructive ? 'text-negative' : 'text-label'}`}
           >
             {title}
           </span>
-          {subtitle && <span className="block text-subhead text-label-2 truncate mt-0.5">{subtitle}</span>}
+          {subtitle && <span className="block text-footnote text-label-2 truncate">{subtitle}</span>}
         </span>
       )}
-      {detail != null && <span className="shrink-0 text-body text-label-2 tabular">{detail}</span>}
+      {detail != null && <span className="shrink-0 text-subhead text-label-2 tabular">{detail}</span>}
       {trailing}
-      {chevron && <ChevronRight size={18} className="shrink-0 text-label-3 -mr-1" strokeWidth={2.4} />}
+      {chevron && <ChevronRight size={16} className="shrink-0 text-label-3 -mr-1" strokeWidth={2} />}
     </Comp>
   )
 }

@@ -63,7 +63,7 @@ export default function StudyBlock({
         touchAction: 'pan-x pan-y',
         WebkitTouchCallout: 'none',
       }}
-      className={`group absolute rounded-[9px] overflow-hidden select-none cursor-grab active:cursor-grabbing transition-[box-shadow,transform] duration-150 outline-none focus-visible:ring-2 focus-visible:ring-tint ${
+      className={`group absolute rounded-[4px] overflow-hidden select-none cursor-grab active:cursor-grabbing transition-[box-shadow,transform] duration-150 outline-none focus-visible:ring-2 focus-visible:ring-tint ${
         dragging ? 'z-20' : 'z-10'
       } ${block.done ? 'opacity-55' : ''}`}
     >

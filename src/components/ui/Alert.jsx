@@ -72,21 +72,21 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="alert-title"
-        initial={{ opacity: 0, scale: 1.12 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.15 } }}
         transition={snappy}
-        className="glass-strong relative w-full max-w-[300px] rounded-[30px] p-5 pt-6 text-center"
+        className="glass-strong relative w-full max-w-[360px] rounded-sheet p-5 text-left"
       >
         <h2 id="alert-title" className="text-headline font-medium">
           {title}
         </h2>
         {message && <p className="text-footnote text-label-2 mt-1.5">{message}</p>}
-        <div className="grid grid-cols-2 gap-2.5 mt-5">
+        <div className="flex justify-end gap-2 mt-5">
           <button
             type="button"
             onClick={() => onSettle(false)}
-            className="h-11 rounded-full bg-fill text-subhead font-medium active:bg-fill-2"
+            className="h-9 px-4 rounded-control bg-fill-2 text-subhead font-medium hover:bg-fill"
           >
             {cancelLabel}
           </button>
@@ -94,9 +94,9 @@ function AlertCard({ title, message, confirmLabel = 'OK', cancelLabel = 'Cancel'
             ref={confirmRef}
             type="button"
             onClick={() => onSettle(true)}
-            className={`h-11 rounded-full text-subhead font-medium ${
-              destructive ? 'bg-accent text-tint-fg' : 'tint-fill text-tint-fg'
-            } active:opacity-80`}
+            className={`h-9 px-4 rounded-control text-subhead font-medium ${
+              destructive ? 'bg-negative text-white' : 'tint-fill text-tint-fg'
+            } hover:opacity-90`}
           >
             {confirmLabel}
           </button>

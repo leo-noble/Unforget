@@ -18,7 +18,7 @@ const END_OF_DAY = 24 * 60
 const shortDate = (iso) => startOfDay(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 const rowDate = (iso) => startOfDay(iso).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric' })
 
-const fieldClass = 'bg-fill rounded-[10px] px-3 h-[34px] text-subhead text-label outline-none tabular'
+const fieldClass = 'bg-fill rounded-control px-3 h-[34px] text-subhead text-label outline-none tabular'
 
 export default function StudyPlanSheet({
   chapters,
@@ -381,7 +381,7 @@ export default function StudyPlanSheet({
                 onClose()
               }}
             >
-              <span className="flex items-center gap-2 text-body text-accent">
+              <span className="flex items-center gap-2 text-body text-negative">
                 <Trash2 size={17} /> Delete Session
               </span>
             </Row>
@@ -393,7 +393,7 @@ export default function StudyPlanSheet({
                   onClose()
                 }}
               >
-                <span className="flex items-center gap-2 text-body text-accent">
+                <span className="flex items-center gap-2 text-body text-negative">
                   <Trash2 size={17} /> Delete All {seriesCount} Days
                 </span>
               </Row>

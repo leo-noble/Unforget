@@ -23,10 +23,10 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
           {new Date(year, month, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
         </p>
         <div className="flex items-center">
-          <button onClick={() => onShiftMonth(-1)} aria-label="Previous month" className="h-8 w-8 rounded-full flex items-center justify-center text-tint hover:bg-fill">
+          <button onClick={() => onShiftMonth(-1)} aria-label="Previous month" className="h-8 w-8 rounded-control flex items-center justify-center text-label-2 hover:text-label hover:bg-fill">
             <ChevronLeft size={19} strokeWidth={2.4} />
           </button>
-          <button onClick={() => onShiftMonth(1)} aria-label="Next month" className="h-8 w-8 rounded-full flex items-center justify-center text-tint hover:bg-fill">
+          <button onClick={() => onShiftMonth(1)} aria-label="Next month" className="h-8 w-8 rounded-control flex items-center justify-center text-label-2 hover:text-label hover:bg-fill">
             <ChevronRight size={19} strokeWidth={2.4} />
           </button>
         </div>
@@ -53,7 +53,7 @@ export default function MiniMonth({ cursorDate, weekDates, loadByDate, onSelectD
             >
               <span
                 className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                  isToday ? 'bg-accent text-tint-fg font-medium' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
+                  isToday ? 'bg-data text-white font-medium' : cell.inMonth ? 'hover:bg-fill' : 'text-label-3 hover:bg-fill'
                 }`}
               >
                 {cell.date.getDate()}

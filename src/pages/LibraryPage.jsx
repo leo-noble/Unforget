@@ -1,15 +1,16 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Search, X, Trash2, LibraryBig, Plus, Clock3, ArrowUpRight } from 'lucide-react'
+import { Search, X, Trash2, Plus } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
+import Segmented from '../components/ui/Segmented'
 import ChapterRow from '../components/chapter/ChapterRow'
+import MemoryMap, { MemoryLegend } from '../components/insights/MemoryMap'
 import { useConfirm } from '../components/ui/Alert'
-import { subjectColor } from '../lib/colors'
-import { MAX_REVIEW_INDEX } from '../lib/srs'
-import { snappy, easeOut } from '../components/ui/motion'
-import { estimateChapterMinutes, formatMinutes, recommendChapters } from '../lib/studyCoach'
+import { snappy } from '../components/ui/motion'
+import { memoryMap, weakestSubject } from '../lib/memory'
+import { useListKeys } from '../lib/useShortcuts'
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -27,10 +28,16 @@ const EMPTY = {
 }
 
 export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, account }) {
-  const { subjects, chapters, subjectMap, removeSubject } = cadence
+  const { subjects, chapters, events, subjectMap, removeSubject } = cadence
   const confirm = useConfirm()
   const [filter, setFilter] = useState('all')
+  const [sort, setSort] = useState('subject') // subject | memory
   const [query, setQuery] = useState('')
+
+  const memory = useMemo(() => memoryMap(chapters, subjects, events), [chapters, subjects, events])
+  const strength = useMemo(() => new Map(memory.flatMap((g) => g.items.map((i) => [i.chapter.id, i.value]))), [memory])
+  const slipping = memory.flatMap((g) => g.items).filter((i) => i.chapter.status !== 'mastered' && i.band.id === 'slipping').length
+  const weakest = weakestSubject(memory)
 
   const counts = useMemo(() => {
     const c = { all: chapters.length, overdue: 0, due: 0, upcoming: 0, mastered: 0 }
@@ -40,25 +47,36 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
     return c
   }, [chapters])
 
-  const groups = useMemo(() => {
+  const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
+    return chapters.filter((c) => {
+      if (filter !== 'all' && c.derivedStatus !== filter) return false
+      if (!q) return true
+      const name = subjectMap.get(c.subjectId)?.name || ''
+      return c.title.toLowerCase().includes(q) || name.toLowerCase().includes(q)
+    })
+  }, [chapters, filter, query, subjectMap])
+
+  const groups = useMemo(() => {
     const map = new Map(subjects.map((s) => [s.id, []]))
-    chapters.forEach((c) => {
-      if (filter !== 'all' && c.derivedStatus !== filter) return
-      if (q) {
-        const name = subjectMap.get(c.subjectId)?.name || ''
-        if (!c.title.toLowerCase().includes(q) && !name.toLowerCase().includes(q)) return
-      }
+    visible.forEach((c) => {
       if (!map.has(c.subjectId)) map.set(c.subjectId, [])
       map.get(c.subjectId).push(c)
     })
     return map
-  }, [subjects, chapters, filter, query, subjectMap])
+  }, [subjects, visible])
 
-  const anyVisible = [...groups.values()].some((l) => l.length > 0)
-  const nextChapter = useMemo(() => recommendChapters(chapters)[0], [chapters])
-  const showFocusTimer = cadence.prefs.showFocusTimer !== false
-  const nextEstimate = showFocusTimer && nextChapter ? estimateChapterMinutes(nextChapter.id, cadence.focusSessions) : null
+  const byMemory = useMemo(
+    () => [...visible].sort((a, b) => (strength.get(a.id) ?? 1) - (strength.get(b.id) ?? 1)),
+    [visible, strength]
+  )
+
+  // The order rows appear in on screen, for j / k.
+  const ordered = useMemo(
+    () => (sort === 'memory' ? byMemory : subjects.flatMap((s) => groups.get(s.id) || [])),
+    [sort, byMemory, subjects, groups]
+  )
+  const selectedId = useListKeys(ordered, { onOpen: onOpenChapter, onRevise: actions.revise, onSnooze: actions.snooze })
 
   async function deleteSubject(subject, count) {
     const ok = await confirm({
@@ -70,167 +88,166 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
     if (ok) removeSubject(subject.id)
   }
 
+  const row = (c, showSubject) => (
+    <ChapterRow
+      key={c.id}
+      chapter={c}
+      subject={subjectMap.get(c.subjectId)}
+      showSubject={showSubject}
+      onOpen={onOpenChapter}
+      onRevise={actions.revise}
+      onSnooze={actions.snooze}
+      onLocked={actions.locked}
+      strength={strength.get(c.id)}
+      selected={c.id === selectedId}
+    />
+  )
+
+  let subtitle = 'Every chapter you log lands here, grouped by subject.'
+  if (chapters.length) {
+    subtitle = slipping
+      ? `${slipping} chapter${slipping === 1 ? ' is' : 's are'} slipping.${weakest ? ` ${weakest.subject.name} is weakest, at ${Math.round(weakest.average * 100)}%.` : ''}`
+      : `Nothing is slipping.${weakest ? ` ${weakest.subject.name} is weakest, at ${Math.round(weakest.average * 100)}%.` : ''}`
+  }
+
   return (
     <Page
       title="Library"
-      eyebrow={`${chapters.length} chapter${chapters.length === 1 ? '' : 's'} · ${subjects.length} subject${
-        subjects.length === 1 ? '' : 's'
-      }`}
+      meta={`${chapters.length} chapter${chapters.length === 1 ? '' : 's'} · ${subjects.length} subject${subjects.length === 1 ? '' : 's'}`}
+      subtitle={subtitle}
       trailing={account}
+      titleAccessory={
+        <Button size="md" variant="gray" onClick={onAdd} className="hidden sm:inline-flex">
+          <Plus size={15} /> New chapter
+        </Button>
+      }
       wide
     >
-      {nextChapter && filter === 'all' && !query && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: easeOut }} className="mb-5">
-          <Section prominent title="Next up">
-            <button
-              type="button"
-              onClick={() => onOpenChapter(nextChapter)}
-              style={{ '--inset': '58px' }}
-              className="flex min-h-[68px] w-full items-center gap-3 px-4 py-3 text-left active:bg-fill transition-colors duration-75"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill text-label-2"><Clock3 size={17} /></span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-body font-medium">{nextChapter.title}</span>
-                <span className="mt-0.5 block truncate text-footnote text-label-2">
-                  {nextChapter.coachReason}{nextEstimate ? ` · ${nextEstimate.label} · ${formatMinutes(nextEstimate.minutes)}` : ''}
-                </span>
-              </span>
-              <ArrowUpRight size={17} className="shrink-0 text-label-2" />
-            </button>
-          </Section>
-        </motion.div>
-      )}
-      {/* Search, iOS 26 style: a capsule field */}
-      <div className="relative mb-3">
-        <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-label-2 pointer-events-none" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search chapters and subjects"
-          aria-label="Search chapters and subjects"
-          enterKeyHint="search"
-          className="w-full h-11 rounded-full bg-card pl-10 pr-10 text-body outline-none placeholder:text-label-3 focus:ring-1 focus:ring-label-3"
-        />
-        <AnimatePresence>
-          {query && (
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.6 }}
-              onClick={() => setQuery('')}
-              aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-label-3 text-card flex items-center justify-center"
-            >
-              <X size={14} strokeWidth={3} />
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Filter chips — scroll sideways on a phone rather than wrapping */}
-      <div className="-mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto no-scrollbar mb-6">
-        <div className="flex gap-2 w-max" role="radiogroup" aria-label="Filter">
-          {FILTERS.map((f) => {
-            const on = filter === f.id
-            return (
-              <motion.button
-                key={f.id}
-                type="button"
-                role="radio"
-                aria-checked={on}
-                whileTap={{ scale: 0.94 }}
-                transition={snappy}
-                onClick={() => setFilter(f.id)}
-                className={`relative h-9 px-4 rounded-full text-subhead flex items-center gap-1.5 ${
-                  on ? 'text-tint-fg' : 'bg-card text-label'
-                }`}
-              >
-                {on && <motion.span layoutId="library-chip" transition={snappy} className="absolute inset-0 rounded-full tint-fill" />}
-                <span className="relative">{f.label}</span>
-                <span className={`relative font-mono text-[12px] tabular ${on ? 'text-tint-fg/70' : 'text-label-2'}`}>{counts[f.id] || 0}</span>
-              </motion.button>
-            )
-          })}
-        </div>
-      </div>
-
       {chapters.length === 0 ? (
-        <div className="bg-card rounded-[28px] px-6 py-10 text-center">
-          <span className="mx-auto h-14 w-14 rounded-full bg-fill text-label flex items-center justify-center">
-            <LibraryBig size={24} strokeWidth={1.6} />
-          </span>
-          <h2 className="text-title-2 font-medium mt-4">Your library is empty</h2>
-          <p className="text-subhead text-label-2 mt-1.5 max-w-[300px] mx-auto">
-            Every chapter you log lands here, grouped by subject.
+        <div className="bg-card rounded-cell px-6 py-10">
+          <h2 className="text-title-3 font-medium">Your library is empty</h2>
+          <p className="text-subhead text-label-2 mt-1 max-w-[420px]">
+            Log a chapter the day you study it. Its five reviews (day 1, 4, 11, 26 and 56) are planned for you, and it shows up here.
           </p>
           <Button className="mt-5" onClick={onAdd}>
-            <Plus size={18} strokeWidth={2.6} /> Add Chapter
+            <Plus size={15} /> Add chapter
           </Button>
         </div>
-      ) : !anyVisible ? (
-        <p className="text-center text-subhead text-label-2 py-16">
-          {query ? `No results for “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
-        </p>
       ) : (
-        <div className="grid lg:grid-cols-2 gap-x-8 gap-y-8 items-start">
-          {subjects.map((subject) => {
-            const list = groups.get(subject.id) || []
-            if (list.length === 0) return null
-            const all = chapters.filter((c) => c.subjectId === subject.id)
-            const progress =
-              all.reduce((sum, c) => sum + (c.status === 'mastered' ? MAX_REVIEW_INDEX : c.currentReviewIndex || 0), 0) /
-              Math.max(1, all.length * MAX_REVIEW_INDEX)
-            const color = subjectColor(subject.colorTag)
-            return (
-              <motion.section
-                key={subject.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: easeOut }}
-              >
-                <div className="flex items-center gap-3 px-1 mb-2.5">
-                  <h2 className="text-title-3 font-medium truncate flex-1 min-w-0">{subject.name}</h2>
-                  <span className="font-mono text-[12px] text-label-2 tabular shrink-0">{Math.round(progress * 100)}%</span>
+        <>
+          <section className="mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-0.5 mb-2.5 min-h-6">
+              <h2 className="text-subhead font-medium">Memory by subject</h2>
+              <MemoryLegend />
+            </div>
+            <div className="bg-card rounded-cell p-5">
+              <MemoryMap groups={memory} onOpen={onOpenChapter} />
+            </div>
+          </section>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+            <div className="relative flex-1 min-w-0">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-label-3 pointer-events-none" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Filter chapters and subjects"
+                aria-label="Filter chapters and subjects"
+                enterKeyHint="search"
+                className="w-full h-9 rounded-control bg-card shadow-[inset_0_0_0_1px_var(--separator)] pl-9 pr-9 outline-none placeholder:text-label-3 focus:shadow-[inset_0_0_0_1px_var(--label-3)]"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  aria-label="Clear filter"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-control text-label-2 hover:bg-fill flex items-center justify-center"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            <Segmented
+              value={sort}
+              onChange={setSort}
+              options={[
+                { id: 'subject', label: 'By subject' },
+                { id: 'memory', label: 'Weakest first' },
+              ]}
+              className="sm:w-[240px]"
+              ariaLabel="Sort"
+            />
+          </div>
+
+          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto no-scrollbar mb-6 border-b border-separator">
+            <div className="flex gap-5 w-max" role="radiogroup" aria-label="Show">
+              {FILTERS.map((f) => {
+                const on = filter === f.id
+                const count = (f.id === 'overdue' || f.id === 'due') && counts[f.id] ? counts[f.id] : null
+                return (
                   <button
+                    key={f.id}
                     type="button"
-                    onClick={() => deleteSubject(subject, all.length)}
-                    aria-label={`Delete ${subject.name}`}
-                    className="h-8 w-8 -mr-1 rounded-full flex items-center justify-center text-label-2 active:bg-fill hover:text-accent"
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => setFilter(f.id)}
+                    className={`relative h-9 text-subhead flex items-center gap-1.5 ${on ? 'text-label' : 'text-label-2 hover:text-label'}`}
                   >
-                    <Trash2 size={16} />
+                    {f.label}
+                    {count != null && <span className={`text-footnote tabular ${f.id === 'overdue' ? 'text-negative' : 'text-label-2'}`}>{count}</span>}
+                    {on && <motion.span layoutId="library-filter" transition={snappy} className="absolute left-0 right-0 -bottom-px h-[2px] bg-label" />}
                   </button>
-                </div>
-                <div className="h-1 rounded-full bg-fill overflow-hidden mx-1 mb-3">
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: progress }}
-                    transition={{ duration: 0.6, ease: easeOut }}
-                    style={{ originX: 0, background: color }}
-                    className="h-full rounded-full"
-                  />
-                </div>
-                <Section>
-                  <AnimatePresence initial={false}>
-                    {list.map((c) => (
-                      <ChapterRow
-                        key={c.id}
-                        chapter={c}
-                        subject={subject}
-                        showSubject={false}
-                        onOpen={onOpenChapter}
-                        onRevise={actions.revise}
-                        onSnooze={actions.snooze}
-                        onLocked={actions.locked}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </Section>
-              </motion.section>
-            )
-          })}
-        </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {visible.length === 0 ? (
+            <p className="text-subhead text-label-2 py-10">
+              {query ? `No chapter or subject matches “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
+            </p>
+          ) : sort === 'memory' ? (
+            <Section>
+              <AnimatePresence initial={false}>{byMemory.map((c) => row(c, true))}</AnimatePresence>
+            </Section>
+          ) : (
+            <div className="space-y-8">
+              {subjects.map((subject) => {
+                const list = groups.get(subject.id) || []
+                if (list.length === 0) return null
+                const all = chapters.filter((c) => c.subjectId === subject.id)
+                const mastered = all.filter((c) => c.status === 'mastered').length
+                const avg = memory.find((g) => g.subject.id === subject.id)?.average
+                return (
+                  <section key={subject.id}>
+                    <div className="flex items-center gap-3 px-0.5 mb-2.5 min-h-6">
+                      <h2 className="text-subhead font-medium truncate flex-1 min-w-0">
+                        {subject.name}
+                        <span className="ml-2 font-normal text-label-2">
+                          {mastered} of {all.length} mastered
+                          {avg != null && <span className="hidden sm:inline"> · memory {Math.round(avg * 100)}%</span>}
+                        </span>
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => deleteSubject(subject, all.length)}
+                        aria-label={`Delete ${subject.name}`}
+                        title={`Delete ${subject.name}`}
+                        className="h-7 w-7 -mr-1 rounded-control flex items-center justify-center text-label-3 hover:bg-fill hover:text-negative"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <Section>
+                      <AnimatePresence initial={false}>{list.map((c) => row(c, false))}</AnimatePresence>
+                    </Section>
+                  </section>
+                )
+              })}
+            </div>
+          )}
+        </>
       )}
     </Page>
   )

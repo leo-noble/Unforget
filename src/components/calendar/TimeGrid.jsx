@@ -433,8 +433,8 @@ export default function TimeGrid({
                 style={{ top: minutesToY(now.minute, win) }}
                 className="absolute inset-x-0 z-30 pointer-events-none"
               >
-                <span className="absolute -left-[4px] -top-[4px] h-[9px] w-[9px] rounded-full bg-accent" />
-                <span className="absolute inset-x-0 -top-px h-[2px] bg-accent" />
+                <span className="absolute -left-[3px] -top-[3px] h-[7px] w-[7px] rounded-full bg-data" />
+                <span className="absolute inset-x-0 -top-px h-px bg-data" />
               </div>
             )}
 

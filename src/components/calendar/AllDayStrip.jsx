@@ -46,7 +46,7 @@ export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjec
             <div
               key={entry.id}
               style={{ background: `color-mix(in srgb, ${color} 18%, var(--card))` }}
-              className={`relative items-center gap-1.5 pl-2.5 pr-2 rounded-[8px] overflow-hidden ${
+              className={`relative items-center gap-1.5 pl-2.5 pr-2 rounded-[4px] overflow-hidden ${
                 compact ? 'flex w-full min-w-0 h-[24px]' : 'inline-flex h-7'
               } ${entry.done ? 'opacity-55' : ''}`}
             >

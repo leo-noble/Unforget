@@ -1,5 +1,6 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { supabase, isSupabaseConfigured } from './supabaseClient'
+import { isDevPreview, previewSession, seedPreviewData } from './devPreview'
 
 // Supabase Auth's session, read once at the root and shared through context
 // so every screen agrees on who's signed in without each re-reading it.
@@ -7,6 +8,11 @@ import { supabase, isSupabaseConfigured } from './supabaseClient'
 // routes wait for it before deciding where to send the user.
 
 const AuthContext = createContext(null)
+
+// `vite dev` only: ?preview=1 opens the app as a local sample account. A
+// build-time constant, so production bundles drop the preview code entirely.
+const preview = import.meta.env.DEV && isDevPreview()
+if (preview) seedPreviewData()
 
 // Set the first time a session is seen on this device. A signed-out visitor
 // who has used the app before goes straight to sign-in, not the marketing page.
@@ -57,11 +63,11 @@ const returnURL = (path) => {
 }
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null)
-  const [loading, setLoading] = useState(isSupabaseConfigured)
+  const [session, setSession] = useState(() => (preview ? previewSession() : null))
+  const [loading, setLoading] = useState(isSupabaseConfigured && !preview)
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return
+    if (!isSupabaseConfigured || preview) return
     let active = true
     // getSession() resolves only after the client has finished reading any
     // OAuth tokens out of the URL, so a just-returned Google sign-in is
@@ -87,7 +93,7 @@ export function AuthProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false)
   const userId = session?.user?.id
   useEffect(() => {
-    if (!isSupabaseConfigured || !userId) {
+    if (!isSupabaseConfigured || !userId || preview) {
       setIsAdmin(false)
       return
     }

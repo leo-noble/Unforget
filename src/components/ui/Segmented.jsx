@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { snappy } from './motion'
 
-// A single persistent glass lens moves between the options. Measuring within
+// A single white pill moves between the options. Measuring within
 // this control keeps its first position local to the current tab and layout.
 export default function Segmented({ options, value, onChange, className = '', size = 'md', ariaLabel }) {
   const containerRef = useRef(null)
@@ -37,7 +37,7 @@ export default function Segmented({ options, value, onChange, className = '', si
       ref={containerRef}
       role="radiogroup"
       aria-label={ariaLabel}
-      className={`relative isolate inline-flex items-stretch p-[2px] rounded-full bg-fill ${h} ${className}`}
+      className={`relative isolate inline-flex items-stretch p-[2px] rounded-control bg-fill-2 ${h} ${className}`}
     >
       {indicator && (
         <motion.span
@@ -45,11 +45,8 @@ export default function Segmented({ options, value, onChange, className = '', si
           initial={false}
           animate={{ left: indicator.left, width: indicator.width }}
           transition={snappy}
-          className="absolute top-[2px] bottom-[2px] z-0 rounded-full pointer-events-none"
-          style={{
-            background: 'var(--segment-pill)',
-            boxShadow: '0 3px 8px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.04)',
-          }}
+          className="absolute top-[2px] bottom-[2px] z-0 rounded-[4px] pointer-events-none"
+          style={{ background: 'var(--segment-pill)', boxShadow: '0 0 0 1px var(--separator)' }}
         />
       )}
       {options.map((opt) => {
@@ -65,7 +62,7 @@ export default function Segmented({ options, value, onChange, className = '', si
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.id)}
-            className="relative z-[1] flex-1 min-w-0 px-3.5 rounded-full text-footnote font-medium whitespace-nowrap"
+            className="relative z-[1] flex-1 min-w-0 px-3 rounded-[4px] text-footnote font-medium whitespace-nowrap"
           >
             <span className={`relative flex items-center justify-center gap-1.5 ${active ? 'text-label' : 'text-label-2'}`}>
               {opt.label}

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useDragControls } from 'framer-motion'
-import { X, Check } from 'lucide-react'
-import { IconButton } from './Button'
+import { X } from 'lucide-react'
+import { Button, IconButton } from './Button'
 import { sheetSpring } from './motion'
 import { useIsDesktop } from './useMediaQuery'
 import { lockScroll } from './scrollLock'
@@ -57,8 +57,8 @@ export default function Sheet({
 
   const leadingNode =
     leading === undefined ? (
-      <IconButton variant="fill" size={36} label="Close" onClick={onClose}>
-        <X size={18} strokeWidth={2.6} />
+      <IconButton size={32} label="Close" onClick={onClose}>
+        <X size={17} strokeWidth={2} />
       </IconButton>
     ) : (
       leading
@@ -68,25 +68,18 @@ export default function Sheet({
     trailing !== undefined ? (
       trailing
     ) : onConfirm ? (
-      <IconButton
-        variant="tint"
-        size={36}
-        label={confirmLabel}
-        onClick={onConfirm}
-        disabled={confirmDisabled}
-        className={confirmDisabled ? '!bg-fill !text-label-3 !shadow-none' : ''}
-      >
-        <Check size={19} strokeWidth={2.8} />
-      </IconButton>
+      <Button size="sm" onClick={onConfirm} disabled={confirmDisabled}>
+        {confirmLabel}
+      </Button>
     ) : (
       <span className="w-9" />
     )
 
   const panelMotion = desktop
     ? {
-        initial: { opacity: 0, scale: 0.94, y: 12 },
+        initial: { opacity: 0, scale: 0.98, y: 8 },
         animate: { opacity: 1, scale: 1, y: 0 },
-        exit: { opacity: 0, scale: 0.96, y: 8, transition: { duration: 0.18 } },
+        exit: { opacity: 0, scale: 0.98, y: 6, transition: { duration: 0.14 } },
         transition: sheetSpring,
       }
     : {
@@ -129,7 +122,7 @@ export default function Sheet({
           }}
           className={`elevated pointer-events-auto relative flex flex-col sheet-surface outline-none ${
             desktop
-              ? `w-full ${size === 'lg' ? 'max-w-[620px]' : 'max-w-[540px]'} max-h-[min(880px,calc(100vh-48px))] rounded-[30px]`
+              ? `w-full ${size === 'lg' ? 'max-w-[620px]' : 'max-w-[540px]'} max-h-[min(880px,calc(100vh-48px))] rounded-sheet`
               : `w-full rounded-t-sheet ${
                   size === 'lg'
                     ? 'h-[calc(100dvh-env(safe-area-inset-top)-12px)]'
@@ -144,21 +137,21 @@ export default function Sheet({
               if (e.target.closest('button, input, textarea, select, a')) return
               drag.start(e)
             }}
-            className="shrink-0 relative px-4 pt-2.5 pb-2 select-none"
+            className="shrink-0 relative px-4 pt-2.5 pb-2 select-none hairline-b"
             style={{ touchAction: desktop ? 'auto' : 'none' }}
           >
             {!desktop && <div className="grabber mx-auto mb-2" aria-hidden="true" />}
             <div className="flex items-center gap-3 min-h-[40px]">
               <div className="flex-1 flex justify-start">{leadingNode}</div>
               {title && (
-                <h2 className="text-headline font-medium text-center truncate max-w-[60%]">{title}</h2>
+                <h2 className="text-headline text-center truncate max-w-[60%]">{title}</h2>
               )}
               <div className="flex-1 flex justify-end">{trailingNode}</div>
             </div>
           </div>
 
           <div
-            className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-2 ${
+            className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5 pt-4 ${
               footer ? 'pb-4' : desktop ? 'pb-6' : 'pb-[calc(env(safe-area-inset-bottom)+24px)]'
             } ${bodyClassName}`}
           >

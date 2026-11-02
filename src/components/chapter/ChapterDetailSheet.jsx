@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Check, Clock, AlertCircle, Lock, Pencil, Award, BookOpen } from 'lucide-react'
+import { Check, Clock, AlertCircle, Pencil, Award, BookOpen } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import { Button } from '../ui/Button'
@@ -9,26 +9,28 @@ import { formatDay, relativeDay, plural } from '../../lib/format'
 import { subjectColor } from '../../lib/colors'
 import { reviewLabel, whenLabel, STATUS_TONE } from './meta'
 import { spring } from '../ui/motion'
+import RecallCurve from '../insights/RecallCurve'
+import { retention, bandFor } from '../../lib/memory'
 
 function StateDot({ state }) {
   if (state === 'done') {
     return (
-      <span className="h-6 w-6 rounded-full bg-green text-tint-fg flex items-center justify-center shrink-0">
-        <Check size={14} strokeWidth={3} />
+      <span className="h-5 w-5 rounded-full bg-label text-tint-fg flex items-center justify-center shrink-0">
+        <Check size={12} strokeWidth={3} />
       </span>
     )
   }
   if (state === 'next') {
     return (
-      <span className="h-6 w-6 rounded-full flex items-center justify-center shrink-0" style={{ boxShadow: 'inset 0 0 0 2px var(--tint)' }}>
-        <span className="h-2.5 w-2.5 rounded-full bg-tint" />
+      <span className="h-5 w-5 rounded-full flex items-center justify-center shrink-0" style={{ boxShadow: 'inset 0 0 0 1.5px var(--data)' }}>
+        <span className="h-2 w-2 rounded-full bg-data" />
       </span>
     )
   }
-  return <span className="h-6 w-6 rounded-full shrink-0" style={{ boxShadow: 'inset 0 0 0 1.5px var(--label-3)' }} />
+  return <span className="h-5 w-5 rounded-full shrink-0" style={{ boxShadow: 'inset 0 0 0 1.5px var(--label-3)' }} />
 }
 
-export default function ChapterDetailSheet({ chapter, subject, actions, onRename, onClose }) {
+export default function ChapterDetailSheet({ chapter, subject, actions, onRename, onClose, lastReviewed }) {
   const [renaming, setRenaming] = useState(false)
   const [draft, setDraft] = useState(chapter?.title || '')
   const inputRef = useRef(null)
@@ -45,6 +47,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
   const daysUntil = chapter.nextReviewDate ? daysBetween(new Date(), chapter.nextReviewDate) : null
   const done = mastered ? MAX_REVIEW_INDEX : chapter.currentReviewIndex
   const tone = STATUS_TONE[chapter.derivedStatus]
+  const recallNow = retention(chapter, lastReviewed)
 
   function commitRename() {
     setRenaming(false)
@@ -79,7 +82,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 setRenaming(false)
               }
             }}
-            className="mt-1 w-full bg-card rounded-[14px] px-3 py-1.5 text-title-1 font-medium outline-none ring-1 ring-accent"
+            className="mt-1 w-full bg-card rounded-control px-2 py-1 text-title-1 font-medium outline-none ring-1 ring-data"
           />
         ) : (
           <button
@@ -92,31 +95,41 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
             title="Rename"
           >
             <h2 className="text-title-1 font-medium break-words min-w-0">{chapter.title}</h2>
-            <Pencil size={16} className="mt-2.5 shrink-0 text-label-3 group-hover:text-tint" />
+            <Pencil size={14} className="mt-2 shrink-0 text-label-3 group-hover:text-label" />
           </button>
         )}
 
         <div className="flex flex-wrap items-center gap-2 mt-3">
           <span
-            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium"
+            className="inline-flex items-center gap-1.5 h-6 px-2 rounded-control text-footnote font-medium"
             style={{ color: tone, background: `color-mix(in srgb, ${tone} 14%, transparent)` }}
           >
             {mastered ? <Award size={14} /> : <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone }} />}
             {mastered ? 'Mastered' : whenLabel(chapter)}
           </span>
           {chapter.struggleFlag && !mastered && (
-            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-footnote font-medium text-orange bg-orange/15">
+            <span className="inline-flex items-center gap-1.5 h-6 px-2 rounded-control text-footnote font-medium text-label bg-fill-2">
               <AlertCircle size={14} /> Needs attention
             </span>
           )}
         </div>
       </div>
 
-      {/* Progress through the five reviews */}
+      {/* How well it's held right now, and why the next review lands when it does */}
       <div className="mt-5 bg-card rounded-cell p-4">
+        <div className="flex items-baseline justify-between gap-3 mb-3">
+          <p className="text-footnote text-label-2">Memory now</p>
+          <p className="text-footnote text-label-2">{bandFor(recallNow).label}</p>
+        </div>
+        <p className="font-display text-[30px] leading-[34px] tabular mb-3">{Math.round(recallNow * 100)}%</p>
+        <RecallCurve chapter={chapter} lastReviewed={lastReviewed} />
+      </div>
+
+      {/* Progress through the five reviews */}
+      <div className="mt-3 bg-card rounded-cell p-4">
         <div className="flex items-baseline justify-between mb-4">
-          <span className="eyebrow text-label">{reviewLabel(chapter)}</span>
-          <span className="eyebrow text-label-2 tabular">
+          <span className="text-footnote font-medium text-label">{reviewLabel(chapter)}</span>
+          <span className="text-footnote text-label-2 tabular">
             {done}/{MAX_REVIEW_INDEX} done
           </span>
         </div>
@@ -129,11 +142,11 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 key={i}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ ...spring, delay: 0.08 + i * 0.05 }}
-                className="h-[22px] w-[22px] rounded-full"
+                transition={{ ...spring, delay: 0.04 + i * 0.03 }}
+                className="h-[18px] w-[18px] rounded-full"
                 style={{
                   background: isDone ? 'var(--label)' : 'transparent',
-                  boxShadow: isDone ? 'none' : `inset 0 0 0 1.5px ${isNext ? 'var(--accent)' : 'var(--label-3)'}`,
+                  boxShadow: isDone ? 'none' : `inset 0 0 0 1.5px ${isNext ? 'var(--data)' : 'var(--label-3)'}`,
                 }}
               />
             )
@@ -144,10 +157,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
       {/* What you can do right now */}
       <div className="mt-4">
         {mastered ? (
-          <div className="rounded-cell bg-card p-4 flex items-center gap-3">
-            <span className="h-10 w-10 rounded-full bg-green text-tint-fg flex items-center justify-center shrink-0">
-              <Award size={20} />
-            </span>
+          <div className="rounded-cell bg-card p-4">
             <p className="text-subhead">
               <span className="font-medium block">Fully retained.</span>
               <span className="text-label-2">All five reviews are done — this one's yours.</span>
@@ -163,14 +173,14 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 onClose()
               }}
             >
-              <Check size={20} strokeWidth={2.8} /> Mark as Revised
+              <Check size={17} strokeWidth={2.4} /> Mark revised
             </Button>
             <div className="grid grid-cols-2 gap-2.5">
               <Button variant="gray" onClick={() => actions.snooze(chapter)}>
-                <Clock size={17} /> Snooze 1 Day
+                <Clock size={15} /> Snooze a day
               </Button>
               <Button variant="gray" onClick={() => actions.struggle(chapter)} disabled={chapter.struggleFlag}>
-                <AlertCircle size={17} /> {chapter.struggleFlag ? 'Flagged' : 'Struggled'}
+                <AlertCircle size={15} /> {chapter.struggleFlag ? 'Marked hard' : 'This was hard'}
               </Button>
             </div>
             <button
@@ -179,16 +189,13 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
                 const res = await actions.masterEarly(chapter)
                 if (!res?.blocked) onClose()
               }}
-              className="w-full py-2 text-footnote text-label-2 active:text-tint"
+              className="w-full py-2 text-footnote text-label-2 hover:text-label"
             >
               I know this cold — end the cycle early
             </button>
           </div>
         ) : (
-          <div className="rounded-cell bg-card p-4 flex items-center gap-3">
-            <span className="h-10 w-10 rounded-full bg-fill text-label-2 flex items-center justify-center shrink-0">
-              <Lock size={18} />
-            </span>
+          <div className="rounded-cell bg-card p-4">
             <p className="text-subhead">
               <span className="font-medium block">
                 Unlocks {daysUntil === 1 ? 'tomorrow' : `in ${plural(daysUntil, 'day')}`}
@@ -204,12 +211,8 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
       {/* The whole schedule */}
       <Section title="Schedule" className="mt-6">
         <Row
-          leading={
-            <span className="h-6 w-6 rounded-full bg-fill text-label-2 flex items-center justify-center shrink-0">
-              <BookOpen size={13} strokeWidth={2.4} />
-            </span>
-          }
-          inset={52}
+          leading={<BookOpen size={16} strokeWidth={1.6} className="w-5 shrink-0 text-label-2" />}
+          inset={48}
           title="Studied"
           detail={formatDay(chapter.studiedDate)}
         />
@@ -217,7 +220,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
           <Row
             key={t.reviewNumber}
             leading={<StateDot state={t.state} />}
-            inset={52}
+            inset={48}
             title={
               <span className={t.state === 'next' ? 'font-medium' : t.state === 'done' ? 'text-label-2' : ''}>
                 Review {t.reviewNumber}
@@ -245,13 +248,12 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
         <Row
           center
           destructive
-          title="Delete Chapter"
+          title="Delete chapter"
           onClick={async () => {
             if (await actions.remove(chapter)) onClose()
           }}
-          className="!text-accent"
         >
-          <span className="text-body text-accent">Delete Chapter</span>
+          <span className="text-body text-negative">Delete chapter</span>
         </Row>
       </Section>
     </Sheet>

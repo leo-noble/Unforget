@@ -31,6 +31,13 @@ export default {
         // Text and icons placed on a tint-filled surface.
         'tint-fg': token('tint-fg'),
         accent: token('accent'),
+        data: token('data'),
+        'data-1': token('data-1'),
+        'data-2': token('data-2'),
+        'data-3': token('data-3'),
+        'data-4': token('data-4'),
+        negative: token('negative'),
+        positive: token('positive'),
         ...Object.fromEntries(SYSTEM.map((c) => [c, token(c)])),
       },
       fontFamily: {
@@ -42,22 +49,24 @@ export default {
       },
       // Type scale, named by role.
       fontSize: {
-        'large-title': ['34px', { lineHeight: '40px', letterSpacing: '-0.03em', fontWeight: '500' }],
-        'title-1': ['28px', { lineHeight: '34px', letterSpacing: '-0.02em' }],
-        'title-2': ['22px', { lineHeight: '28px', letterSpacing: '-0.016em' }],
-        'title-3': ['20px', { lineHeight: '25px', letterSpacing: '-0.012em' }],
-        headline: ['17px', { lineHeight: '22px', letterSpacing: '-0.01em' }],
-        body: ['17px', { lineHeight: '22px', letterSpacing: '-0.01em' }],
-        callout: ['16px', { lineHeight: '21px', letterSpacing: '-0.008em' }],
-        subhead: ['15px', { lineHeight: '20px', letterSpacing: '-0.006em' }],
-        footnote: ['13px', { lineHeight: '18px', letterSpacing: '-0.002em' }],
+        'large-title': ['24px', { lineHeight: '30px', letterSpacing: '-0.02em', fontWeight: '600' }],
+        'title-1': ['22px', { lineHeight: '28px', letterSpacing: '-0.018em' }],
+        'title-2': ['19px', { lineHeight: '25px', letterSpacing: '-0.014em' }],
+        'title-3': ['17px', { lineHeight: '23px', letterSpacing: '-0.01em' }],
+        headline: ['15px', { lineHeight: '21px', letterSpacing: '-0.006em', fontWeight: '500' }],
+        body: ['15px', { lineHeight: '21px', letterSpacing: '-0.006em' }],
+        callout: ['15px', { lineHeight: '20px', letterSpacing: '-0.006em' }],
+        subhead: ['14px', { lineHeight: '19px', letterSpacing: '-0.003em' }],
+        footnote: ['13px', { lineHeight: '18px' }],
         caption: ['12px', { lineHeight: '16px' }],
-        'caption-2': ['11px', { lineHeight: '13px', letterSpacing: '0.01em' }],
+        'caption-2': ['11px', { lineHeight: '14px', letterSpacing: '0.005em' }],
       },
+      // Two radii: 8 for cards and sheets' insides, 6 for controls (and full
+      // round for pills and avatars).
       borderRadius: {
-        cell: '22px',
-        sheet: '34px',
-        control: '12px',
+        cell: '8px',
+        sheet: '12px',
+        control: '6px',
         capsule: '9999px',
       },
       boxShadow: {

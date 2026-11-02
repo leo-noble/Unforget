@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ChevronDown, Plus, Clock3, CalendarDays } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, Plus } from 'lucide-react'
 import Page from '../components/ui/Page'
-import { IconButton } from '../components/ui/Button'
+import { Button, IconButton } from '../components/ui/Button'
 import Segmented from '../components/ui/Segmented'
 import StudyPlanSheet from '../components/calendar/StudyPlanSheet'
 import MiniMonth from '../components/calendar/MiniMonth'
@@ -12,8 +12,10 @@ import MonthView from '../components/calendar/MonthView'
 import { useIsDesktop } from '../components/ui/useMediaQuery'
 import { toISODate, startOfDay, addDays, buildTimeline } from '../lib/srs'
 import { startOfWeek, weekDates as weekDatesOf } from '../lib/timeGrid'
-import { snappy, easeOut } from '../components/ui/motion'
+import { snappy } from '../components/ui/motion'
 import { formatMinutes, weeklyFocusStats } from '../lib/studyCoach'
+import { forecast } from '../lib/memory'
+import LoadForecast from '../components/insights/LoadForecast'
 
 const VIEWS = [
   { id: 'day', label: 'Day' },
@@ -48,7 +50,7 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
         const today = iso === todayISO
         return (
           <button key={iso} onClick={() => onSelect(iso)} className="flex flex-col items-center gap-1 py-1">
-            <span className={`text-[11px] font-medium uppercase ${today ? 'text-accent' : 'text-label-2'}`}>
+            <span className={`text-[11px] font-medium ${today ? 'text-data' : 'text-label-2'}`}>
               {d.toLocaleDateString(undefined, { weekday: 'narrow' })}
             </span>
             <span className="relative h-9 w-9 flex items-center justify-center">
@@ -56,11 +58,11 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
                 <motion.span
                   layoutId="weekstrip-sel"
                   transition={snappy}
-                  className={`absolute inset-0 rounded-full ${today ? 'bg-accent' : 'bg-label'}`}
+                  className={`absolute inset-0 rounded-control ${today ? 'bg-data' : 'bg-label'}`}
                 />
               )}
               <span
-                className={`relative text-[17px] tabular ${sel ? (today ? 'text-tint-fg' : 'text-canvas') + ' font-medium' : today ? 'text-accent font-medium' : ''}`}
+                className={`relative text-[16px] tabular ${sel ? (today ? 'text-white' : 'text-canvas') + ' font-medium' : today ? 'text-data font-medium' : ''}`}
               >
                 {d.getDate()}
               </span>
@@ -105,6 +107,9 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
   const [gridTop, setGridTop] = useState(260)
 
   const chapterMap = useMemo(() => new Map(chapters.map((c) => [c.id, c])), [chapters])
+  const ahead = useMemo(() => forecast(chapters, 14), [chapters])
+  const aheadTotal = ahead.reduce((sum, d) => sum + d.count, 0)
+  const peak = ahead.reduce((a, b) => (b.count > a.count ? b : a), ahead[0])
   const pickerWeek = useMemo(() => weekDatesOf(cursor), [cursor])
 
   // A dot on days that already hold work: planned blocks and scheduled reviews.
@@ -194,27 +199,79 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
   return (
     <Page
       title="Plan"
+      meta={`${aheadTotal} review${aheadTotal === 1 ? '' : 's'} in the next 14 days`}
+      subtitle={
+        peak.count > 0
+          ? `${peak.date === todayISO ? 'Today' : startOfDay(peak.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })} is the busiest day, with ${peak.count} review${peak.count === 1 ? '' : 's'}.`
+          : 'No reviews scheduled in the next two weeks.'
+      }
       wide
+      titleAccessory={
+        <Button size="md" variant="gray" onClick={() => setSheet({ date: cursor })} className="hidden sm:inline-flex">
+          <Plus size={15} /> Plan a session
+        </Button>
+      }
       trailing={
         <>
-          <IconButton size={40} label="Plan a study session" onClick={() => setSheet({ date: cursor })}>
-            <Plus size={21} strokeWidth={2.4} />
+          <IconButton size={36} label="Plan a study session" onClick={() => setSheet({ date: cursor })} className="md:hidden">
+            <Plus size={18} strokeWidth={2} />
           </IconButton>
           {account}
         </>
       }
     >
+      <div className="grid gap-x-8 gap-y-6 lg:grid-cols-12 mb-8">
+        <section className="lg:col-span-8 min-w-0 flex flex-col">
+          <div className="flex items-center justify-between gap-3 px-0.5 mb-2.5 min-h-6">
+            <h2 className="text-subhead font-medium">Reviews ahead</h2>
+            {peak.count > 1 && (
+              <button type="button" onClick={() => setSheet({ date: peak.date })} className="text-footnote text-label-2 hover:text-label">
+                Plan time for the busiest day
+              </button>
+            )}
+          </div>
+          <div className="bg-card rounded-cell p-5 flex-1 flex flex-col justify-end">
+            <LoadForecast days={ahead} onSelectDay={openDay} />
+          </div>
+        </section>
+        <section className="hidden lg:flex lg:col-span-4 min-w-0 flex-col">
+          <h2 className="text-subhead font-medium px-0.5 mb-2.5 min-h-6 flex items-center">This week</h2>
+          <div className="bg-card rounded-cell px-5 py-5 divide-y divide-separator flex-1">
+            <div className="pb-4">
+              <p className="text-footnote text-label-2">Study sessions planned</p>
+              <p className="mt-1 font-display text-[30px] leading-[34px] tabular">{plannedThisWeek}</p>
+            </div>
+            {showFocusTimer && (
+              <div className="pt-4">
+                <p className="text-footnote text-label-2">Focused</p>
+                <p className="mt-1 font-display text-[30px] leading-[34px] tabular">{formatMinutes(focusWeek.minutes)}</p>
+                {cadence.prefs.weeklyFocusGoalMinutes ? (
+                  <>
+                    <p className="text-footnote text-label-2 mt-0.5">of {formatMinutes(cadence.prefs.weeklyFocusGoalMinutes)} goal</p>
+                    <div className="mt-2.5 h-1.5 rounded-full bg-fill-2 overflow-hidden" aria-hidden="true">
+                      <div className="h-full rounded-full bg-data" style={{ width: `${Math.min(100, (focusWeek.minutes / cadence.prefs.weeklyFocusGoalMinutes) * 100)}%` }} />
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-footnote text-label-2 mt-0.5">{focusWeek.sessions} session{focusWeek.sessions === 1 ? '' : 's'}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
       {/* Toolbar: where you are on the left, how you're looking on the right. */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-3 mb-3">
         <div className="relative min-w-0 flex items-center gap-1" ref={pickerRef}>
           <button
             onClick={() => setPickerOpen((o) => !o)}
             aria-expanded={pickerOpen}
-            className="flex items-center gap-1 min-w-0 h-9 pl-1 pr-2 rounded-full hover:bg-fill active:bg-fill"
+            className="flex items-center gap-1 min-w-0 h-9 pl-1.5 pr-2 rounded-control hover:bg-fill active:bg-fill"
           >
-            <span className="text-title-3 font-medium truncate">{rangeLabel}</span>
-            <motion.span animate={{ rotate: pickerOpen ? 180 : 0 }} transition={snappy} className="text-tint shrink-0">
-              <ChevronDown size={18} strokeWidth={2.6} />
+            <span className="text-headline truncate">{rangeLabel}</span>
+            <motion.span animate={{ rotate: pickerOpen ? 180 : 0 }} transition={snappy} className="text-label-2 shrink-0">
+              <ChevronDown size={16} strokeWidth={2} />
             </motion.span>
           </button>
           <AnimatePresence>
@@ -224,7 +281,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={snappy}
-                className="glass-strong absolute left-0 top-full mt-2 z-30 w-[300px] origin-top-left rounded-[24px] p-3"
+                className="glass-strong absolute left-0 top-full mt-2 z-30 w-[300px] origin-top-left rounded-sheet p-3"
               >
                 <MiniMonth
                   cursorDate={cursor}
@@ -248,15 +305,15 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
 
         <div className="ml-auto flex items-center gap-1.5">
           {cursor !== todayISO && (
-            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-full bg-tint/15 text-tint text-footnote font-medium">
+            <button onClick={() => setCursor(todayISO)} className="h-8 px-3 rounded-control bg-fill-2 text-label text-footnote font-medium hover:bg-fill">
               Today
             </button>
           )}
-          <button onClick={() => shift(-1)} aria-label={`Previous ${view}`} className="h-8 w-8 rounded-full flex items-center justify-center text-tint hover:bg-fill active:bg-fill">
-            <ChevronLeft size={21} strokeWidth={2.4} />
+          <button onClick={() => shift(-1)} aria-label={`Previous ${view}`} className="h-8 w-8 rounded-control flex items-center justify-center text-label-2 hover:text-label hover:bg-fill active:bg-fill">
+            <ChevronLeft size={18} strokeWidth={2} />
           </button>
-          <button onClick={() => shift(1)} aria-label={`Next ${view}`} className="h-8 w-8 rounded-full flex items-center justify-center text-tint hover:bg-fill active:bg-fill">
-            <ChevronRight size={21} strokeWidth={2.4} />
+          <button onClick={() => shift(1)} aria-label={`Next ${view}`} className="h-8 w-8 rounded-control flex items-center justify-center text-label-2 hover:text-label hover:bg-fill active:bg-fill">
+            <ChevronRight size={18} strokeWidth={2} />
           </button>
         </div>
 
@@ -270,22 +327,6 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
         />
       </div>
 
-      {(showFocusTimer || plannedThisWeek > 0) && <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: easeOut }} className="mb-4 flex items-center gap-3 rounded-[20px] bg-card px-4 py-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fill">{showFocusTimer ? <Clock3 size={16} /> : <CalendarDays size={16} />}</span>
-        <div className="min-w-0 flex-1">
-          <p className="text-footnote font-medium">{showFocusTimer ? `This week · ${formatMinutes(focusWeek.minutes)} focused · ${plannedThisWeek} planned` : `This week · ${plannedThisWeek} planned`}</p>
-          <p className="text-caption text-label-2">{showFocusTimer ? 'Your study rhythm, alongside the plan.' : 'Your planned study sessions.'}</p>
-        </div>
-        {showFocusTimer && cadence.prefs.weeklyFocusGoalMinutes && (
-          <div className="w-14 shrink-0">
-            <span className="block text-right text-caption text-label-2">{Math.min(100, Math.round(focusWeek.minutes / cadence.prefs.weeklyFocusGoalMinutes * 100))}%</span>
-            <div className="mt-1 h-1.5 rounded-full bg-fill-2 overflow-hidden" aria-hidden="true">
-              <motion.div className="h-full rounded-full bg-label" animate={{ width: `${Math.min(100, focusWeek.minutes / cadence.prefs.weeklyFocusGoalMinutes * 100)}%` }} transition={snappy} />
-            </div>
-          </div>
-        )}
-      </motion.div>}
-
       {!desktop && view === 'day' && (
         <WeekStrip
           cursor={cursor}
@@ -295,13 +336,10 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
         />
       )}
 
-      <motion.div
+      <div
         ref={gridRef}
         key={view}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: easeOut }}
-        className="bg-card rounded-[20px] shadow-card overflow-hidden isolate"
+        className="bg-card rounded-cell overflow-hidden isolate"
         style={{ height: gridHeight }}
       >
         {view === 'week' && <WeekView {...viewProps} />}
@@ -314,7 +352,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
             onCreateOnDate={(date) => setSheet({ date })}
           />
         )}
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {sheet && (

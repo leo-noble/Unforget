@@ -16,12 +16,12 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
   if (status === 'mastered') {
     return (
       <span
-        className="h-[26px] w-[26px] shrink-0 rounded-full flex items-center justify-center text-tint-fg"
+        className="h-[22px] w-[22px] shrink-0 rounded-full flex items-center justify-center text-tint-fg"
         style={{ background: STATUS_TONE.mastered }}
         aria-label="Mastered"
         role="img"
       >
-        <Check size={15} strokeWidth={3.2} />
+        <Check size={13} strokeWidth={3} />
       </span>
     )
   }
@@ -35,9 +35,9 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
           onLocked?.()
         }}
         aria-label={`${label} is not due yet`}
-        className="h-[26px] w-[26px] shrink-0 rounded-full border-[1.5px] border-dashed border-label-3 flex items-center justify-center text-label-3"
+        className="h-[22px] w-[22px] shrink-0 rounded-full border-[1.5px] border-dashed border-label-3 flex items-center justify-center text-label-3"
       >
-        <Lock size={11} strokeWidth={2.6} />
+        <Lock size={10} strokeWidth={2.4} />
       </button>
     )
   }
@@ -60,7 +60,7 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
         }, 420)
       }}
       aria-label={`Mark ${label} as revised`}
-      className="relative h-[26px] w-[26px] shrink-0 rounded-full flex items-center justify-center"
+      className="relative h-[22px] w-[22px] shrink-0 rounded-full flex items-center justify-center"
       style={{ boxShadow: `inset 0 0 0 1.5px ${color}` }}
     >
       <motion.span
@@ -75,9 +75,9 @@ export default function CompleteButton({ status, onComplete, onLocked, label }) 
         animate={{ scale: checking ? 1 : 0, opacity: checking ? 1 : 0 }}
         transition={reduceMotion ? { duration: 0.12 } : bouncy}
         className="absolute inset-0 rounded-full flex items-center justify-center"
-        style={{ background: color, color: 'var(--tint-fg)' }}
+        style={{ background: 'var(--label)', color: 'var(--tint-fg)' }}
       >
-        <Check size={15} strokeWidth={3.2} />
+        <Check size={13} strokeWidth={3} />
       </motion.span>
       {!reduceMotion && checking && (
         <span aria-hidden="true" className="pointer-events-none absolute inset-0">

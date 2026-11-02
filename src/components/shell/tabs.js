@@ -13,3 +13,7 @@ export function tabFromPath(pathname) {
   const seg = pathname.replace(/^\/dashboard\/?/, '').split('/')[0]
   return seg === 'insights' ? 'insights' : TABS.find((t) => t.id === seg)?.id || 'today'
 }
+
+// The modifier key as people know it on this machine, for shortcut hints.
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
+export const MOD = isMac ? '⌘' : 'Ctrl '

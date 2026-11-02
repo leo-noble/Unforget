@@ -20,9 +20,8 @@ function useScrolledPast(threshold) {
   return past
 }
 
-// The navigation bar: transparent over the large title, then — once the title
-// has scrolled under it — a blurred bar with the title inline, exactly how a
-// UINavigationController with prefersLargeTitles behaves.
+// The navigation bar: transparent over the title, then, once the title has
+// scrolled under it, a solid bar on the page ground with the title inline.
 export function NavBar({ title, leading, trailing }) {
   const scrolled = useScrolledPast(38)
   return (
@@ -36,13 +35,13 @@ export function NavBar({ title, leading, trailing }) {
           scrolled ? 'opacity-100' : 'opacity-0'
         }`}
       />
-      <div className="relative mx-auto max-w-[var(--page-max)] h-[52px] px-4 sm:px-6 flex items-center gap-2">
+      <div className="relative mx-auto max-w-[var(--page-max)] h-12 px-4 sm:px-8 flex items-center gap-2">
         <div className="pointer-events-auto flex-1 flex items-center gap-2 min-w-0">{leading}</div>
         <motion.p
           initial={false}
           animate={{ opacity: scrolled ? 1 : 0, y: scrolled ? 0 : 6 }}
           transition={{ duration: 0.2, ease: easeOut }}
-          className="eyebrow text-label truncate max-w-[50%] text-center"
+          className="text-subhead font-medium text-label truncate max-w-[50%] text-center"
         >
           {title}
         </motion.p>
@@ -52,20 +51,24 @@ export function NavBar({ title, leading, trailing }) {
   )
 }
 
-// A screen: nav bar, large title, and the content column. `wide` is for the
-// calendar, which needs the room; everything else reads best in a column.
-export default function Page({ title, eyebrow, subtitle, trailing, leading, wide = false, children, titleAccessory }) {
+// A screen: nav bar, the title row, and the content column. The title row
+// holds the screen's name with a grey `meta` after it (the date, a count), the
+// screen's finding as one line under it, and its main action on the right.
+export default function Page({ title, eyebrow, meta, subtitle, trailing, leading, wide = false, children, titleAccessory }) {
+  const after = meta ?? eyebrow
   return (
-    <div style={{ '--page-max': wide ? '1180px' : '760px' }}>
+    <div style={{ '--page-max': wide ? '1120px' : '760px' }}>
       <NavBar title={title} leading={leading} trailing={trailing} />
       <div
-        className="mx-auto w-full max-w-[var(--page-max)] px-4 sm:px-6 pb-[calc(env(safe-area-inset-bottom)+var(--dock-space,112px))] md:pb-14"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 52px)' }}
+        className="mx-auto w-full max-w-[var(--page-max)] px-4 sm:px-8 pb-[calc(env(safe-area-inset-bottom)+var(--dock-space,100px))] md:pb-14"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 48px)' }}
       >
-        <div className="pt-1 pb-5 flex items-end justify-between gap-4">
+        <div className="pt-2 md:pt-4 pb-6 flex items-end justify-between gap-4">
           <div className="min-w-0">
-            {eyebrow && <p className="eyebrow text-label-2 mb-2 flex items-center gap-2"><span className="h-[5px] w-[5px] rounded-full bg-accent" aria-hidden="true" />{eyebrow}</p>}
-            <h1 className="page-title font-display text-[38px] leading-[42px] truncate">{title}</h1>
+            <h1 className="page-title text-[22px] leading-[28px] md:text-[24px] md:leading-[30px] truncate">
+              {title}
+              {after && <span className="ml-2.5 text-subhead font-normal tracking-normal text-label-2">{after}</span>}
+            </h1>
             {subtitle && <p className="text-subhead text-label-2 mt-1">{subtitle}</p>}
           </div>
           {titleAccessory}

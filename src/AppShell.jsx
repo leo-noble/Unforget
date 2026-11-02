@@ -10,13 +10,19 @@ import ChapterDetailSheet from './components/chapter/ChapterDetailSheet'
 import { useChapterActions } from './components/chapter/useChapterActions'
 import SettingsSheet from './components/sheets/SettingsSheet'
 import InsightsSheet from './components/sheets/InsightsSheet'
+import CommandPalette from './components/shell/CommandPalette'
+import ShortcutsSheet from './components/shell/ShortcutsSheet'
+import { shortcutsBlocked } from './lib/useShortcuts'
+import { recommendChapters } from './lib/studyCoach'
+import { lastReviewMap } from './lib/memory'
+import { Search } from 'lucide-react'
 import TodayPage from './pages/TodayPage'
 import LibraryPage from './pages/LibraryPage'
 import PlanPage from './pages/PlanPage'
 import FocusPage from './pages/FocusPage'
 import { useCadence } from './lib/useCadence'
 import { useAuth } from './lib/useAuth'
-import { TimerProvider } from './lib/TimerContext'
+import { TimerProvider, useTimer } from './lib/TimerContext'
 import { applyAppearance } from './lib/appearance'
 import { getLastNotifiedDate, setLastNotifiedDate } from './lib/storage'
 import { toISODate } from './lib/srs'
@@ -26,6 +32,13 @@ const TAB_PATH = Object.fromEntries(TABS.map((t) => [t.id, t.path]))
 TAB_PATH.insights = '/dashboard/insights'
 const SIDEBAR_KEY = 'unforget.sidebarCollapsed'
 
+// The timer lives in a provider rendered below the shell; this hands the
+// shell a handle on it for the command palette.
+function TimerBridge({ timerRef }) {
+  timerRef.current = useTimer()
+  return null
+}
+
 export default function AppShell() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -33,7 +46,7 @@ export default function AppShell() {
   const cadence = useCadence(user?.id)
   const actions = useChapterActions(cadence)
   const tab = tabFromPath(location.pathname)
-  const [sheet, setSheet] = useState(null) // 'add' | 'settings' | 'insights'
+  const [sheet, setSheet] = useState(null) // 'add' | 'settings' | 'insights' | 'palette' | 'shortcuts'
   const [openChapterId, setOpenChapterId] = useState(null)
   // Laptop sidebar: full panel or icon rail, remembered on this device.
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -137,52 +150,92 @@ export default function AppShell() {
     return () => clearTimeout(t)
   }, [justMastered, clearJustMastered])
 
-  // ---- keyboard: ⌘/Ctrl+N adds a chapter, ⌘/Ctrl+\ toggles the sidebar ----
+  // ---- keyboard ----
+  // ⌘/Ctrl+K search, ⌘/Ctrl+N add, ⌘/Ctrl+\ sidebar; and, when nothing is
+  // focused or open, ? for the shortcut list and 1-4 for the tabs.
   useEffect(() => {
     function onKey(e) {
-      if (!(e.metaKey || e.ctrlKey)) return
-      if (e.key.toLowerCase() === 'n' && !sheet) {
+      if (e.metaKey || e.ctrlKey) {
+        const k = e.key.toLowerCase()
+        if (k === 'k') {
+          e.preventDefault()
+          setSheet((s) => (s === 'palette' ? null : s ? s : 'palette'))
+        } else if (k === 'n' && !sheet) {
+          e.preventDefault()
+          setSheet('add')
+        } else if (e.key === '\\') {
+          e.preventDefault()
+          toggleSidebar()
+        }
+        return
+      }
+      if (shortcutsBlocked(e) || sheet) return
+      if (e.key === '?') {
         e.preventDefault()
-        setSheet('add')
-      } else if (e.key === '\\') {
-        e.preventDefault()
-        toggleSidebar()
+        setSheet('shortcuts')
+      } else if (/^[1-4]$/.test(e.key)) {
+        const visible = TABS.filter((t) => prefs.showFocusTimer !== false || t.id !== 'focus')
+        const target = visible[Number(e.key) - 1]
+        if (target) selectTab(target.id)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [sheet, toggleSidebar])
+  }, [sheet, toggleSidebar, selectTab, prefs.showFocusTimer])
 
   const chapterMap = useMemo(() => new Map(cadence.chapters.map((c) => [c.id, c])), [cadence.chapters])
   const openChapter = openChapterId ? chapterMap.get(openChapterId) : null
+  const lastReviewed = useMemo(() => lastReviewMap(cadence.events), [cadence.events])
   const onOpenChapter = useCallback((c) => setOpenChapterId(c.id), [])
   const openSettings = useCallback(() => setSheet('settings'), [])
   const openAdd = useCallback(() => setSheet('add'), [])
   const closeSheet = useCallback(() => setSheet(null), [])
+  const openPalette = useCallback(() => setSheet('palette'), [])
+  const timerRef = useRef(null)
 
-  // The account button on phones; on wide screens it lives in the sidebar.
+  const runCommand = useCallback(
+    (id, chapter) => {
+      if (id === 'chapter') return setOpenChapterId(chapter.id)
+      if (id.startsWith('tab:')) return selectTab(id.slice(4))
+      if (id === 'add') return setSheet('add')
+      if (id === 'settings') return setSheet('settings')
+      if (id === 'shortcuts') return setSheet('shortcuts')
+      if (id === 'sidebar') return toggleSidebar()
+      if (id === 'focus-next') {
+        const next = recommendChapters(cadence.chapters)[0]
+        const timer = timerRef.current
+        if (next && timer?.status === 'idle') timer.startForChapter(next.id)
+        selectTab('focus')
+      }
+    },
+    [selectTab, toggleSidebar, cadence.chapters]
+  )
+
+  // Search and the account button on phones; on wide screens both live in
+  // the sidebar.
   const account = (
-    <motion.button
-      type="button"
-      whileTap={{ scale: 0.9 }}
-      onClick={openSettings}
-      aria-label="Account and settings"
-      className="md:hidden rounded-full p-[2px] glass"
-    >
-      <Avatar name={displayName} src={avatarUrl} size={34} />
-    </motion.button>
+    <div className="md:hidden flex items-center gap-1">
+      <button type="button" onClick={openPalette} aria-label="Search" className="h-9 w-9 rounded-control flex items-center justify-center text-label-2 hover:bg-fill">
+        <Search size={18} strokeWidth={1.7} />
+      </button>
+      <motion.button type="button" whileTap={{ scale: 0.92 }} onClick={openSettings} aria-label="Account and settings" className="rounded-full">
+        <Avatar name={displayName} src={avatarUrl} size={30} />
+      </motion.button>
+    </div>
   )
 
   const pageProps = { cadence, actions, profile, onOpenChapter, account }
 
   return (
     <TimerProvider prefs={prefs} updatePrefs={updatePrefs}>
+      <TimerBridge timerRef={timerRef} />
       <div className="relative min-h-[100dvh]">
 
         <Sidebar
           active={tab}
           onSelect={selectTab}
           onAdd={openAdd}
+          onSearch={openPalette}
           onOpenInsights={() => selectTab('insights')}
           onOpenSettings={openSettings}
           profile={profile}
@@ -194,20 +247,13 @@ export default function AppShell() {
         />
 
         <main className="relative md:pl-[var(--sidebar-w)] transition-[padding] duration-300 ease-ios">
-          {/* Opacity only: a transform here would become the containing block
-              for each page's fixed nav bar and drag it along mid-animation. */}
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-          >
-            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenFocus={() => selectTab('focus')} onOpenInsights={() => setSheet('insights')} />}
+          <div key={tab}>
+            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenFocus={() => selectTab('focus')} onOpenInsights={() => selectTab('insights')} onOpenLibrary={() => selectTab('library')} />}
             {tab === 'library' && <LibraryPage {...pageProps} onAdd={openAdd} />}
             {tab === 'plan' && <PlanPage {...pageProps} />}
             {tab === 'focus' && <FocusPage {...pageProps} />}
-            {tab === 'insights' && <InsightsSheet cadence={cadence} asPage account={account} />}
-          </motion.div>
+            {tab === 'insights' && <InsightsSheet cadence={cadence} asPage account={account} onOpenChapter={onOpenChapter} />}
+          </div>
         </main>
 
         <TabBar
@@ -230,8 +276,18 @@ export default function AppShell() {
             onCreateChapter={cadence.createChapter}
           />
         )}
-        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} />}
-        {sheet === 'insights' && <InsightsSheet key="insights" cadence={cadence} onClose={closeSheet} />}
+        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} onOpenShortcuts={() => setSheet('shortcuts')} />}
+        {sheet === 'insights' && <InsightsSheet key="insights" cadence={cadence} onClose={closeSheet} onOpenChapter={onOpenChapter} />}
+        {sheet === 'shortcuts' && <ShortcutsSheet key="shortcuts" onClose={closeSheet} />}
+        {sheet === 'palette' && (
+          <CommandPalette
+            key="palette"
+            cadence={cadence}
+            showFocusTimer={prefs.showFocusTimer !== false}
+            onClose={closeSheet}
+            run={runCommand}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
@@ -242,6 +298,7 @@ export default function AppShell() {
             subject={cadence.subjectMap.get(openChapter.subjectId)}
             actions={actions}
             onRename={cadence.renameChapter}
+            lastReviewed={lastReviewed.get(openChapter.id)}
             onClose={() => setOpenChapterId(null)}
           />
         )}

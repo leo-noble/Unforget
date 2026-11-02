@@ -10,7 +10,9 @@ const SWIPE_TRIGGER = 96
 // One chapter in a list. Tap the circle to mark it revised, tap the row for
 // its timeline, or — like Mail and Reminders — swipe right to mark revised and
 // left to snooze a day. Swipes only exist on rows that are actually due.
-export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooze, onLocked, showSubject = true }) {
+// `strength` (0-1) draws the memory meter; `selected` marks the row the
+// keyboard is on.
+export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooze, onLocked, showSubject = true, strength, selected = false }) {
   const actionable = isActionable(chapter)
   const x = useMotionValue(0)
   const dragged = useRef(false)
@@ -41,7 +43,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
       exit={{ opacity: 0, height: 0, transition: { duration: 0.28, ease: easeOut } }}
       transition={{ duration: 0.3, ease: easeOut }}
       className="relative overflow-hidden"
-      style={{ '--inset': '54px' }}
+      data-chapter-id={chapter.id}
+      style={{ '--inset': '50px' }}
     >
       {actionable && (
         <>
@@ -50,8 +53,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
             style={{ opacity: reviseOpacity, width: reviseWidth }}
             className="absolute inset-y-0 left-0 overflow-hidden bg-tint flex items-center pl-6 text-tint-fg whitespace-nowrap"
           >
-            <motion.span style={{ scale: reviseScale }} className="flex items-center gap-2 eyebrow">
-              <Check size={18} strokeWidth={2.4} /> Revised
+            <motion.span style={{ scale: reviseScale }} className="flex items-center gap-2 text-footnote font-medium">
+              <Check size={16} strokeWidth={2.4} /> Revised
             </motion.span>
           </motion.div>
           <motion.div
@@ -59,8 +62,8 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
             style={{ opacity: snoozeOpacity, width: snoozeWidth }}
             className="absolute inset-y-0 right-0 overflow-hidden bg-fill-2 flex items-center justify-end pr-6 text-label whitespace-nowrap"
           >
-            <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 eyebrow">
-              Tomorrow <Clock size={18} strokeWidth={2} />
+            <motion.span style={{ scale: snoozeScale }} className="flex items-center gap-2 text-footnote font-medium">
+              Tomorrow <Clock size={16} strokeWidth={2} />
             </motion.span>
           </motion.div>
         </>
@@ -95,7 +98,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
               onOpen?.(chapter)
             }
           }}
-          className="flex items-center gap-3.5 pl-4 pr-4 py-3 min-h-[64px] cursor-pointer active:bg-fill transition-colors duration-75 select-none"
+          className={`flex items-center gap-3.5 pl-4 pr-4 py-2.5 min-h-[54px] cursor-pointer hover:bg-fill active:bg-fill transition-colors duration-75 select-none ${selected ? 'bg-fill' : ''}`}
         >
           <CompleteButton
             key={`${chapter.id}-${chapter.currentReviewIndex}-${chapter.nextReviewDate}`}
@@ -106,7 +109,7 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
           />
           <div className="min-w-0 flex-1">
             <p className="text-body truncate">{chapter.title}</p>
-            <p className="text-subhead text-label-2 truncate mt-0.5">
+            <p className="text-footnote text-label-2 truncate">
               {showSubject && subject && (
                 <>
                   {subject.name}
@@ -116,19 +119,29 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
               {reviewLabel(chapter)}
             </p>
           </div>
-          {when && (
-            <span
-              className="shrink-0 text-footnote font-medium tabular"
-              style={{ color: chapter.derivedStatus === 'upcoming' ? 'var(--label-2)' : tone }}
-            >
-              {when}
-            </span>
-          )}
           {chapter.struggleFlag && chapter.derivedStatus !== 'mastered' && (
-            <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 text-label-2" aria-label="Needs extra attention" />
+            <AlertCircle size={15} strokeWidth={1.8} className="shrink-0 text-label-2" aria-label="Needs extra attention" />
           )}
+          {strength != null && <StrengthMeter value={strength} />}
+          <span
+            className="shrink-0 w-[68px] text-right text-footnote tabular"
+            style={{ color: chapter.derivedStatus === 'upcoming' || !when ? 'var(--label-2)' : tone }}
+          >
+            {when || 'Done'}
+          </span>
         </div>
       </motion.div>
     </motion.div>
+  )
+}
+
+// How well the chapter is probably remembered right now, as a short bar in the
+// data hue. The number is in its label for screen readers and on hover.
+export function StrengthMeter({ value, className = '' }) {
+  const pct = Math.round(value * 100)
+  return (
+    <span className={`hidden sm:block shrink-0 w-10 h-1 rounded-full bg-fill-2 overflow-hidden ${className}`} role="img" aria-label={`Memory ${pct}%`} title={`Memory ${pct}%`}>
+      <span className="block h-full rounded-full bg-data" style={{ width: `${Math.max(4, pct)}%` }} />
+    </span>
   )
 }

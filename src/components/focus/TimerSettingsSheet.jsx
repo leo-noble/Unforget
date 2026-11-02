@@ -11,7 +11,7 @@ function Stepper({ value, onChange, min, max, unit, label }) {
         {value}
         {unit}
       </span>
-      <span className="flex items-center h-8 rounded-full bg-fill overflow-hidden">
+      <span className="flex items-center h-8 rounded-control bg-fill-2 overflow-hidden">
         <button
           type="button"
           disabled={value <= min}
