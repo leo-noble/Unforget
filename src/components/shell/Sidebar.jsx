@@ -51,6 +51,9 @@ export default function Sidebar({
   collapsed,
   onToggle,
   showFocusTimer = true,
+  subjects = [],
+  activeSubjectId = null,
+  onSelectSubject,
 }) {
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus' && !collapsed
@@ -114,6 +117,31 @@ export default function Sidebar({
         ))}
         <Item icon={ChartNoAxesCombined} label="Insights" collapsed={collapsed} selected={active === 'insights'} onClick={onOpenInsights} />
       </nav>
+
+      {/* Subjects, like projects in a to-do app: each opens its own list. */}
+      {!collapsed && subjects.length > 0 && (
+        <nav className="mt-5 flex flex-col gap-0.5 min-h-0 overflow-y-auto no-scrollbar" aria-label="Subjects">
+          <p className="px-2.5 mb-1 text-footnote text-label-2">Subjects</p>
+          {subjects.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => onSelectSubject?.(s.id)}
+              aria-current={activeSubjectId === s.id ? 'page' : undefined}
+              className={`relative h-8 w-full flex items-center gap-2.5 px-2.5 rounded-control text-subhead ${
+                activeSubjectId === s.id ? 'text-label' : 'text-label-2 hover:text-label hover:bg-fill'
+              }`}
+            >
+              {activeSubjectId === s.id && <motion.span layoutId="sidebar-pill" transition={snappy} className="desktop-nav-active absolute inset-0 rounded-control" />}
+              <span className="relative w-4 flex justify-center">
+                <span className="h-2 w-2 rounded-full" style={{ background: 'var(--label-3)' }} />
+              </span>
+              <span className="relative flex-1 min-w-0 text-left truncate">{s.name}</span>
+              {s.due > 0 && <span className="relative text-footnote text-label-2 tabular">{s.due}</span>}
+            </button>
+          ))}
+        </nav>
+      )}
 
       <div className={`mt-auto flex flex-col gap-2 ${collapsed ? 'items-center' : ''}`}>
         <AnimatePresence>

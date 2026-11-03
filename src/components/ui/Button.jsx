@@ -30,7 +30,7 @@ export const Button = forwardRef(function Button(
       disabled={disabled}
       whileTap={disabled ? undefined : press}
       transition={snappy}
-      className={`inline-flex items-center justify-center rounded-full md:rounded-control select-none whitespace-nowrap transition-opacity disabled:opacity-40 ${
+      className={`inline-flex items-center justify-center rounded-full select-none whitespace-nowrap transition-opacity disabled:opacity-40 ${
         VARIANT[variant]
       } ${SIZE[size]} ${block ? 'w-full' : ''} ${className}`}
       {...rest}

@@ -65,7 +65,7 @@ export default function Heatmap({ events, weeks = 16, today = new Date() }) {
       </div>
       <div className="mt-3 flex items-center gap-1.5 text-caption text-label-2">
         Fewer
-        {STEP.map((c) => <span key={c} className={`h-2.5 w-2.5 rounded-[2px] ${c}`} aria-hidden="true" />)}
+        {STEP.map((c) => <span key={c} className={`h-2.5 w-2.5 rounded-full ${c}`} aria-hidden="true" />)}
         More
       </div>
     </div>
@@ -83,7 +83,7 @@ function Row({ d, columns, step }) {
           <span
             key={cell.iso}
             title={cell.future ? undefined : `${startOfDay(cell.iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: ${cell.n} review${cell.n === 1 ? '' : 's'}`}
-            className={`h-[14px] w-[14px] rounded-[2px] ${cell.future ? '' : STEP[step(cell.n)]}`}
+            className={`h-[14px] w-[14px] rounded-full ${cell.future ? '' : STEP[step(cell.n)]}`}
           />
         )
       })}

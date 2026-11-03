@@ -12,6 +12,7 @@ import SettingsSheet from './components/sheets/SettingsSheet'
 import InsightsSheet from './components/sheets/InsightsSheet'
 import CommandPalette from './components/shell/CommandPalette'
 import ShortcutsSheet from './components/shell/ShortcutsSheet'
+import GuideSheet from './components/sheets/GuideSheet'
 import { shortcutsBlocked } from './lib/useShortcuts'
 import { recommendChapters } from './lib/studyCoach'
 import { lastReviewMap } from './lib/memory'
@@ -24,7 +25,7 @@ import { useCadence } from './lib/useCadence'
 import { useAuth } from './lib/useAuth'
 import { TimerProvider, useTimer } from './lib/TimerContext'
 import { applyAppearance } from './lib/appearance'
-import { getLastNotifiedDate, setLastNotifiedDate } from './lib/storage'
+import { getLastNotifiedDate, setLastNotifiedDate, getChapter } from './lib/storage'
 import { toISODate } from './lib/srs'
 import { APP_NAME } from './brand'
 
@@ -186,11 +187,34 @@ export default function AppShell() {
   const chapterMap = useMemo(() => new Map(cadence.chapters.map((c) => [c.id, c])), [cadence.chapters])
   const openChapter = openChapterId ? chapterMap.get(openChapterId) : null
   const lastReviewed = useMemo(() => lastReviewMap(cadence.events), [cadence.events])
+  // Notes save onto the stored chapter, not the display copy with its
+  // derived fields.
+  const { updateChapter } = cadence
+  const saveNotes = useCallback(
+    (id, notes) => {
+      const stored = getChapter(id)
+      if (stored && stored.notes !== notes) updateChapter({ ...stored, notes })
+    },
+    [updateChapter]
+  )
   const onOpenChapter = useCallback((c) => setOpenChapterId(c.id), [])
   const openSettings = useCallback(() => setSheet('settings'), [])
   const openAdd = useCallback(() => setSheet('add'), [])
   const closeSheet = useCallback(() => setSheet(null), [])
   const openPalette = useCallback(() => setSheet('palette'), [])
+  const openSubject = useCallback(
+    (id) => {
+      if (tab !== 'library') scrollByTab.current[tab] = window.scrollY
+      navigate(id ? `/dashboard/library?subject=${id}` : '/dashboard/library', { replace: true })
+      window.scrollTo(0, 0)
+    },
+    [tab, navigate]
+  )
+  const sidebarSubjects = useMemo(() => {
+    const due = new Map()
+    ;[...cadence.overdue, ...cadence.dueToday].forEach((c) => due.set(c.subjectId, (due.get(c.subjectId) || 0) + 1))
+    return cadence.subjects.map((s) => ({ ...s, due: due.get(s.id) || 0 }))
+  }, [cadence.subjects, cadence.overdue, cadence.dueToday])
   const timerRef = useRef(null)
 
   const runCommand = useCallback(
@@ -200,6 +224,7 @@ export default function AppShell() {
       if (id === 'add') return setSheet('add')
       if (id === 'settings') return setSheet('settings')
       if (id === 'shortcuts') return setSheet('shortcuts')
+      if (id === 'guide') return setSheet('guide')
       if (id === 'sidebar') return toggleSidebar()
       if (id === 'focus-next') {
         const next = recommendChapters(cadence.chapters)[0]
@@ -237,6 +262,9 @@ export default function AppShell() {
           onAdd={openAdd}
           onSearch={openPalette}
           onOpenInsights={() => selectTab('insights')}
+          subjects={sidebarSubjects}
+          activeSubjectId={tab === 'library' ? new URLSearchParams(location.search).get('subject') : null}
+          onSelectSubject={openSubject}
           onOpenSettings={openSettings}
           profile={profile}
           dueCount={dueCount}
@@ -248,8 +276,8 @@ export default function AppShell() {
 
         <main className="relative md:pl-[var(--sidebar-w)] transition-[padding] duration-300 ease-ios">
           <div key={tab}>
-            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenFocus={() => selectTab('focus')} onOpenInsights={() => selectTab('insights')} onOpenLibrary={() => selectTab('library')} />}
-            {tab === 'library' && <LibraryPage {...pageProps} onAdd={openAdd} />}
+            {tab === 'today' && <TodayPage {...pageProps} onAdd={openAdd} onOpenGuide={() => setSheet('guide')} onOpenFocus={() => selectTab('focus')} onOpenInsights={() => selectTab('insights')} onOpenLibrary={() => selectTab('library')} />}
+            {tab === 'library' && <LibraryPage {...pageProps} onAdd={openAdd} onSelectSubject={openSubject} />}
             {tab === 'plan' && <PlanPage {...pageProps} />}
             {tab === 'focus' && <FocusPage {...pageProps} />}
             {tab === 'insights' && <InsightsSheet cadence={cadence} asPage account={account} onOpenChapter={onOpenChapter} />}
@@ -276,9 +304,10 @@ export default function AppShell() {
             onCreateChapter={cadence.createChapter}
           />
         )}
-        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} onOpenShortcuts={() => setSheet('shortcuts')} />}
+        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} onOpenShortcuts={() => setSheet('shortcuts')} onOpenGuide={() => setSheet('guide')} />}
         {sheet === 'insights' && <InsightsSheet key="insights" cadence={cadence} onClose={closeSheet} onOpenChapter={onOpenChapter} />}
         {sheet === 'shortcuts' && <ShortcutsSheet key="shortcuts" onClose={closeSheet} />}
+        {sheet === 'guide' && <GuideSheet key="guide" onClose={closeSheet} />}
         {sheet === 'palette' && (
           <CommandPalette
             key="palette"
@@ -298,6 +327,7 @@ export default function AppShell() {
             subject={cadence.subjectMap.get(openChapter.subjectId)}
             actions={actions}
             onRename={cadence.renameChapter}
+            onSaveNotes={saveNotes}
             lastReviewed={lastReviewed.get(openChapter.id)}
             onClose={() => setOpenChapterId(null)}
           />

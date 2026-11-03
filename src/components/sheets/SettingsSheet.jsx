@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, BellRing, Clock, Timer, RefreshCw, Check, Info, LogOut, Smartphone, Share, SquarePlus, Cloud, CloudOff, Download, Upload, CalendarPlus, Keyboard } from 'lucide-react'
+import { Bell, BellRing, Clock, Timer, Info, LogOut, Smartphone, Share, SquarePlus, Download, Upload, CalendarPlus, Keyboard, HelpCircle } from 'lucide-react'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import Switch from '../ui/Switch'
@@ -14,13 +14,6 @@ import { isIOS, isStandalone } from '../ui/useMediaQuery'
 import { APP_NAME, TAGLINE } from '../../brand'
 import { exportAllData, importAllData, exportChaptersToICS } from '../../lib/storage'
 import { toISODate } from '../../lib/srs'
-
-const SYNC_LABEL = {
-  synced: 'Synced across devices',
-  syncing: 'Saving changes…',
-  offline: 'Offline — changes will retry automatically',
-  idle: 'Sign in to sync across devices',
-}
 
 const APPEARANCE_MODES = [
   { id: 'system', label: 'System' },
@@ -54,8 +47,8 @@ function describeBackup(text) {
   }
 }
 
-export default function SettingsSheet({ cadence, onClose, onOpenShortcuts }) {
-  const { prefs, updatePrefs, chapters, events, syncState } = cadence
+export default function SettingsSheet({ cadence, onClose, onOpenShortcuts, onOpenGuide }) {
+  const { prefs, updatePrefs, chapters, events } = cadence
   const navigate = useNavigate()
   const confirm = useConfirm()
   const { user, displayName, avatarUrl, signOut } = useAuth()
@@ -236,28 +229,6 @@ export default function SettingsSheet({ cadence, onClose, onOpenShortcuts }) {
           )}
         </Section>
 
-        {/* Sync */}
-        <Section title="Sync" footer="Your chapters, plans, progress, and settings sync automatically across your devices.">
-          <Row
-            icon={syncState === 'offline' ? CloudOff : Cloud}
-            title="Automatic cloud sync"
-            subtitle={SYNC_LABEL[syncState] || SYNC_LABEL.synced}
-            trailing={
-              <span className="flex items-center justify-center text-label-2" aria-hidden="true">
-                {syncState === 'syncing' ? (
-                  <RefreshCw size={16} className="animate-spin" />
-                ) : syncState === 'offline' ? (
-                  <CloudOff size={17} />
-                ) : syncState === 'synced' ? (
-                  <Check size={17} />
-                ) : (
-                  <Cloud size={17} />
-                )}
-              </span>
-            }
-          />
-        </Section>
-
         {showInstallHint && (
           <Section title="Install">
             <Row icon={Smartphone} title="Add to Home Screen">
@@ -288,6 +259,7 @@ export default function SettingsSheet({ cadence, onClose, onOpenShortcuts }) {
         </Section>
 
         <Section>
+          {onOpenGuide && <Row icon={HelpCircle} title="How Unforget works" onClick={onOpenGuide} chevron />}
           {onOpenShortcuts && <Row icon={Keyboard} title="Keyboard shortcuts" detail="?" onClick={onOpenShortcuts} chevron />}
           <Row icon={Info} title={`About ${APP_NAME}`} chevron onClick={() => navigate('/welcome')} />
         </Section>

@@ -8,7 +8,7 @@ export function MemoryLegend({ className = '' }) {
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-label-2 ${className}`}>
       {BANDS.map((b) => (
         <span key={b.id} className="inline-flex items-center gap-1.5">
-          <span className={`h-2.5 w-2.5 rounded-[2px] ${STEP_CLASS[b.step]}`} aria-hidden="true" />
+          <span className={`h-2.5 w-2.5 rounded-full ${STEP_CLASS[b.step]}`} aria-hidden="true" />
           {b.label}
         </span>
       ))}
@@ -41,7 +41,7 @@ export default function MemoryMap({ groups, onOpen, compact = false, stacked = f
                 onClick={() => onOpen?.(chapter)}
                 title={`${chapter.title}: ${Math.round(value * 100)}%`}
                 aria-label={`${chapter.title}, ${band.label.toLowerCase()}, ${Math.round(value * 100)}%`}
-                className={`${size} rounded-[3px] ${STEP_CLASS[band.step]} hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-label`}
+                className={`${size} rounded-full ${STEP_CLASS[band.step]} hover:outline hover:outline-1 hover:outline-offset-1 hover:outline-label`}
               />
             ))}
           </div>

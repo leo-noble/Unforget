@@ -22,7 +22,6 @@ const MODE_OPTIONS = PHASES.map((id) => ({ id, label: PHASE_META[id].label }))
 // the middle. One component, so the page and fullscreen can never show the
 // same timer two different ways.
 function Dial({ timer, chapterTitle, big = false }) {
-  const running = timer.status === 'running'
   const color = PHASE_COLOR[timer.phase]
   const R = 46
   const C = 2 * Math.PI * R
@@ -34,7 +33,8 @@ function Dial({ timer, chapterTitle, big = false }) {
     >
       <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden="true">
         <circle cx="50" cy="50" r={R} fill="none" stroke="var(--fill-2)" strokeWidth="1.4" />
-        <circle
+        {/* Nothing until the session has started, so a fresh timer shows no stray dot. */}
+        {timer.progress > 0.005 && <circle
           cx="50"
           cy="50"
           r={R}
@@ -45,11 +45,10 @@ function Dial({ timer, chapterTitle, big = false }) {
           strokeDasharray={C}
           strokeDashoffset={C * (1 - timer.progress)}
           style={{ transition: 'stroke-dashoffset 0.4s linear, stroke 0.3s' }}
-        />
+        />}
       </svg>
       <div role="timer" aria-label={timer.timeLabel} className="absolute inset-0 flex flex-col items-center justify-center px-10">
-        <span className="text-footnote text-label-2 mb-2 flex items-center gap-1.5">
-          <span className={`h-[6px] w-[6px] rounded-full ${running ? 'pulse-dot' : ''}`} style={{ background: color }} />
+        <span className="text-footnote text-label-2 mb-2">
           {timer.status === 'paused' ? 'Paused' : timer.meta.label}
         </span>
         <span
@@ -219,13 +218,11 @@ export default function FocusPage({ cadence, account }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [toggle, reset, skip, switchMode, fullscreen, showSettings])
 
-  const inCycle =
-    timer.cycleCount % timer.cycleLength === 0 && timer.cycleCount > 0 ? timer.cycleLength : timer.cycleCount % timer.cycleLength
-
   return (
     <Page
       title="Focus"
       meta={timer.phase === 'work' ? `Session ${(timer.cycleCount % timer.cycleLength) + 1} of ${timer.cycleLength}` : 'Break'}
+      subtitle={timer.phase === 'work' ? `A long break comes after ${timer.cycleLength} focus sessions.` : 'Step away from the screen for a bit.'}
       wide
       trailing={
         <>
@@ -257,16 +254,6 @@ export default function FocusPage({ cadence, account }) {
           <Controls timer={timer} />
 
           <div className="mt-6 flex items-center gap-5 text-footnote text-label-2">
-            <span
-              className="flex items-center gap-1.5"
-              role="img"
-              aria-label={`${inCycle} of ${timer.cycleLength} focus sessions done before the long break`}
-            >
-              {Array.from({ length: timer.cycleLength }).map((_, i) => (
-                <span key={i} className={`h-[7px] w-[7px] rounded-full ${i < inCycle ? 'bg-data' : 'bg-fill-2'}`} />
-              ))}
-              <span className="ml-1">until a long break</span>
-            </span>
             <button type="button" onClick={fullscreen.enter} aria-keyshortcuts="F" className="flex items-center gap-1.5 hover:text-label">
               <Maximize2 size={13} /> Full screen
             </button>

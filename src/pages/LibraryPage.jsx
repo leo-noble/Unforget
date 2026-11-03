@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, X, Trash2, Plus } from 'lucide-react'
 import Page from '../components/ui/Page'
@@ -6,6 +7,7 @@ import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
 import Segmented from '../components/ui/Segmented'
 import ChapterRow from '../components/chapter/ChapterRow'
+import QuickAdd from '../components/chapter/QuickAdd'
 import MemoryMap, { MemoryLegend } from '../components/insights/MemoryMap'
 import { useConfirm } from '../components/ui/Alert'
 import { snappy } from '../components/ui/motion'
@@ -27,8 +29,15 @@ const EMPTY = {
   mastered: 'Nothing mastered yet — keep going.',
 }
 
-export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, account }) {
-  const { subjects, chapters, events, subjectMap, removeSubject } = cadence
+export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, onSelectSubject, account }) {
+  const { subjects: allSubjects, chapters: allChapters, events, subjectMap, removeSubject } = cadence
+  // A subject picked in the sidebar (or the pills below) narrows the whole
+  // page to it, like opening one project in a to-do app.
+  const [params] = useSearchParams()
+  const subjectId = params.get('subject')
+  const focusSubject = subjectId ? subjectMap.get(subjectId) : null
+  const subjects = useMemo(() => (focusSubject ? [focusSubject] : allSubjects), [focusSubject, allSubjects])
+  const chapters = useMemo(() => (focusSubject ? allChapters.filter((c) => c.subjectId === focusSubject.id) : allChapters), [focusSubject, allChapters])
   const confirm = useConfirm()
   const [filter, setFilter] = useState('all')
   const [sort, setSort] = useState('subject') // subject | memory
@@ -112,8 +121,8 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
 
   return (
     <Page
-      title="Library"
-      meta={`${chapters.length} chapter${chapters.length === 1 ? '' : 's'} · ${subjects.length} subject${subjects.length === 1 ? '' : 's'}`}
+      title={focusSubject ? focusSubject.name : 'Library'}
+      meta={`${chapters.length} chapter${chapters.length === 1 ? '' : 's'}${focusSubject ? '' : ` · ${subjects.length} subject${subjects.length === 1 ? '' : 's'}`}`}
       subtitle={subtitle}
       trailing={account}
       titleAccessory={
@@ -123,7 +132,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
       }
       wide
     >
-      {chapters.length === 0 ? (
+      {allChapters.length === 0 ? (
         <div className="bg-card rounded-cell px-6 py-10">
           <h2 className="text-title-3 font-medium">Your library is empty</h2>
           <p className="text-subhead text-label-2 mt-1 max-w-[420px]">
@@ -135,9 +144,40 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
         </div>
       ) : (
         <>
+          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto no-scrollbar mb-5">
+            <div className="flex gap-2 w-max" role="radiogroup" aria-label="Subject">
+              {[{ id: null, name: 'All subjects' }, ...allSubjects].map((s) => {
+                const on = (s.id || null) === (focusSubject?.id || null)
+                return (
+                  <button
+                    key={s.id || 'all'}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => onSelectSubject?.(s.id)}
+                    className={`h-9 px-4 rounded-full text-subhead whitespace-nowrap transition-colors ${
+                      on ? 'tint-fill text-tint-fg' : 'bg-card text-label-2 hover:text-label shadow-[inset_0_0_0_1px_var(--separator)]'
+                    }`}
+                  >
+                    {s.name}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <QuickAdd
+            key={focusSubject?.id || 'all'}
+            subjects={allSubjects}
+            preferSubjectId={focusSubject?.id}
+            onCreateSubject={cadence.createSubject}
+            onCreateChapter={cadence.createChapter}
+            className="mb-8"
+          />
+
           <section className="mb-8">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-0.5 mb-2.5 min-h-6">
-              <h2 className="text-subhead font-medium">Memory by subject</h2>
+              <h2 className="text-subhead font-medium">{focusSubject ? 'Memory' : 'Memory by subject'}</h2>
               <MemoryLegend />
             </div>
             <div className="bg-card rounded-cell p-5">
@@ -205,7 +245,7 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, ac
 
           {visible.length === 0 ? (
             <p className="text-subhead text-label-2 py-10">
-              {query ? `No chapter or subject matches “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
+              {query ? `No chapter matches “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
             </p>
           ) : sort === 'memory' ? (
             <Section>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
-import { Search, Plus, Timer, SunMedium, LibraryBig, CalendarDays, ChartNoAxesCombined, Settings, PanelLeft, Keyboard, CornerDownLeft } from 'lucide-react'
+import { Search, Plus, Timer, SunMedium, LibraryBig, CalendarDays, ChartNoAxesCombined, Settings, PanelLeft, Keyboard, CornerDownLeft, HelpCircle } from 'lucide-react'
 import { lockScroll } from '../ui/scrollLock'
 import { shortWhen, reviewLabel } from '../chapter/meta'
 
@@ -30,6 +30,7 @@ export default function CommandPalette({ cadence, onClose, run, showFocusTimer }
         { id: 'tab:insights', label: 'Go to Insights', icon: ChartNoAxesCombined },
         { id: 'settings', label: 'Settings', icon: Settings },
         { id: 'sidebar', label: 'Toggle sidebar', icon: PanelLeft },
+        { id: 'guide', label: 'How Unforget works', icon: HelpCircle },
         { id: 'shortcuts', label: 'Keyboard shortcuts', icon: Keyboard, hint: '?' },
       ].filter(Boolean),
     [showFocusTimer]

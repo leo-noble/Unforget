@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { ArrowRight, Plus } from 'lucide-react'
+import { ArrowRight, Plus, X } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
 import ChapterRow, { StrengthMeter } from '../components/chapter/ChapterRow'
+import QuickAdd from '../components/chapter/QuickAdd'
 import MemoryMap, { MemoryLegend } from '../components/insights/MemoryMap'
 import { todayISO } from '../lib/format'
 import { reviewLabel, shortWhen } from '../components/chapter/meta'
@@ -42,7 +43,25 @@ function Figure({ label, value, unit, note, children }) {
   )
 }
 
-export default function TodayPage({ cadence, actions, onOpenChapter, onAdd, onOpenInsights, onOpenFocus, onOpenLibrary, account }) {
+const GUIDE_KEY = 'unforget.guideDismissed'
+const guideDismissed = () => {
+  try {
+    return localStorage.getItem(GUIDE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+export default function TodayPage({ cadence, actions, onOpenChapter, onAdd, onOpenInsights, onOpenFocus, onOpenLibrary, onOpenGuide, account }) {
+  const [showGuideCard, setShowGuideCard] = useState(() => !guideDismissed())
+  function dismissGuide() {
+    setShowGuideCard(false)
+    try {
+      localStorage.setItem(GUIDE_KEY, '1')
+    } catch {
+      // best-effort
+    }
+  }
   const { overdue, dueToday, chapters, subjects, events, streak, subjectMap } = cadence
   const timer = useTimer()
   const [showGoal, setShowGoal] = useState(false)
@@ -115,20 +134,37 @@ export default function TodayPage({ cadence, actions, onOpenChapter, onAdd, onOp
       titleAccessory={<div className="hidden sm:block shrink-0">{primary}</div>}
       wide
     >
-      <div className="sm:hidden mb-6">{primary && <div className="[&>button]:w-full">{primary}</div>}</div>
+      <div className="sm:hidden mb-5">{primary && <div className="[&>button]:w-full">{primary}</div>}</div>
+
+      {showGuideCard && (
+        <div className="mb-5 flex items-start gap-3 rounded-cell bg-card px-5 py-4 shadow-[inset_0_0_0_1px_var(--separator)]">
+          <div className="min-w-0 flex-1">
+            <p className="text-body font-medium">New here?</p>
+            <p className="text-subhead text-label-2 mt-0.5">
+              Log what you study, and Unforget brings it back 5 times over 8 weeks so it sticks.{' '}
+              <button type="button" onClick={onOpenGuide} className="text-label underline underline-offset-2">See how it works</button>
+            </p>
+          </div>
+          <button type="button" onClick={dismissGuide} aria-label="Dismiss" className="h-8 w-8 -mr-2 -mt-1 shrink-0 rounded-full flex items-center justify-center text-label-3 hover:text-label hover:bg-fill">
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
+      <QuickAdd subjects={subjects} onCreateSubject={cadence.createSubject} onCreateChapter={cadence.createChapter} className="mb-8" />
 
       <div className="grid gap-x-8 gap-y-8 lg:grid-cols-12">
         {/* The queue: what to review right now. */}
         <div className="lg:col-span-8 space-y-6 min-w-0">
           {overdue.length > 0 && (
-            <Section prominent title={`Overdue · ${overdue.length}`}>
+            <Section prominent title={`Overdue · ${overdue.length}`} action={<span className="text-footnote text-label-2">Tick the circle once reviewed</span>}>
               <AnimatePresence initial={false}>
                 {overdue.map((c) => <ChapterRow key={c.id} {...rowProps(c)} />)}
               </AnimatePresence>
             </Section>
           )}
           {dueToday.length > 0 && (
-            <Section prominent title={`Due today · ${dueToday.length}`}>
+            <Section prominent title={`Due today · ${dueToday.length}`} {...(overdue.length ? {} : { action: <span className="text-footnote text-label-2">Tick the circle once reviewed</span> })}>
               <AnimatePresence initial={false}>
                 {dueToday.map((c) => <ChapterRow key={c.id} {...rowProps(c)} />)}
               </AnimatePresence>

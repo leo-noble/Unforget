@@ -18,13 +18,13 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
-    document.documentElement.style.setProperty('--dock-space', showTimer ? '172px' : '104px')
+    document.documentElement.style.setProperty('--dock-space', showTimer ? '162px' : '94px')
   }, [showTimer])
 
   return (
     <div
       className="md:hidden fixed inset-x-0 bottom-0 z-50 pointer-events-none"
-      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 6px), 14px)' }}
+      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 16px), 12px)' }}
     >
       <div className="mx-auto max-w-[540px] px-4">
         <AnimatePresence>

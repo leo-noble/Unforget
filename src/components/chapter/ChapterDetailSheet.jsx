@@ -10,6 +10,7 @@ import { subjectColor } from '../../lib/colors'
 import { reviewLabel, whenLabel, STATUS_TONE } from './meta'
 import { spring } from '../ui/motion'
 import RecallCurve from '../insights/RecallCurve'
+import NotesBlock from './NotesBlock'
 import { retention, bandFor } from '../../lib/memory'
 
 function StateDot({ state }) {
@@ -30,7 +31,7 @@ function StateDot({ state }) {
   return <span className="h-5 w-5 rounded-full shrink-0" style={{ boxShadow: 'inset 0 0 0 1.5px var(--label-3)' }} />
 }
 
-export default function ChapterDetailSheet({ chapter, subject, actions, onRename, onClose, lastReviewed }) {
+export default function ChapterDetailSheet({ chapter, subject, actions, onRename, onSaveNotes, onClose, lastReviewed }) {
   const [renaming, setRenaming] = useState(false)
   const [draft, setDraft] = useState(chapter?.title || '')
   const inputRef = useRef(null)
@@ -208,6 +209,11 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
         )}
       </div>
 
+      {/* Notes: the page part of the chapter */}
+      <Section title="Notes" className="mt-6">
+        <NotesBlock value={chapter.notes || ''} onSave={(notes) => onSaveNotes?.(chapter.id, notes)} />
+      </Section>
+
       {/* The whole schedule */}
       <Section title="Schedule" className="mt-6">
         <Row
@@ -237,12 +243,6 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
           />
         ))}
       </Section>
-
-      {chapter.notes && (
-        <Section title="Notes" className="mt-6">
-          <p className="px-4 py-3.5 text-body whitespace-pre-wrap break-words">{chapter.notes}</p>
-        </Section>
-      )}
 
       <Section className="mt-6">
         <Row
