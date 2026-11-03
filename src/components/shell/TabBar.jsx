@@ -7,7 +7,7 @@ import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.85 }
 
-// Four labelled destinations in a floating round glass capsule, with a glass
+// Four icon-only destinations in a floating round glass capsule, with a glass
 // lens that slides to the selected one. Add is the round glass button beside it.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap, showFocusTimer = true }) {
   const { status } = useTimerStatus()
@@ -45,7 +45,7 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
         <div className="flex items-center gap-3">
           <nav
             aria-label="Main navigation"
-            className={`liquid-dock relative grid h-[62px] min-w-0 flex-1 ${gridClass} items-center rounded-full p-[5px] pointer-events-auto`}
+            className={`liquid-dock relative grid h-[60px] min-w-0 flex-1 ${gridClass} items-center rounded-full p-[5px] pointer-events-auto`}
           >
             <motion.span
               aria-hidden="true"
@@ -73,7 +73,7 @@ function AddDockButton({ onAdd }) {
       transition={pillSpring}
       aria-label="Add chapter"
       title="Add chapter"
-      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-full"
+      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full"
     >
       <Plus size={26} strokeWidth={1.8} />
     </motion.button>
@@ -91,10 +91,11 @@ function DockTab({ tab, active, onSelect }) {
       whileTap={{ scale: 0.96 }}
       transition={pillSpring}
       aria-current={selected ? 'page' : undefined}
-      className={`relative z-[1] flex h-full min-w-0 w-full flex-col items-center justify-center gap-0.5 rounded-full transition-colors ${selected ? 'text-label' : 'text-label-2'}`}
+      aria-label={tab.label}
+      title={tab.label}
+      className={`relative z-[1] flex h-full min-w-0 w-full items-center justify-center rounded-full transition-colors ${selected ? 'text-label' : 'text-label-2'}`}
     >
-      <Icon size={19} strokeWidth={selected ? 2 : 1.7} className="relative z-[1]" />
-      <span className={`relative z-[1] text-caption-2 ${selected ? 'font-medium' : ''}`}>{tab.label}</span>
+      <Icon size={21} strokeWidth={selected ? 2 : 1.7} className="relative z-[1]" />
     </motion.button>
   )
 }
