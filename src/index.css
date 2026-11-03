@@ -281,59 +281,64 @@ input[type='search']::-webkit-search-cancel-button {
     background: var(--fill-2);
   }
 
-  /* The phone tab bar is the one place that keeps real glass, by choice:
-     a round capsule that blurs the page scrolling under it, a fine bright
-     edge, and a round glass lens that slides to the selected tab.
-     taste-skill-ignore: glass and its highlight gradients are deliberate here. */
+  /* The phone tab bar is the one place that keeps real glass, by choice. It
+     is the Mnora-era glass: a saturated blur, a bright rim on the top-left
+     and bottom-right edges (a masked gradient border on ::before, so it
+     follows the radius), and a brighter glass bubble on the selected tab.
+     taste-skill-ignore: glass and its rim gradients are deliberate here. */
+  :root {
+    --dock-bg: rgba(255, 255, 255, 0.6);
+    --dock-edge: rgba(255, 255, 255, 0.95);
+    --dock-edge-soft: rgba(255, 255, 255, 0.4);
+    --dock-rim: rgba(0, 0, 0, 0.07);
+    --dock-lens: rgba(10, 10, 10, 0.07);
+    --dock-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.28);
+  }
+  :root[data-mode='dark'] {
+    --dock-bg: rgba(40, 40, 40, 0.55);
+    --dock-edge: rgba(255, 255, 255, 0.26);
+    --dock-edge-soft: rgba(255, 255, 255, 0.07);
+    --dock-rim: rgba(255, 255, 255, 0.07);
+    --dock-lens: rgba(255, 255, 255, 0.12);
+    --dock-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.9);
+  }
   .liquid-dock,
-  .dock-action,
   .dock-glass {
     position: relative;
     isolation: isolate;
-    -webkit-backdrop-filter: blur(22px) saturate(180%);
-    backdrop-filter: blur(22px) saturate(180%);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.16) 60%),
-      rgba(250, 249, 247, 0.55);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-      0 0 0 0.5px rgba(0, 0, 0, 0.08),
-      0 10px 30px -8px rgba(0, 0, 0, 0.22);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    background: var(--dock-bg);
+    box-shadow: var(--dock-shadow), inset 0 0 0 0.5px var(--dock-rim);
   }
-  :root[data-mode='dark'] .liquid-dock,
-  :root[data-mode='dark'] .dock-action,
-  :root[data-mode='dark'] .dock-glass {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 60%),
-      rgba(30, 30, 29, 0.55);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.22),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-      0 0 0 0.5px rgba(0, 0, 0, 0.6),
-      0 12px 32px -8px rgba(0, 0, 0, 0.6);
-  }
-  .dock-action {
-    color: var(--label);
+  .liquid-dock::before,
+  .dock-glass::before,
+  .dock-lens::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(150deg, var(--dock-edge) 0%, var(--dock-edge-soft) 28%, transparent 52%, var(--dock-edge-soft) 78%, var(--dock-edge) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
   .dock-lens {
     position: absolute;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
-    box-shadow:
-      inset 0 1px 0 #fff,
-      0 0 0 0.5px rgba(0, 0, 0, 0.06),
-      0 2px 8px -2px rgba(0, 0, 0, 0.16);
+    isolation: isolate;
+    background: var(--dock-lens);
+    box-shadow: inset 0 1px 1px var(--dock-edge-soft), 0 2px 8px -2px rgba(0, 0, 0, 0.18);
   }
-  :root[data-mode='dark'] .dock-lens {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.09));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-      0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  .dock-action {
+    background: var(--tint);
+    color: var(--tint-fg);
+    box-shadow: var(--dock-shadow);
   }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .liquid-dock,
-    .dock-action,
     .dock-glass {
       background: var(--card);
     }
