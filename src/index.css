@@ -100,6 +100,13 @@
   --color-surface: var(--card);
 }
 
+/* Corner radii: rounder on a phone, where the glass dock sets the feel;
+   tight on wide screens. */
+:root { --r-cell: 16px; --r-sheet: 24px; --r-control: 10px; }
+@media (min-width: 768px) {
+  :root { --r-cell: 8px; --r-sheet: 12px; --r-control: 6px; }
+}
+
 /* The sidebar's footprint on wide screens; fixed bars offset by it. */
 :root { --sidebar-w: 0px; }
 @media (min-width: 768px) {
@@ -274,19 +281,62 @@ input[type='search']::-webkit-search-cancel-button {
     background: var(--fill-2);
   }
 
-  /* The phone tab bar: one opaque bar, a grey pill on the selected tab. */
-  .liquid-dock {
+  /* The phone tab bar is the one place that keeps real glass, by choice:
+     a round capsule that blurs the page scrolling under it, a fine bright
+     edge, and a round glass lens that slides to the selected tab.
+     taste-skill-ignore: glass and its highlight gradients are deliberate here. */
+  .liquid-dock,
+  .dock-action,
+  .dock-glass {
     position: relative;
-    background: var(--card);
-    box-shadow: var(--shadow-float);
+    isolation: isolate;
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.16) 60%),
+      rgba(250, 249, 247, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+      0 0 0 0.5px rgba(0, 0, 0, 0.08),
+      0 10px 30px -8px rgba(0, 0, 0, 0.22);
+  }
+  :root[data-mode='dark'] .liquid-dock,
+  :root[data-mode='dark'] .dock-action,
+  :root[data-mode='dark'] .dock-glass {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 60%),
+      rgba(30, 30, 29, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 0 0.5px rgba(0, 0, 0, 0.6),
+      0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  }
+  .dock-action {
+    color: var(--label);
   }
   .dock-lens {
     position: absolute;
-    background: var(--fill-2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 0 0 0.5px rgba(0, 0, 0, 0.06),
+      0 2px 8px -2px rgba(0, 0, 0, 0.16);
   }
-  .dock-action {
-    background: var(--tint);
-    color: var(--tint-fg);
+  :root[data-mode='dark'] .dock-lens {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.09));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .liquid-dock,
+    .dock-action,
+    .dock-glass {
+      background: var(--card);
+    }
   }
   .liquid-add,
   .glass-tint {

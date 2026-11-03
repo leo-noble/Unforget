@@ -61,12 +61,12 @@ export default {
         caption: ['12px', { lineHeight: '16px' }],
         'caption-2': ['11px', { lineHeight: '14px', letterSpacing: '0.005em' }],
       },
-      // Two radii: 8 for cards and sheets' insides, 6 for controls (and full
-      // round for pills and avatars).
+      // Two radii: 8 for cards, 6 for controls on wide screens; softer on a
+      // phone (see --r-* in index.css). Full round for pills and avatars.
       borderRadius: {
-        cell: '8px',
-        sheet: '12px',
-        control: '6px',
+        cell: 'var(--r-cell)',
+        sheet: 'var(--r-sheet)',
+        control: 'var(--r-control)',
         capsule: '9999px',
       },
       boxShadow: {

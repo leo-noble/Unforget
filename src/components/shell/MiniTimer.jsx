@@ -6,7 +6,7 @@ import { snappy } from '../ui/motion'
 
 // The running session as a live-activity pill: what phase, how long left, and
 // a play/pause you can hit without leaving the screen you're on.
-export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
+export default function MiniTimer({ onOpen, chapterMap, compact = false, glass = false }) {
   const timer = useTimer()
   if (!timer) return null
   const chapterTitle = timer.phase === 'work' ? chapterMap?.get(timer.linkedChapterId)?.title : null
@@ -17,7 +17,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
 
   return (
     <div
-      className={`glass pointer-events-auto flex items-center gap-3 rounded-cell ${
+      className={`${glass ? 'dock-glass rounded-full' : 'glass rounded-cell'} pointer-events-auto flex items-center gap-3 ${
         compact ? 'h-[48px] pl-2 pr-1.5' : 'h-[54px] pl-2.5 pr-2'
       }`}
     >
@@ -61,7 +61,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false }) {
         transition={snappy}
         onClick={timer.toggle}
         aria-label={running ? 'Pause' : 'Resume'}
-        className="h-9 w-9 shrink-0 rounded-control flex items-center justify-center bg-fill hover:bg-fill-2"
+        className={`h-9 w-9 shrink-0 flex items-center justify-center bg-fill hover:bg-fill-2 ${glass ? 'rounded-full' : 'rounded-control'}`}
       >
         {running ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
       </motion.button>
