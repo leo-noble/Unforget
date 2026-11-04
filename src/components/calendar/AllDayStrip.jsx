@@ -1,4 +1,5 @@
-import { Check, RefreshCw } from 'lucide-react'
+import { useState } from 'react'
+import { Check, RefreshCw, ChevronDown } from 'lucide-react'
 import { blockTitle, blockColor, blockChapters } from '../../lib/timeGrid'
 import { subjectColor } from '../../lib/colors'
 
@@ -6,12 +7,29 @@ import { subjectColor } from '../../lib/colors'
 // languages so the grid never needs decoding: reviews (the schedule's, tinted
 // capsules with a repeat glyph) and untimed study blocks (yours, subject rail).
 export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjectMap, onToggleDone, onOpenBlock, compact = false }) {
-  const entries = [...reviews.map((r) => ({ type: 'review', ...r })), ...untimedBlocks.map((b) => ({ type: 'block', ...b }))]
-  if (entries.length === 0) return null
+  const [open, setOpen] = useState(false)
+  // In the roomy day view, more than two reviews fold into one quiet line
+  // until you ask to see them.
+  const fold = !compact && reviews.length > 2 && !open
+  const shownReviews = fold ? [] : reviews
+  const entries = [...shownReviews.map((r) => ({ type: 'review', ...r })), ...untimedBlocks.map((b) => ({ type: 'block', ...b }))]
+  if (entries.length === 0 && !fold) return null
 
   return (
     <div className={compact ? 'p-1' : 'px-2 py-2'}>
       <div className={compact ? 'flex flex-col gap-1' : 'flex flex-wrap items-center gap-1.5'}>
+        {!compact && reviews.length > 2 && (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-fill-2 text-footnote font-medium text-label hover:bg-fill"
+          >
+            <RefreshCw size={12} strokeWidth={2.4} />
+            {reviews.length} reviews due
+            <ChevronDown size={13} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+        )}
         {entries.map((entry) => {
           if (entry.type === 'review') {
             const chapter = chapterMap.get(entry.chapterId)
@@ -22,7 +40,7 @@ export default function AllDayStrip({ reviews, untimedBlocks, chapterMap, subjec
                 key={`review-${entry.chapterId}`}
                 onClick={() => entry.onOpen?.(chapter)}
                 title={`Review ${entry.reviewNumber} — ${chapter.title}`}
-                className={`inline-flex items-center gap-1 rounded-full bg-tint/15 text-tint font-medium active:bg-tint/25 hover:bg-tint/20 transition-colors duration-100 ${
+                className={`inline-flex items-center gap-1 rounded-full bg-fill text-label-2 font-medium hover:bg-fill-2 transition-colors duration-100 ${
                   compact ? 'w-full min-w-0 px-1.5 h-[22px] text-[10.5px]' : 'px-2.5 h-7 text-footnote'
                 }`}
               >

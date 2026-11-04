@@ -65,6 +65,7 @@ export default function Segmented({ options, value, onChange, className = '', si
             className="relative z-[1] flex-1 min-w-0 px-3 rounded-full text-footnote font-medium whitespace-nowrap"
           >
             <span className={`relative flex items-center justify-center gap-1.5 ${active ? 'text-label' : 'text-label-2'}`}>
+              {opt.icon && <opt.icon size={14} strokeWidth={1.8} />}
               {opt.label}
             </span>
           </button>

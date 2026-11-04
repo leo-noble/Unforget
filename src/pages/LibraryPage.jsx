@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Search, X, Trash2, Plus } from 'lucide-react'
+import { Trash2, Plus, ArrowDownWideNarrow } from 'lucide-react'
 import Page from '../components/ui/Page'
 import { Section } from '../components/ui/List'
 import { Button } from '../components/ui/Button'
-import Segmented from '../components/ui/Segmented'
 import ChapterRow from '../components/chapter/ChapterRow'
-import QuickAdd from '../components/chapter/QuickAdd'
 import MemoryMap, { MemoryLegend } from '../components/insights/MemoryMap'
 import { useConfirm } from '../components/ui/Alert'
 import { snappy } from '../components/ui/motion'
@@ -41,7 +39,6 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
   const confirm = useConfirm()
   const [filter, setFilter] = useState('all')
   const [sort, setSort] = useState('subject') // subject | memory
-  const [query, setQuery] = useState('')
 
   const memory = useMemo(() => memoryMap(chapters, subjects, events), [chapters, subjects, events])
   const strength = useMemo(() => new Map(memory.flatMap((g) => g.items.map((i) => [i.chapter.id, i.value]))), [memory])
@@ -57,14 +54,8 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
   }, [chapters])
 
   const visible = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return chapters.filter((c) => {
-      if (filter !== 'all' && c.derivedStatus !== filter) return false
-      if (!q) return true
-      const name = subjectMap.get(c.subjectId)?.name || ''
-      return c.title.toLowerCase().includes(q) || name.toLowerCase().includes(q)
-    })
-  }, [chapters, filter, query, subjectMap])
+    return chapters.filter((c) => filter === 'all' || c.derivedStatus === filter)
+  }, [chapters, filter])
 
   const groups = useMemo(() => {
     const map = new Map(subjects.map((s) => [s.id, []]))
@@ -107,13 +98,16 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
       onRevise={actions.revise}
       onSnooze={actions.snooze}
       onLocked={actions.locked}
-      strength={strength.get(c.id)}
       selected={c.id === selectedId}
     />
   )
 
   let subtitle = 'Every chapter you log lands here, grouped by subject.'
-  if (chapters.length) {
+  if (focusSubject) {
+    const g = memory.find((m) => m.subject.id === focusSubject.id)
+    const mastered = chapters.filter((c) => c.status === 'mastered').length
+    subtitle = chapters.length ? `${mastered} of ${chapters.length} mastered${g ? ` · memory ${Math.round(g.average * 100)}%` : ''}` : 'No chapters yet.'
+  } else if (chapters.length) {
     subtitle = slipping
       ? `${slipping} chapter${slipping === 1 ? ' is' : 's are'} slipping.${weakest ? ` ${weakest.subject.name} is weakest, at ${Math.round(weakest.average * 100)}%.` : ''}`
       : `Nothing is slipping.${weakest ? ` ${weakest.subject.name} is weakest, at ${Math.round(weakest.average * 100)}%.` : ''}`
@@ -166,86 +160,57 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
             </div>
           </div>
 
-          <QuickAdd
-            key={focusSubject?.id || 'all'}
-            subjects={allSubjects}
-            preferSubjectId={focusSubject?.id}
-            onCreateSubject={cadence.createSubject}
-            onCreateChapter={cadence.createChapter}
-            className="mb-8"
-          />
+          {!focusSubject && (
+            <section className="mb-8">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-0.5 mb-2.5 min-h-6">
+                <h2 className="text-subhead font-medium">Memory by subject</h2>
+                <MemoryLegend className="hidden sm:flex" />
+              </div>
+              <div className="bg-card rounded-cell p-5">
+                <MemoryMap groups={memory} onOpen={onOpenChapter} />
+                <MemoryLegend className="sm:hidden mt-4" />
+              </div>
+            </section>
+          )}
 
-          <section className="mb-8">
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-0.5 mb-2.5 min-h-6">
-              <h2 className="text-subhead font-medium">{focusSubject ? 'Memory' : 'Memory by subject'}</h2>
-              <MemoryLegend />
+          {/* One quiet toolbar: what to show on the left, how to order it on the right. */}
+          <div className="flex items-center gap-3 mb-4 border-b border-separator">
+            <div className="flex-1 min-w-0 -ml-4 sm:ml-0 pl-4 sm:pl-0 overflow-x-auto no-scrollbar">
+              <div className="flex gap-5 w-max" role="radiogroup" aria-label="Show">
+                {FILTERS.map((f) => {
+                  const on = filter === f.id
+                  const count = (f.id === 'overdue' || f.id === 'due') && counts[f.id] ? counts[f.id] : null
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => setFilter(f.id)}
+                      className={`relative h-10 text-subhead flex items-center gap-1.5 ${on ? 'text-label' : 'text-label-2 hover:text-label'}`}
+                    >
+                      {f.label}
+                      {count != null && <span className={`text-footnote tabular ${f.id === 'overdue' ? 'text-negative' : 'text-label-2'}`}>{count}</span>}
+                      {on && <motion.span layoutId="library-filter" transition={snappy} className="absolute left-0 right-0 -bottom-px h-[2px] rounded-full bg-label" />}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-            <div className="bg-card rounded-cell p-5">
-              <MemoryMap groups={memory} onOpen={onOpenChapter} />
-            </div>
-          </section>
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
-            <div className="relative flex-1 min-w-0">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-label-3 pointer-events-none" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Filter chapters and subjects"
-                aria-label="Filter chapters and subjects"
-                enterKeyHint="search"
-                className="w-full h-9 rounded-control bg-card shadow-[inset_0_0_0_1px_var(--separator)] pl-9 pr-9 outline-none placeholder:text-label-3 focus:shadow-[inset_0_0_0_1px_var(--label-3)]"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery('')}
-                  aria-label="Clear filter"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-control text-label-2 hover:bg-fill flex items-center justify-center"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-            <Segmented
-              value={sort}
-              onChange={setSort}
-              options={[
-                { id: 'subject', label: 'By subject' },
-                { id: 'memory', label: 'Weakest first' },
-              ]}
-              className="sm:w-[240px]"
-              ariaLabel="Sort"
-            />
-          </div>
-
-          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto no-scrollbar mb-6 border-b border-separator">
-            <div className="flex gap-5 w-max" role="radiogroup" aria-label="Show">
-              {FILTERS.map((f) => {
-                const on = filter === f.id
-                const count = (f.id === 'overdue' || f.id === 'due') && counts[f.id] ? counts[f.id] : null
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    onClick={() => setFilter(f.id)}
-                    className={`relative h-9 text-subhead flex items-center gap-1.5 ${on ? 'text-label' : 'text-label-2 hover:text-label'}`}
-                  >
-                    {f.label}
-                    {count != null && <span className={`text-footnote tabular ${f.id === 'overdue' ? 'text-negative' : 'text-label-2'}`}>{count}</span>}
-                    {on && <motion.span layoutId="library-filter" transition={snappy} className="absolute left-0 right-0 -bottom-px h-[2px] bg-label" />}
-                  </button>
-                )
-              })}
-            </div>
+            <button
+              type="button"
+              onClick={() => setSort((v) => (v === 'memory' ? 'subject' : 'memory'))}
+              aria-pressed={sort === 'memory'}
+              title={sort === 'memory' ? 'Showing weakest first' : 'Show weakest first'}
+              className={`shrink-0 h-8 px-3 mb-1 rounded-full text-footnote flex items-center gap-1.5 ${sort === 'memory' ? 'bg-fill-2 text-label' : 'text-label-2 hover:text-label hover:bg-fill'}`}
+            >
+              <ArrowDownWideNarrow size={14} /> Weakest first
+            </button>
           </div>
 
           {visible.length === 0 ? (
             <p className="text-subhead text-label-2 py-10">
-              {query ? `No chapter matches “${query.trim()}”.` : EMPTY[filter] || 'No chapters yet.'}
+              {EMPTY[filter] || 'No chapters in this subject yet. Add one from Today or the + button.'}
             </p>
           ) : sort === 'memory' ? (
             <Section>
@@ -259,6 +224,22 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
                 const all = chapters.filter((c) => c.subjectId === subject.id)
                 const mastered = all.filter((c) => c.status === 'mastered').length
                 const avg = memory.find((g) => g.subject.id === subject.id)?.average
+                if (focusSubject) {
+                  return (
+                    <section key={subject.id}>
+                      <Section>
+                        <AnimatePresence initial={false}>{list.map((c) => row(c, false))}</AnimatePresence>
+                      </Section>
+                      <button
+                        type="button"
+                        onClick={() => deleteSubject(subject, all.length)}
+                        className="mt-6 h-9 px-1 text-footnote text-label-3 hover:text-negative inline-flex items-center gap-1.5"
+                      >
+                        <Trash2 size={13} /> Delete {subject.name}
+                      </button>
+                    </section>
+                  )
+                }
                 return (
                   <section key={subject.id}>
                     <div className="flex items-center gap-3 px-0.5 mb-2.5 min-h-6">

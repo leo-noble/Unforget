@@ -304,7 +304,7 @@ export default function AppShell() {
             onCreateChapter={cadence.createChapter}
           />
         )}
-        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} onOpenShortcuts={() => setSheet('shortcuts')} onOpenGuide={() => setSheet('guide')} />}
+        {sheet === 'settings' && <SettingsSheet key="settings" cadence={cadence} onClose={closeSheet} onOpenGuide={() => setSheet('guide')} />}
         {sheet === 'insights' && <InsightsSheet key="insights" cadence={cadence} onClose={closeSheet} onOpenChapter={onOpenChapter} />}
         {sheet === 'shortcuts' && <ShortcutsSheet key="shortcuts" onClose={closeSheet} />}
         {sheet === 'guide' && <GuideSheet key="guide" onClose={closeSheet} />}

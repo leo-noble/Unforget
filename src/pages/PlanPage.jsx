@@ -29,7 +29,7 @@ const isNarrow = () => typeof window !== 'undefined' && window.innerWidth < 768
 
 // iOS Calendar's week row above the day view: seven dates, tap to jump,
 // swipe sideways for the previous or next week.
-function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
+function WeekStrip({ cursor, onSelect, onShiftWeek }) {
   const todayISO = toISODate(new Date())
   const dates = weekDatesOf(cursor)
   return (
@@ -67,7 +67,6 @@ function WeekStrip({ cursor, onSelect, onShiftWeek, loadByDate }) {
                 {d.getDate()}
               </span>
             </span>
-            <span className={`h-[5px] w-[5px] rounded-full ${loadByDate.get(iso) ? 'bg-label-3' : 'bg-transparent'}`} />
           </button>
         )
       })}
@@ -332,7 +331,6 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
           cursor={cursor}
           onSelect={setCursor}
           onShiftWeek={(d) => setCursor((prev) => toISODate(addDays(prev, d * 7)))}
-          loadByDate={loadByDate}
         />
       )}
 
