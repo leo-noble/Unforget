@@ -9,7 +9,7 @@ const PAD_B = 16
 // today marked in the data hue and the next review as a grey line. Shows why
 // the review lands when it does.
 export default function RecallCurve({ chapter, lastReviewed, today = new Date() }) {
-  const start = lastReviewed || chapter.lastActionDate || chapter.studiedDate
+  const start = lastReviewed || chapter.studiedDate
   const todayISO = toISODate(today)
   const h = halfLife(chapter)
   const due = chapter.nextReviewDate

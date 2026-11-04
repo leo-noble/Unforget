@@ -44,7 +44,9 @@ export function halfLife(chapter) {
 
 /** Estimated recall between 0 and 1. */
 export function retention(chapter, lastReviewed, today = new Date()) {
-  const since = lastReviewed || chapter.lastActionDate || chapter.studiedDate
+  // Only a completed review refreshes memory; snoozing or marking a chapter
+  // hard (which also stamp lastActionDate) doesn't.
+  const since = lastReviewed || chapter.studiedDate
   const t = Math.max(0, daysBetween(since, toISODate(today)))
   return Math.pow(2, -t / halfLife(chapter))
 }

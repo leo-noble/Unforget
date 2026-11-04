@@ -1,7 +1,16 @@
-import { Switch as GlassSwitch } from 'glisse'
-
-// Apple's Liquid Glass switch (from Glisse): the thumb lifts into a lens while
-// held. Same props as before, so every caller keeps working.
+// iOS 26 switch: a wide pill, green when on, the thumb springs across.
 export default function Switch({ checked, onChange, label, disabled = false }) {
-  return <GlassSwitch aria-label={label} checked={checked} onCheckedChange={(v) => onChange?.(v)} disabled={disabled} />
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={!!checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange?.(!checked)}
+      className="lg-switch"
+    >
+      <span className="lg-switch-thumb" />
+    </button>
+  )
 }

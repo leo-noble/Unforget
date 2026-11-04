@@ -1,20 +1,20 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
-import { TabBar as GlassTabBar, Button as GlassButton } from 'glisse'
 import { TABS } from './tabs'
 import MiniTimer from './MiniTimer'
 import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.85 }
 
-// Apple's Liquid Glass tab bar (from Glisse), icons only: the selection
-// springs between tabs and lifts into a lens while held. Add is a round glass
-// button beside it.
+// iOS 26 tab bar, icons only, on Liquid Glass (styles/liquid-glass.css): the
+// lens springs to the selected tab with a transform, so it stays smooth on a
+// phone. Add is the round glass button beside it.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap, showFocusTimer = true }) {
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus'
   const navTabs = showFocusTimer ? TABS : TABS.filter((tab) => tab.id !== 'focus')
+  const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === active))
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -42,19 +42,38 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <div className="flex items-end justify-center gap-3 pointer-events-auto">
-          <GlassTabBar
-            aria-label="Main navigation"
-            items={navTabs.map((tab) => ({
-              value: tab.id,
-              label: <span className="sr-only">{tab.label}</span>,
-              icon: <tab.icon size={22} strokeWidth={1.8} />,
-            }))}
-            value={active}
-            onValueChange={onSelect}
-            className="unf-tabbar"
-          />
-          <GlassButton icon={<Plus size={24} strokeWidth={1.8} />} aria-label="Add chapter" onClick={onAdd} className="unf-dock-add" />
+        <div className="flex items-center gap-3 pointer-events-auto">
+          <nav aria-label="Main navigation" className="lg-glass lg-tabbar flex-1 min-w-0">
+            <span
+              aria-hidden="true"
+              className="lg-tabbar-lens"
+              style={{ width: `calc((100% - 8px) / ${navTabs.length})`, transform: `translateX(${activeIndex * 100}%)` }}
+            />
+            {navTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => onSelect(tab.id)}
+                aria-current={tab.id === active ? 'page' : undefined}
+                aria-label={tab.label}
+                title={tab.label}
+                className="lg-tab"
+              >
+                <tab.icon size={22} strokeWidth={tab.id === active ? 2.1 : 1.7} />
+              </button>
+            ))}
+          </nav>
+          <button
+            type="button"
+            onClick={onAdd}
+            aria-label="Add chapter"
+            title="Add chapter"
+            data-icon-only=""
+            className="lg-button lg-glass shrink-0"
+            style={{ width: 60, height: 60 }}
+          >
+            <Plus size={24} strokeWidth={1.8} />
+          </button>
         </div>
       </div>
     </div>

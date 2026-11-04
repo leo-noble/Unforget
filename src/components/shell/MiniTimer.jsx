@@ -17,7 +17,7 @@ export default function MiniTimer({ onOpen, chapterMap, compact = false, glass =
 
   return (
     <div
-      className={`${glass ? 'dock-glass rounded-full' : 'glass rounded-cell'} pointer-events-auto flex items-center gap-3 ${
+      className={`${glass ? 'lg-glass rounded-full' : 'glass rounded-cell'} pointer-events-auto flex items-center gap-3 ${
         compact ? 'h-[48px] pl-2 pr-1.5' : 'h-[54px] pl-2.5 pr-2'
       }`}
     >

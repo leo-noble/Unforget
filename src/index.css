@@ -1,3 +1,6 @@
+/* Liquid Glass first, so Tailwind utilities (hidden, w-full, mt-*) still win. */
+@import './styles/liquid-glass.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -281,68 +284,6 @@ input[type='search']::-webkit-search-cancel-button {
     background: var(--fill-2);
   }
 
-  /* The phone tab bar is the one place that keeps real glass, by choice. It
-     is the Mnora-era glass: a saturated blur, a bright rim on the top-left
-     and bottom-right edges (a masked gradient border on ::before, so it
-     follows the radius), and a brighter glass bubble on the selected tab.
-     taste-skill-ignore: glass and its rim gradients are deliberate here. */
-  :root {
-    --dock-bg: rgba(255, 255, 255, 0.6);
-    --dock-edge: rgba(255, 255, 255, 0.95);
-    --dock-edge-soft: rgba(255, 255, 255, 0.4);
-    --dock-rim: rgba(0, 0, 0, 0.07);
-    --dock-lens: rgba(10, 10, 10, 0.07);
-    --dock-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.28);
-  }
-  :root[data-mode='dark'] {
-    --dock-bg: rgba(40, 40, 40, 0.55);
-    --dock-edge: rgba(255, 255, 255, 0.26);
-    --dock-edge-soft: rgba(255, 255, 255, 0.07);
-    --dock-rim: rgba(255, 255, 255, 0.07);
-    --dock-lens: rgba(255, 255, 255, 0.12);
-    --dock-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.9);
-  }
-  .liquid-dock,
-  .dock-glass {
-    position: relative;
-    isolation: isolate;
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-    background: var(--dock-bg);
-    box-shadow: var(--dock-shadow), inset 0 0 0 0.5px var(--dock-rim);
-  }
-  .liquid-dock::before,
-  .dock-glass::before,
-  .dock-lens::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(150deg, var(--dock-edge) 0%, var(--dock-edge-soft) 28%, transparent 52%, var(--dock-edge-soft) 78%, var(--dock-edge) 100%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .dock-lens {
-    position: absolute;
-    isolation: isolate;
-    background: var(--dock-lens);
-    box-shadow: inset 0 1px 1px var(--dock-edge-soft), 0 2px 8px -2px rgba(0, 0, 0, 0.18);
-  }
-  .dock-action {
-    background: var(--tint);
-    color: var(--tint-fg);
-    box-shadow: var(--dock-shadow);
-  }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .liquid-dock,
-    .dock-glass {
-      background: var(--card);
-    }
-  }
   .liquid-add,
   .glass-tint {
     position: relative;
@@ -450,18 +391,3 @@ input[type='search']::-webkit-search-cancel-button {
 .auth-input::placeholder { opacity: 0.72; }
 [role='button'][data-calendar-block='true'][class*='rounded-'] { border-radius: 4px !important; }
 
-/* Glisse (Liquid Glass) on the phone dock: the add button matches the tab
-   bar's height so the two read as one set. */
-.unf-dock-add.lg-button {
-  flex: none;
-  width: 60px;
-  min-width: 60px;
-  height: 60px;
-  padding: 0;
-  border-radius: 30px;
-}
-.unf-btn-lg.lg-button {
-  height: 50px;
-  border-radius: 25px;
-  padding: 0 22px;
-}

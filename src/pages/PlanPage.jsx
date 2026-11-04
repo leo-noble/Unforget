@@ -212,7 +212,7 @@ export default function PlanPage({ cadence, onOpenChapter, account }) {
       }
       trailing={
         <>
-          <IconButton size={36} label="Plan a study session" onClick={() => setSheet({ date: cursor })} className="md:hidden">
+          <IconButton variant="plain" size={36} label="Plan a study session" onClick={() => setSheet({ date: cursor })} className="md:hidden">
             <Plus size={18} strokeWidth={2} />
           </IconButton>
           {account}

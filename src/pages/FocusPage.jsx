@@ -226,7 +226,7 @@ export default function FocusPage({ cadence, account }) {
       wide
       trailing={
         <>
-          <IconButton label="Timer settings" onClick={() => setShowSettings(true)}>
+          <IconButton variant="plain" label="Timer settings" onClick={() => setShowSettings(true)}>
             <Settings2 size={17} />
           </IconButton>
           {account}

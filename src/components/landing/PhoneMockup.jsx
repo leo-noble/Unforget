@@ -64,15 +64,15 @@ export default function PhoneMockup() {
           </div>
 
           <div className="absolute inset-x-3 bottom-[22px] z-20 flex items-center gap-2">
-            <div className="liquid-dock relative grid h-[46px] flex-1 grid-cols-4 items-center rounded-full p-[4px]">
-              <span className="dock-lens absolute left-[4px] top-[4px] bottom-[4px] rounded-full" style={{ width: 'calc((100% - 8px) / 4)' }} />
+            <div className="lg-glass relative grid h-[46px] flex-1 grid-cols-4 items-center rounded-full p-[4px]">
+              <span className="absolute left-[4px] top-[4px] bottom-[4px] rounded-full" style={{ width: 'calc((100% - 8px) / 4)', background: 'var(--lg-selection)' }} />
               {[SunMedium, LibraryBig, CalendarDays, Timer].map((Icon, i) => (
-                <span key={i} className={`relative z-[1] flex justify-center ${i === 0 ? 'text-label' : 'text-label-2'}`}>
+                <span key={i} className="relative z-[1] flex justify-center" style={{ color: i === 0 ? 'var(--lg-fill)' : 'var(--lg-foreground)' }}>
                   <Icon size={15} strokeWidth={i === 0 ? 2 : 1.7} />
                 </span>
               ))}
             </div>
-            <span className="dock-action flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full">
+            <span className="lg-glass flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full">
               <Plus size={19} strokeWidth={1.8} />
             </span>
           </div>

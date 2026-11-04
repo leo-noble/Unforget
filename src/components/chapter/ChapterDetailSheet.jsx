@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check, Clock, AlertCircle, Pencil, Award, BookOpen, MoreHorizontal, Trash2 } from 'lucide-react'
-import { Menu } from 'glisse'
+import Menu from '../ui/Menu'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import { Button } from '../ui/Button'
@@ -65,7 +65,7 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
       ariaLabel={chapter.title}
       trailing={
         <Menu
-          aria-label="Chapter options"
+          label="Chapter options"
           icon={<MoreHorizontal size={18} />}
           align="end"
           items={[
