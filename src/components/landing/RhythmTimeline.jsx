@@ -1,15 +1,12 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { REVIEW_DAYS, REVIEW_GAPS, dayToFraction, formatGap } from '../../lib/reviewSchedule'
+import { REVIEW_DAYS, REVIEW_GAPS, formatGap } from '../../lib/reviewSchedule'
 
 // A chapter's whole life on one line. The spacing is the message: each wait is
 // drawn wider than the last. Every label is derived from the engine's own
 // schedule, so this can't fall out of step with it again (it once had five
 // labels for six points).
 const LABELS = REVIEW_DAYS.map((_, i) => (i === 0 ? 'Studied' : i === REVIEW_DAYS.length - 1 ? 'Mastered' : `Review ${i}`))
-const LEFT = 5
-const SPAN = 88
-const at = (day) => LEFT + dayToFraction(day) * SPAN
 
 function Marker({ i }) {
   const last = i === REVIEW_DAYS.length - 1
@@ -23,49 +20,26 @@ export default function RhythmTimeline() {
 
   return (
     <div ref={ref}>
-      {/* Horizontal, md and up */}
-      <div className="hidden md:block relative h-40">
-        {REVIEW_GAPS.map((gap, i) => {
-          const left = at(REVIEW_DAYS[i])
-          const width = at(REVIEW_DAYS[i + 1]) - left
-          return (
-            <div key={i} className="absolute top-1/2" style={{ left: `${left}%`, width: `${width}%` }}>
-              <motion.div
-                className="h-[2px] bg-[repeating-linear-gradient(90deg,var(--label-3)_0_2px,transparent_2px_7px)] origin-left"
-                initial={{ scaleX: 0 }}
-                animate={inView ? { scaleX: 1 } : {}}
-                transition={{ duration: 0.45, delay: 0.2 + i * 0.25, ease: 'easeOut' }}
-              />
-              <motion.span
-                className={`absolute ${i === 1 ? '-top-16' : '-top-10'} left-1/2 -translate-x-1/2 whitespace-nowrap text-footnote text-label-3`}
-                initial={{ opacity: 0, y: 6 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.3, delay: 0.45 + i * 0.25 }}
-              >
-                +{formatGap(gap)}
-              </motion.span>
-            </div>
-          )
-        })}
+      {/* Horizontal, md and up: evenly spaced stops, the growing wait written
+          between them, so no two labels can collide. */}
+      <div className="hidden md:grid grid-cols-6">
         {REVIEW_DAYS.map((day, i) => (
           <motion.div
             key={day}
-            className="absolute top-1/2 -translate-x-1/2 flex flex-col items-center"
-            style={{ left: `${at(day)}%` }}
-            initial={{ opacity: 0, scale: 0.4 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ type: 'spring', stiffness: 320, damping: 20, delay: 0.12 + i * 0.25 }}
+            className="relative flex flex-col items-center"
+            initial={{ opacity: 0, y: 6 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.35, delay: 0.1 + i * 0.12 }}
           >
-            <div className="-translate-y-1/2">
-              <Marker i={i} />
-            </div>
-            <p className="font-display text-[22px] leading-none tabular whitespace-nowrap mt-1">Day {day}</p>
-            <p
-              className="text-footnote text-label-2 whitespace-nowrap mt-1.5"
-              style={{ transform: i === 0 ? 'translateX(-20px)' : i === 1 ? 'translateX(20px)' : undefined }}
-            >
-              {LABELS[i]}
-            </p>
+            {i < REVIEW_GAPS.length && (
+              <>
+                <div className="absolute top-[9px] left-1/2 w-full h-[2px] bg-[repeating-linear-gradient(90deg,var(--label-3)_0_2px,transparent_2px_7px)]" />
+                <span className="absolute -top-6 left-full -translate-x-1/2 whitespace-nowrap text-footnote text-label-3">+{formatGap(REVIEW_GAPS[i])}</span>
+              </>
+            )}
+            <div className="relative"><Marker i={i} /></div>
+            <p className="font-display text-[20px] leading-none tabular whitespace-nowrap mt-3">Day {day}</p>
+            <p className="text-footnote text-label-2 whitespace-nowrap mt-1.5">{LABELS[i]}</p>
           </motion.div>
         ))}
       </div>

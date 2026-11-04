@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { Check, Clock, AlertCircle } from 'lucide-react'
+import { Check, Clock } from 'lucide-react'
 import CompleteButton from './CompleteButton'
 import { reviewLabel, shortWhen, isActionable, STATUS_TONE } from './meta'
 import { easeOut } from '../ui/motion'
@@ -113,15 +113,11 @@ export default function ChapterRow({ chapter, subject, onOpen, onRevise, onSnooz
               {showSubject && subject && (
                 <>
                   {subject.name}
-                  <span className="text-label-3"> · </span>
                 </>
               )}
-              {reviewLabel(chapter)}
+              {showSubject ? null : reviewLabel(chapter)}
             </p>
           </div>
-          {chapter.struggleFlag && chapter.derivedStatus !== 'mastered' && (
-            <AlertCircle size={15} strokeWidth={1.8} className="shrink-0 text-label-2" aria-label="Needs extra attention" />
-          )}
           {strength != null && <StrengthMeter value={strength} />}
           <span
             className="shrink-0 w-[68px] text-right text-footnote tabular"

@@ -266,7 +266,7 @@ export default function LandingPage() {
             ))}
           </ol>
           <div className="mt-12 bg-card rounded-sheet p-6 sm:p-10 shadow-[inset_0_0_0_1px_var(--separator)]">
-            <p className="text-subhead font-medium mb-6 md:mb-14">One chapter, from the day you study it</p>
+            <p className="text-subhead font-medium mb-6 md:mb-12">One chapter, from the day you study it</p>
             <RhythmTimeline />
           </div>
         </div>

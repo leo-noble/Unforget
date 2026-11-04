@@ -57,7 +57,7 @@ export default function TodayPage({ cadence, actions, onOpenChapter, onOpenGuide
 
   let subtitle = 'Log what you studied and Unforget brings it back to review.'
   if (chapters.length) {
-    if (queue.length) subtitle = `${plural(queue.length, 'review')} left${doneToday ? `, ${doneToday} done` : ''}. Tick each one once you've gone over it.`
+    if (queue.length) subtitle = `${plural(queue.length, 'review')} left${doneToday ? ` · ${doneToday} done` : ''}`
     else if (doneToday) subtitle = `All done. ${plural(doneToday, 'review')} cleared today.`
     else subtitle = 'Nothing due today.'
   }
@@ -76,7 +76,7 @@ export default function TodayPage({ cadence, actions, onOpenChapter, onOpenGuide
         </div>
       )}
 
-      <QuickAdd subjects={subjects} onCreateSubject={cadence.createSubject} onCreateChapter={cadence.createChapter} className="mb-8" />
+      <QuickAdd subjects={subjects} onCreateSubject={cadence.createSubject} onCreateChapter={cadence.createChapter} className="mb-6" />
 
       {queue.length > 0 ? (
         <Section>
@@ -102,7 +102,7 @@ export default function TodayPage({ cadence, actions, onOpenChapter, onOpenGuide
       )}
 
       {upcoming.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-8">
           <h2 className="text-footnote text-label-2 px-0.5 mb-1">Coming up</h2>
           <div>
             {upcoming.map((c) => (
