@@ -449,3 +449,19 @@ input[type='search']::-webkit-search-cancel-button {
 .auth-input:focus-visible { outline: none; }
 .auth-input::placeholder { opacity: 0.72; }
 [role='button'][data-calendar-block='true'][class*='rounded-'] { border-radius: 4px !important; }
+
+/* Glisse (Liquid Glass) on the phone dock: the add button matches the tab
+   bar's height so the two read as one set. */
+.unf-dock-add.lg-button {
+  flex: none;
+  width: 60px;
+  min-width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 30px;
+}
+.unf-btn-lg.lg-button {
+  height: 50px;
+  border-radius: 25px;
+  padding: 0 22px;
+}

@@ -1,20 +1,20 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
+import { TabBar as GlassTabBar, Button as GlassButton } from 'glisse'
 import { TABS } from './tabs'
 import MiniTimer from './MiniTimer'
 import { useTimerStatus } from '../../lib/TimerContext'
 
 const pillSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.85 }
 
-// Four icon-only destinations in a floating round glass capsule, with a glass
-// lens that slides to the selected one. Add is the solid round button beside it.
+// Apple's Liquid Glass tab bar (from Glisse), icons only: the selection
+// springs between tabs and lifts into a lens while held. Add is a round glass
+// button beside it.
 export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMap, showFocusTimer = true }) {
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus'
   const navTabs = showFocusTimer ? TABS : TABS.filter((tab) => tab.id !== 'focus')
-  const gridClass = navTabs.length === 4 ? 'grid-cols-4' : 'grid-cols-3'
-  const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === active))
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -42,60 +42,21 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
           )}
         </AnimatePresence>
 
-        <div className="flex items-center gap-3">
-          <nav
+        <div className="flex items-end justify-center gap-3 pointer-events-auto">
+          <GlassTabBar
             aria-label="Main navigation"
-            className={`liquid-dock relative grid h-[64px] min-w-0 flex-1 ${gridClass} items-center rounded-full p-[5px] pointer-events-auto`}
-          >
-            <motion.span
-              aria-hidden="true"
-              initial={false}
-              animate={{ x: `${activeIndex * 100}%` }}
-              transition={{ type: 'spring', stiffness: 360, damping: 34, mass: 0.82 }}
-              className="dock-lens pointer-events-none absolute left-[5px] top-[5px] bottom-[5px] z-0 rounded-full"
-              style={{ width: `calc((100% - 10px) / ${navTabs.length})` }}
-            />
-            {navTabs.map((tab) => <DockTab key={tab.id} tab={tab} active={active} onSelect={onSelect} />)}
-          </nav>
-          <AddDockButton onAdd={onAdd} />
+            items={navTabs.map((tab) => ({
+              value: tab.id,
+              label: <span className="sr-only">{tab.label}</span>,
+              icon: <tab.icon size={22} strokeWidth={1.8} />,
+            }))}
+            value={active}
+            onValueChange={onSelect}
+            className="unf-tabbar"
+          />
+          <GlassButton icon={<Plus size={24} strokeWidth={1.8} />} aria-label="Add chapter" onClick={onAdd} className="unf-dock-add" />
         </div>
       </div>
     </div>
-  )
-}
-
-function AddDockButton({ onAdd }) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onAdd}
-      whileTap={{ scale: 0.94 }}
-      transition={pillSpring}
-      aria-label="Add chapter"
-      title="Add chapter"
-      className="dock-action relative z-[1] pointer-events-auto mx-auto flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-full"
-    >
-      <Plus size={26} strokeWidth={1.8} />
-    </motion.button>
-  )
-}
-
-function DockTab({ tab, active, onSelect }) {
-  const selected = tab.id === active
-  const Icon = tab.icon
-
-  return (
-    <motion.button
-      type="button"
-      onClick={() => onSelect(tab.id)}
-      whileTap={{ scale: 0.96 }}
-      transition={pillSpring}
-      aria-current={selected ? 'page' : undefined}
-      aria-label={tab.label}
-      title={tab.label}
-      className={`relative z-[1] flex h-full min-w-0 w-full items-center justify-center rounded-full transition-colors ${selected ? 'text-label' : 'text-label-2'}`}
-    >
-      <Icon size={22} strokeWidth={selected ? 2.1 : 1.7} className="relative z-[1]" />
-    </motion.button>
   )
 }

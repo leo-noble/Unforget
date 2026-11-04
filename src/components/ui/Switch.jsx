@@ -1,32 +1,7 @@
-import { motion } from 'framer-motion'
-import { snappy } from './motion'
+import { Switch as GlassSwitch } from 'glisse'
 
-// UISwitch at its real size (51×31), green when on like the system one.
-// The knob stretches a little while pressed, the way the real one does.
+// Apple's Liquid Glass switch (from Glisse): the thumb lifts into a lens while
+// held. Same props as before, so every caller keeps working.
 export default function Switch({ checked, onChange, label, disabled = false }) {
-  return (
-    <motion.button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      disabled={disabled}
-      onClick={() => onChange?.(!checked)}
-      whileTap="pressed"
-      className={`relative flex w-[51px] h-[31px] shrink-0 rounded-full p-[2px] transition-colors duration-200 disabled:opacity-40 ${
-        checked ? 'bg-accent' : 'bg-fill-2'
-      }`}
-    >
-      <motion.span
-        layout
-        transition={snappy}
-        variants={{ pressed: { width: 33 } }}
-        className={`block h-[27px] w-[27px] rounded-full ${checked ? 'bg-tint-fg' : 'bg-white'}`}
-        style={{
-          marginLeft: checked ? 'auto' : 0,
-          boxShadow: '0 3px 8px rgba(0,0,0,0.15), 0 3px 1px rgba(0,0,0,0.06)',
-        }}
-      />
-    </motion.button>
-  )
+  return <GlassSwitch aria-label={label} checked={checked} onCheckedChange={(v) => onChange?.(v)} disabled={disabled} />
 }

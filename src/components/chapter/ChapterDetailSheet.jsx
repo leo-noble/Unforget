@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Check, Clock, AlertCircle, Pencil, Award, BookOpen } from 'lucide-react'
+import { Check, Clock, AlertCircle, Pencil, Award, BookOpen, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Menu } from 'glisse'
 import Sheet from '../ui/Sheet'
 import { Section, Row } from '../ui/List'
 import { Button } from '../ui/Button'
@@ -58,7 +59,35 @@ export default function ChapterDetailSheet({ chapter, subject, actions, onRename
   }
 
   return (
-    <Sheet onClose={onClose} size="lg" ariaLabel={chapter.title}>
+    <Sheet
+      onClose={onClose}
+      size="lg"
+      ariaLabel={chapter.title}
+      trailing={
+        <Menu
+          aria-label="Chapter options"
+          icon={<MoreHorizontal size={18} />}
+          align="end"
+          items={[
+            ...(canAct
+              ? [
+                  { label: 'Snooze a day', icon: <Clock size={16} />, onSelect: () => actions.snooze(chapter) },
+                  { label: chapter.struggleFlag ? 'Marked hard' : 'This was hard', icon: <AlertCircle size={16} />, disabled: chapter.struggleFlag, onSelect: () => actions.struggle(chapter) },
+                  'separator',
+                ]
+              : []),
+            {
+              label: 'Delete chapter',
+              icon: <Trash2 size={16} />,
+              destructive: true,
+              onSelect: async () => {
+                if (await actions.remove(chapter)) onClose()
+              },
+            },
+          ]}
+        />
+      }
+    >
       {/* Identity */}
       <div className="px-1">
         <p className="text-subhead text-label-2 flex items-center gap-2">
