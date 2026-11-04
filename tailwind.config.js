@@ -12,6 +12,10 @@ const token = (name) => `color-mix(in srgb, var(--${name}) calc(<alpha-value> * 
 const SYSTEM = ['red', 'orange', 'yellow', 'green', 'mint', 'teal', 'cyan', 'blue', 'indigo', 'purple', 'pink']
 
 export default {
+  // hover: utilities only apply on devices that can hover. On an iPhone a
+  // tap would otherwise leave rows highlighted, and iOS can spend the first
+  // tap on the hover state, so buttons felt like they needed two taps.
+  future: { hoverOnlyWhenSupported: true },
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {

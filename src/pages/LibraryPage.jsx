@@ -202,9 +202,10 @@ export default function LibraryPage({ cadence, actions, onOpenChapter, onAdd, on
               onClick={() => setSort((v) => (v === 'memory' ? 'subject' : 'memory'))}
               aria-pressed={sort === 'memory'}
               title={sort === 'memory' ? 'Showing weakest first' : 'Show weakest first'}
+              aria-label="Weakest first"
               className={`shrink-0 h-8 px-3 mb-1 rounded-full text-footnote flex items-center gap-1.5 ${sort === 'memory' ? 'bg-fill-2 text-label' : 'text-label-2 hover:text-label hover:bg-fill'}`}
             >
-              <ArrowDownWideNarrow size={14} /> Weakest first
+              <ArrowDownWideNarrow size={14} /> <span className="hidden sm:inline">Weakest first</span>
             </button>
           </div>
 

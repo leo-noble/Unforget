@@ -68,9 +68,14 @@ export function applyAppearance({ theme, themeMode } = {}) {
   root.dataset.themeMode = themeMode || 'dark'
   root.dataset.mode = mode
   root.style.colorScheme = mode
+  // Safari only re-tints its bars for a new <meta>, not an edited one, so
+  // swap the tag when the colour actually changes.
   document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
-    m.setAttribute('content', CANVAS[mode])
-    m.removeAttribute('media')
+    if (m.getAttribute('content') === CANVAS[mode] && !m.hasAttribute('media')) return
+    const fresh = document.createElement('meta')
+    fresh.name = 'theme-color'
+    fresh.content = CANVAS[mode]
+    m.replaceWith(fresh)
   })
   try {
     localStorage.setItem(BOOT_KEY, JSON.stringify({ accent, themeMode: themeMode || 'dark', appearanceVersion: 1 }))

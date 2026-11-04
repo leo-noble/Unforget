@@ -15,11 +15,11 @@
 :root[data-mode='light'] {
   --lg-foreground: rgb(0 0 0 / 0.88);
   --lg-muted: rgb(60 60 67 / 0.6);
-  --lg-glass: rgb(255 255 255 / 0.62);
+  --lg-glass: rgb(250 250 252 / 0.62);
   --lg-glass-active: rgb(236 236 240 / 0.88);
-  --lg-edge: rgb(0 0 0 / 0.08);
-  --lg-rim-hi: rgb(255 255 255 / 0.95);
-  --lg-rim-lo: rgb(255 255 255 / 0.35);
+  --lg-edge: rgb(0 0 0 / 0.07);
+  --lg-rim-hi: rgb(255 255 255 / 0.9);
+  --lg-rim-lo: rgb(255 255 255 / 0.3);
   --lg-drop: 0 8px 24px -8px rgb(0 0 0 / 0.18), 0 1px 3px rgb(0 0 0 / 0.06);
   --lg-selection: rgb(0 0 0 / 0.08);
   --lg-segment-track: rgb(118 118 128 / 0.12);
@@ -40,11 +40,11 @@
 :root[data-mode='dark'] {
   --lg-foreground: rgb(255 255 255);
   --lg-muted: rgb(235 235 245 / 0.6);
-  --lg-glass: rgb(40 40 40 / 0.66);
-  --lg-glass-active: rgb(70 70 70 / 0.7);
-  --lg-edge: rgb(255 255 255 / 0.08);
-  --lg-rim-hi: rgb(255 255 255 / 0.28);
-  --lg-rim-lo: rgb(255 255 255 / 0.06);
+  --lg-glass: rgb(30 30 32 / 0.58);
+  --lg-glass-active: rgb(70 70 74 / 0.7);
+  --lg-edge: rgb(255 255 255 / 0.1);
+  --lg-rim-hi: rgb(255 255 255 / 0.2);
+  --lg-rim-lo: rgb(255 255 255 / 0.04);
   --lg-drop: 0 12px 32px -10px rgb(0 0 0 / 0.7);
   --lg-selection: rgb(255 255 255 / 0.145);
   --lg-segment-track: rgb(118 118 128 / 0.24);
@@ -77,10 +77,9 @@
   position: relative;
   isolation: isolate;
   background-color: var(--lg-glass);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
   box-shadow: var(--lg-drop), inset 0 0 0 0.5px var(--lg-edge);
-  transform: translateZ(0);
 }
 .lg-glass::before {
   content: '';
@@ -186,9 +185,13 @@
   color: #fff;
   background-color: var(--lg-fill);
 }
-.lg-button[data-variant='filled']:active:not(:disabled),
-.lg-button[data-variant='filled']:hover:not(:disabled) {
+.lg-button[data-variant='filled']:active:not(:disabled) {
   background-color: color-mix(in srgb, var(--lg-fill) 85%, #000);
+}
+@media (hover: hover) {
+  .lg-button[data-variant='filled']:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--lg-fill) 85%, #000);
+  }
 }
 .lg-button[data-variant='destructive'] {
   color: var(--lg-destructive);
@@ -214,9 +217,11 @@
   background: none;
   color: var(--lg-muted);
 }
-.lg-button[data-variant='plain']:hover:not(:disabled) {
-  background: var(--lg-highlight);
-  color: var(--lg-foreground);
+@media (hover: hover) {
+  .lg-button[data-variant='plain']:hover:not(:disabled) {
+    background: var(--lg-highlight);
+    color: var(--lg-foreground);
+  }
 }
 .lg-button.lg-glass {
   background-color: var(--lg-glass);
@@ -341,7 +346,7 @@
   color: inherit;
   cursor: pointer;
 }
-.lg-menu-item:hover:not(:disabled),
+.lg-menu-item:active:not(:disabled),
 .lg-menu-item:focus-visible {
   background: var(--lg-highlight);
   outline: none;
@@ -352,6 +357,11 @@
 }
 .lg-menu-item[data-destructive] {
   color: var(--lg-destructive);
+}
+@media (hover: hover) {
+  .lg-menu-item:hover:not(:disabled) {
+    background: var(--lg-highlight);
+  }
 }
 .lg-menu-separator {
   margin: 6px 12px;

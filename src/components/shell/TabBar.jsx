@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { TABS } from './tabs'
@@ -14,7 +14,20 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
   const { status } = useTimerStatus()
   const showTimer = showFocusTimer && status !== 'idle' && active !== 'focus'
   const navTabs = showFocusTimer ? TABS : TABS.filter((tab) => tab.id !== 'focus')
-  const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === active))
+  // The lens moves the moment a tab is tapped; the page swap follows as a
+  // low-priority update, so its render never holds up the slide.
+  const [pending, setPending] = useState(null)
+  const shown = pending ?? active
+  const activeIndex = Math.max(0, navTabs.findIndex((tab) => tab.id === shown))
+  useEffect(() => {
+    if (pending && pending === active) setPending(null)
+  }, [pending, active])
+
+  function choose(id) {
+    if (id === active) return onSelect(id)
+    setPending(id)
+    requestAnimationFrame(() => requestAnimationFrame(() => startTransition(() => onSelect(id))))
+  }
 
   // Pages pad their bottom by this so the last row clears the dock.
   useEffect(() => {
@@ -53,13 +66,13 @@ export default function TabBar({ active, onSelect, onAdd, onOpenFocus, chapterMa
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => onSelect(tab.id)}
-                aria-current={tab.id === active ? 'page' : undefined}
+                onClick={() => choose(tab.id)}
+                aria-current={tab.id === shown ? 'page' : undefined}
                 aria-label={tab.label}
                 title={tab.label}
                 className="lg-tab"
               >
-                <tab.icon size={22} strokeWidth={tab.id === active ? 2.1 : 1.7} />
+                <tab.icon size={22} strokeWidth={tab.id === shown ? 2.1 : 1.7} />
               </button>
             ))}
           </nav>
